@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>修仙纪元 - 风野工作室</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif}
+html,body{width:100%;overflow-x:hidden;background:#050508;color:#e6e6e6;scroll-behavior:smooth}
+a{text-decoration:none}
+/* 头部导航-科技感边框+渐变文字 */
+.header{
+  position:fixed;top:0;left:0;width:100%;
+  padding:16px 6%;
+  background:rgba(5,5,8,0.98);
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:9998;
+  border-bottom:1px solid #3366ff;
+  box-shadow:0 0 15px rgba(51,102,255,0.2);
+}
+.logo{font-size:24px;font-weight:700;
+  background:linear-gradient(90deg,#ffd055,#3366ff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.nav{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.nav a{color:#d1d1e0;font-size:15px;font-weight:500;outline:none;position:relative}
+.nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#3366ff;transition:0.3s}
+.nav a:hover{color:#3366ff}
+.nav a:hover::after{width:100%}
+/* 福利入口特殊样式 */
+.welfare-btn{color:#00ff99;padding:6px 12px;border:1px solid #00ff99;border-radius:6px;
+  box-shadow:0 0 10px rgba(0,255,153,0.3);transition:0.3s}
+.welfare-btn:hover{background:rgba(0,255,153,0.1);box-shadow:0 0 15px rgba(0,255,153,0.5)}
+/* 粒子特效层级调整 */
+.particles{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:1;
+}
+/* 通用区块-科技感分隔线+内边距优化 */
+.section{
+  max-width:1200px;margin:0 auto;padding:100px 6%;
+  border-bottom:1px solid #1a1a40;
+  position:relative;z-index:2;
+}
+.section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:80px;height:4px;background:linear-gradient(90deg,#3366ff,#00ff99);border-radius:2px;}
+.section-title{
+  text-align:center;font-size:32px;font-weight:700;
+  background:linear-gradient(90deg,#ffd055,#3366ff);
+  -webkit-background-clip:text;color:transparent;
+  margin-bottom:60px;position:relative;
+}
+.section-title::after{content:'';width:60px;height:2px;background:#3366ff;
+  position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);box-shadow:0 0 8px #3366ff}
+/* 首屏-科技感渐变背景+光晕 */
+.hero{
+  min-height:100vh;padding:140px 6% 80px;
+  background:linear-gradient(to bottom,rgba(5,5,15,0.9),#050508),url(https://picsum.photos/id/175/1920/1080);
+  background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  position:relative;z-index:2;
+  box-shadow:inset 0 0 200px rgba(51,102,255,0.15);
+}
+.hero-box{max-width:720px;position:relative;z-index:3;
+  padding:20px;border-radius:16px;background:rgba(5,5,15,0.5);backdrop-filter:blur(8px);
+  border:1px solid rgba(51,102,255,0.3);box-shadow:0 0 30px rgba(51,102,255,0.2)}
+.hero h1{font-size:48px;margin-bottom:20px;line-height:1.2;
+  background:linear-gradient(90deg,#ffd055,#3366ff,#00ff99);
+  -webkit-background-clip:text;color:transparent;
+  text-shadow:0 0 10px rgba(255,208,85,0.3)}
+.hero p{font-size:18px;color:#b8b8d4;margin-bottom:40px;line-height:1.6;}
+/* 按钮-科技感渐变+光晕+hover放大 */
+.btn{
+  display:inline-block;padding:16px 36px;
+  background:linear-gradient(90deg,#ffd055,#3366ff);
+  color:#0f0f17;font-weight:600;border-radius:10px;font-size:17px;
+  cursor:pointer;border:none;transition:0.3s;
+  box-shadow:0 0 15px rgba(51,102,255,0.4);
+}
+.btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(51,102,255,0.6);
+  background:linear-gradient(90deg,#ffdf8e,#4a7bff);
+}
+/* 网格布局-响应式优化 */
+.grid{display:grid;grid-template-columns:repeat(1,1fr);gap:24px}
+@media(min-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+/* 卡片-科技感悬浮+发光边框+渐变背景 */
+.card{
+  background:linear-gradient(180deg,#0f0f25,#050515);
+  padding:30px;border-radius:16px;
+  border:1px solid #2f2f60;transition:0.4s;
+  position:relative;overflow:hidden;
+}
+.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(51,102,255,0.1),transparent);
+  transition:0.6s;}
+.card:hover{transform:translateY(-6px);border-color:#3366ff;
+  box-shadow:0 10px 30px rgba(51,102,255,0.2);}
+.card:hover::before{left:100%}
+.card h3{font-size:20px;color:#00ff99;margin-bottom:12px;
+  text-shadow:0 0 8px rgba(0,255,153,0.3)}
+.card p{color:#a8a8c2;line-height:1.6;font-size:15px;}
+/* 关于区块-文字间距优化 */
+.about{text-align:center;max-width:800px;margin:0 auto;}
+.about p{font-size:16px;line-height:1.8;color:#b8b8d4;margin-bottom:20px;}
+/* 下载区块-科技感背景+发光边框 */
+.download{
+  background:linear-gradient(180deg,#050515,#0f0f25);
+  padding:100px 6%;text-align:center;
+  border-bottom:none;border-radius:20px;
+  margin:0 6%;border:1px solid rgba(51,102,255,0.3);
+  box-shadow:0 0 30px rgba(51,102,255,0.15);
+}
+.download h2{font-size:30px;margin-bottom:16px;
+  background:linear-gradient(90deg,#ffd055,#3366ff);
+  -webkit-background-clip:text;color:transparent;}
+.download p{color:#a8a8c2;margin-bottom:30px;}
+/* 公告区块-文字颜色优化 */
+.info{text-align:center;color:#b8b8d4;font-size:15px;line-height:2;}
+.info p{margin-bottom:10px;}
+/* 回到顶部-科技感样式 */
+.toTop{
+  position:fixed;right:20px;bottom:30px;
+  width:48px;height:48px;
+  background:#3366ff;color:#fff;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;z-index:9998;
+  opacity:0;transform:translateY(20px);
+  transition:0.3s;pointer-events:auto;
+  border:1px solid #4a7bff;box-shadow:0 0 10px rgba(51,102,255,0.5);
+}
+.toTop.show{opacity:1;transform:translateY(0)}
+.toTop:hover{background:#4a7bff;box-shadow:0 0 15px rgba(51,102,255,0.8);}
+/* 底部-科技感边框 */
+.footer{
+  background:#000;padding:40px 6%;text-align:center;
+  color:#888;border-top:1px solid #1a1a40;
+  position:relative;z-index:2;margin-top:50px;
+}
+/* 粒子特效画布 */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;}
+/* 下载提示弹窗样式-科技感 */
+.popup-mask{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);
+  z-index:9999;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:0.3s all;
+}
+.popup-mask.show{opacity:1;pointer-events:auto;}
+.popup-box{
+  width:90%;max-width:400px;
+  background:linear-gradient(180deg,#0f0f25,#050515);
+  border:1px solid #3366ff;border-radius:16px;
+  padding:30px;text-align:center;
+  box-shadow:0 0 20px rgba(51,102,255,0.5);
+}
+.popup-box h3{
+  font-size:22px;color:#ffd055;margin-bottom:15px;
+  text-shadow:0 0 8px rgba(255,208,85,0.3);
+}
+.popup-box p{color:#b8b8d4;margin-bottom:30px;line-height:1.6;}
+.popup-btn-group{
+  display:flex;flex-direction:column;gap:15px;
+}
+.popup-btn{
+  padding:12px 0;border-radius:8px;font-size:16px;font-weight:600;
+  border:none;cursor:pointer;transition:0.3s;
+  box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+.popup-welfare{
+  background:#00ff99;color:#050508;
+  box-shadow:0 0 10px rgba(0,255,153,0.4);
+}
+.popup-welfare:hover{
+  background:#00e68a;box-shadow:0 0 15px rgba(0,255,153,0.6);
+}
+.popup-game{
+  background:linear-gradient(90deg,#3366ff,#4a7bff);
+  color:#fff;box-shadow:0 0 10px rgba(51,102,255,0.4);
+}
+.popup-game:hover{
+  background:linear-gradient(90deg,#4a7bff,#6699ff);
+  box-shadow:0 0 15px rgba(51,102,255,0.6);
+}
+/* 响应式适配 */
+@media(max-width:768px){
+  .hero h1{font-size:32px;}
+  .nav{gap:15px;}
+  .btn{padding:12px 24px;font-size:16px;}
+}
+</style>
+</head>
+<body>
+<canvas class="particles" id="particles"></canvas>
+<!-- 下载提示弹窗 -->
+<div class="popup-mask" id="downloadPopup">
+  <div class="popup-box">
+    <h3>温馨提示</h3>
+    <p>目前暂无可下载版本，您可以前往领取福利或直接游玩网页版游戏</p>
+    <div class="popup-btn-group">
+      <button class="popup-btn popup-welfare" id="popupWelfare">福利</button>
+      <button class="popup-btn popup-game" id="popupGame">游玩网页版游戏</button>
+    </div>
+  </div>
+</div>
+<!-- 头部导航-福利入口改本地fuli.html -->
+<div class="header">
+  <div class="logo">修仙纪元</div>
+  <div class="nav">
+    <a href="#home">首页</a>
+    <a href="#about">游戏介绍</a>
+    <a href="#feature">游戏特色</a>
+    <a href="#info">公告客服</a>
+    <a href="javascript:;" class="download-btn-link">立即下载</a>
+    <a href="fuli.html" class="welfare-btn">福利</a>
+  </div>
+</div>
+<!-- 首屏区块 -->
+<div class="hero" id="home">
+  <div class="hero-box">
+    <h1>修仙纪元 · 开放世界修仙</h1>
+    <p>自由修炼、自创功法、玩家模组、宗门大战，由风野工作室倾力打造</p>
+    <a href="javascript:;" class="btn download-btn-link">立即下载</a>
+  </div>
+</div>
+<!-- 游戏介绍 -->
+<div class="section" id="about">
+  <h2 class="section-title">游戏介绍</h2>
+  <div class="about">
+    <p>《修仙纪元》是一款由风野工作室独立开发的开放世界修仙游戏。</p>
+    <p>游戏拥有完整的境界体系、功法系统、背包系统、社交系统、宗门系统，支持玩家自由探索、自由养成、自由创作内容。</p>
+    <p>我们主打真实、自由、沉浸式修仙体验，让每一位玩家都能走出属于自己的修仙道路。</p>
+  </div>
+</div>
+<!-- 游戏特色 -->
+<div class="section" id="feature">
+  <h2 class="section-title">游戏特色</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>开放世界探索</h3>
+      <p>超大地图随机秘境，妖兽、机缘、奇遇无处不在，超高自由度探索。</p>
+    </div>
+    <div class="card">
+      <h3>自创功法</h3>
+      <p>自由搭配技能、特效、效果，打造独一无二的专属修仙道路。</p>
+    </div>
+    <div class="card">
+      <h3>玩家模组工坊</h3>
+      <p>支持自定义副本、NPC、装备、剧情，审核后全服共享。</p>
+    </div>
+    <div class="card">
+      <h3>宗门联盟战</h3>
+      <p>创建宗门、招收弟子、跨服争霸，登顶全服最强修仙势力。</p>
+    </div>
+    <div class="card">
+      <h3>真实社交</h3>
+      <p>师徒、道侣、结拜、交易，沉浸式修仙社交体系。</p>
+    </div>
+    <div class="card">
+      <h3>24小时稳定服务器</h3>
+      <p>云端稳定运行，数据实时保存，随时随地畅玩修仙世界。</p>
+    </div>
+  </div>
+</div>
+<!-- 公告客服 -->
+<div class="section" id="info">
+  <h2 class="section-title">公告 & 客服</h2>
+  <div class="info">
+    <p>【最新公告】服务器已稳定24小时开放，欢迎玩家入驻</p>
+    <p>【QQ官方交流群】212077324</p>
+    <p>【客服】风野工作室</p>
+    <p>【服务器状态】正常运行中</p>
+  </div>
+</div>
+<!-- 下载区块 -->
+<div class="section download" id="download">
+  <h2>官方正版下载</h2>
+  <p>风野工作室 唯一官方下载渠道</p>
+  <a href="javascript:;" class="btn download-btn-link">立即下载</a>
+</div>
+<!-- 底部 -->
+<div class="footer">
+  <p>© 2026 风野工作室 修仙纪元 版权所有 | 禁止盗用</p>
+</div>
+<!-- 回到顶部 -->
+<div class="toTop" id="toTop">↑</div>
+<script>
+// 导航锚点跳转
+document.querySelectorAll('.nav a[href^="#"]').forEach(link => {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      window.scrollTo({
+        top: target.offsetTop - 90,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+// 回到顶部
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', () => {
+  toTop.classList.toggle('show', window.scrollY > 300);
+});
+toTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+// 升级款科技感粒子特效（更炫酷：粒子更多+连线更密+鼠标交互更强）
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let w, h, points = [];
+let mx = null, my = null;
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+class Point {
+  constructor() {
+    this.x = Math.random() * w;
+    this.y = Math.random() * h;
+    this.vx = (Math.random() - 0.5) * 0.3; // 粒子速度加快
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r = Math.random() * 2 + 0.8; // 粒子尺寸变大
+    // 科技感配色：金色/蓝色/绿色（增加亮度）
+    const colors = ['rgba(255,225,60,', 'rgba(61,122,255,', 'rgba(0,255,180,'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.alpha = Math.random() * 0.6 + 0.3; // 粒子透明度提高
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > w) this.vx *= -1;
+    if (this.y < 0 || this.y > h) this.vy *= -1;
+    // 鼠标交互增强：吸附范围扩大到150px
+    if (mx != null && my != null) {
+      const dx = this.x - mx;
+      const dy = this.y - my;
+      const d = Math.hypot(dx, dy);
+      if (d < 150) {
+        const a = Math.atan2(dy, dx);
+        this.vx += Math.cos(a) * 0.03;
+        this.vy += Math.sin(a) * 0.03;
+      }
+    }
+  }
+  draw() {
+    ctx.fillStyle = this.color + this.alpha + ')';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fill();
+    // 粒子连线升级：连线范围扩大到100px，更密更明显
+    points.forEach(p => {
+      const dx = this.x - p.x;
+      const dy = this.y - p.y;
+      const d = Math.hypot(dx, dy);
+      if (d < 100) {
+        ctx.strokeStyle = this.color + (0.3 - d/300) + ')'; // 连线更亮
+        ctx.lineWidth = 0.8; // 连线变粗
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+    });
+  }
+}
+// 粒子数量增加到260个，效果更饱满
+for (let i = 0; i < 260; i++) points.push(new Point());
+window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY });
+window.addEventListener('mouseout', () => { mx = my = null });
+window.addEventListener('touchmove', e => {
+  mx = e.touches[0].clientX;
+  my = e.touches[0].clientY;
+});
+window.addEventListener('touchstart', e => {
+  mx = e.touches[0].clientX;
+  my = e.touches[0].clientY;
+});
+window.addEventListener('touchend', () => { mx = my = null });
+function loop() {
+  ctx.clearRect(0, 0, w, h);
+  points.forEach(p => { p.update(); p.draw() });
+  requestAnimationFrame(loop);
+}
+loop();
+// 下载按钮点击弹出提示窗
+const downloadPopup = document.getElementById('downloadPopup');
+const downloadBtns = document.querySelectorAll('.download-btn-link');
+downloadBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    downloadPopup.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  });
+});
+// 弹窗按钮改本地跳转：福利→fuli.html  游戏→youxi.html
+const popupWelfare = document.getElementById('popupWelfare');
+const popupGame = document.getElementById('popupGame');
+popupWelfare.addEventListener('click', () => {
+  window.location.href = 'fuli.html';
+  downloadPopup.classList.remove('show');
+  document.body.style.overflow = 'auto';
+});
+popupGame.addEventListener('click', () => {
+  window.location.href = 'youxi.html';
+  downloadPopup.classList.remove('show');
+  document.body.style.overflow = 'auto';
+});
+// 点击遮罩关闭弹窗
+downloadPopup.addEventListener('click', (e) => {
+  if (e.target === downloadPopup) {
+    downloadPopup.classList.remove('show');
+    document.body.style.overflow = 'auto';
+  }
+});
+</script>
+</body>
+</html>
