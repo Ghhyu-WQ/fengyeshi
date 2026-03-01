@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>修仙纪元 - 乱建堂</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif}
+html,body{width:100%;height:100%;overflow-x:hidden;background:#050508;color:#e6e6e6}
+a{text-decoration:none}
+/* 头部导航-和福利页统一 */
+.header{
+  position:fixed;top:0;left:0;right:0;width:100%;
+  padding:16px 6%;background:rgba(5,5,8,0.98);
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:9998;border-bottom:1px solid #ffd055;
+  box-shadow:0 0 15px rgba(255,208,85,0.2);
+  max-width:1920px;margin:0 auto;
+}
+.logo{font-size:24px;font-weight:700;
+  background:linear-gradient(90deg,#ffd055,#ff5e00);
+  -webkit-background-clip:text;color:transparent;
+}
+.nav{display:flex;gap:26px;align-items:center;}
+.nav a{color:#d1d1e0;font-size:15px;font-weight:500;position:relative;cursor:pointer;}
+.nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#ffd055;transition:0.3s;}
+.nav a:hover{color:#ffd055;}
+.nav a:hover::after{width:100%;}
+/* 粒子背景 */
+.particles{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:1;
+}
+/* 乱建堂主区域 */
+.ljt-main{
+  min-height:100vh;padding:120px 6% 60px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+}
+.ljt-box{
+  max-width:800px;width:100%;text-align:center;
+  background:rgba(15,15,23,0.95);padding:60px 30px;
+  border-radius:20px;border:2px solid #ffd055;
+  box-shadow:0 0 50px rgba(255,208,85,0.3);
+  backdrop-filter:blur(8px);
+}
+.ljt-title{
+  font-size:42px;
+  background:linear-gradient(90deg,#ffd055,#ff5e00);
+  -webkit-background-clip:text;color:transparent;
+  margin-bottom:30px;
+  text-shadow:0 0 15px rgba(255,208,85,0.4);
+}
+.ljt-sub{
+  font-size:18px;color:#b8b8d4;margin-bottom:40px;line-height:1.8;
+}
+.ljt-sub span{
+  color:#ffd055;font-weight:700;
+}
+/* 内容区域-可自行修改 */
+.ljt-content{
+  font-size:16px;color:#e6e6e6;line-height:2;
+  text-align:left;margin-bottom:40px;
+  padding:20px;background:rgba(0,0,0,0.5);
+  border-radius:12px;border:1px dashed #ffd055;
+}
+/* 按钮样式 */
+.ljt-btn{
+  padding:16px 40px;
+  background:linear-gradient(90deg,#ffd055,#ff5e00);
+  color:#0f0f17;font-weight:700;
+  border-radius:12px;font-size:18px;
+  cursor:pointer;transition:0.3s;border:none;
+  box-shadow:0 0 20px rgba(255,208,85,0.3);
+  margin:0 10px;
+}
+.ljt-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 30px rgba(255,94,0,0.5);
+  background:linear-gradient(90deg,#ffdf8e,#ff7a2f);
+}
+/* 底部版权 */
+.footer{
+  position:relative;z-index:2;
+  background:#000;padding:35px 6%;text-align:center;
+  color:#888;border-top:1px solid #333;
+  margin-top:20px;
+}
+/* 手机端适配 */
+@media (max-width:768px){
+  .ljt-title{font-size:32px;}
+  .ljt-sub{font-size:16px;}
+  .ljt-btn{padding:14px 30px;font-size:16px;margin:0 5px 15px;}
+  .nav{gap:16px;}
+  .nav a{font-size:14px;}
+  .ljt-box{padding:40px 20px;}
+}
+@media (max-width:480px){
+  .ljt-title{font-size:28px;}
+  .ljt-content{font-size:14px;}
+}
+</style>
+</head>
+<body>
+<!-- 粒子背景 -->
+<canvas class="particles" id="particles"></canvas>
+<!-- 头部导航-改跳转至fuli.html(福利页)+index.html(官网) -->
+<div class="header">
+  <div class="logo">乱建堂</div>
+  <div class="nav">
+    <a href="fuli.html" target="_blank">返回福利页</a>
+    <a href="index.html" target="_blank">返回官网</a>
+  </div>
+</div>
+<!-- 乱建堂主内容 -->
+<div class="ljt-main">
+  <div class="ljt-box">
+    <h2 class="ljt-title">修仙纪元 · 乱建堂</h2>
+    <p class="ljt-sub">这里是专属<span>乱建趣味区域</span>，都是随手乱建的小玩意，随便玩～</p>
+    <!-- 自定义内容区域-可随意修改/添加 -->
+    <div class="ljt-content">
+      ✨ 乱建堂内容区 <br>
+      1. 可在这里添加任意小游戏、文字互动、趣味链接<br>
+      2. 风格和修仙纪元保持统一，科技+修仙风<br>
+      3. 所有内容可自行修改，想怎么建就怎么建～<br>
+      4. 底部按钮可添加跳转、互动等功能！
+    </div>
+    <!-- 随便点一点 跳转至ljt_random.html(你自己的文件)，新窗口打开 -->
+    <button class="ljt-btn" onclick="window.open('ljt_random.html', '_blank')">随便点一点</button>
+    <button class="ljt-btn" onclick="window.open('fuli.html', '_blank')">回福利页抽奖</button>
+  </div>
+</div>
+<!-- 底部版权 -->
+<div class="footer">
+  <p>© 2026 风野工作室 修仙纪元-乱建堂 版权所有 | 随便乱建 开心就好</p>
+</div>
+<script>
+// 粒子背景-和福利页统一，保持风格一致
+const particlesCanvas = document.getElementById('particles');
+const particlesCtx = particlesCanvas.getContext('2d');
+let pWidth, pHeight, points = [];
+let mouseX = null, mouseY = null;
+function resizeParticles() {
+  pWidth = particlesCanvas.width = window.innerWidth;
+  pHeight = particlesCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeParticles);
+resizeParticles();
+// 粒子类
+class Particle {
+  constructor() {
+    this.x = Math.random() * pWidth;
+    this.y = Math.random() * pHeight;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = (Math.random() - 0.5) * 0.2;
+    this.radius = Math.random() * 1.5 + 0.5;
+    const colors = ['rgba(255,208,85,', 'rgba(255,94,0,', 'rgba(255,160,0,'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.alpha = Math.random() * 0.4 + 0.2;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > pWidth) this.vx *= -1;
+    if (this.y < 0 || this.y > pHeight) this.vy *= -1;
+    if (mouseX !== null && mouseY !== null) {
+      const dx = this.x - mouseX;
+      const dy = this.y - mouseY;
+      const distance = Math.hypot(dx, dy);
+      if (distance < 120) {
+        const angle = Math.atan2(dy, dx);
+        this.vx += Math.cos(angle) * 0.015;
+        this.vy += Math.sin(angle) * 0.015;
+      }
+    }
+  }
+  draw() {
+    particlesCtx.fillStyle = `${this.color}${this.alpha})`;
+    particlesCtx.beginPath();
+    particlesCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    particlesCtx.fill();
+  }
+}
+// 生成粒子
+for (let i = 0; i < 200; i++) points.push(new Particle());
+// 鼠标交互
+window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY });
+window.addEventListener('mouseout', () => { mouseX = mouseY = null });
+window.addEventListener('touchmove', e => { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY });
+window.addEventListener('touchstart', e => { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY });
+window.addEventListener('touchend', () => { mouseX = mouseY = null });
+// 粒子动画
+function animateParticles() {
+  particlesCtx.clearRect(0, 0, pWidth, pHeight);
+  points.forEach(p => { p.update(); p.draw() });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+</script>
+</body>
+</html>
