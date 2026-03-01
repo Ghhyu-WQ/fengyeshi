@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1-100 按钮链接页</title>
+<style>
+  body{background:#111;color:#fff;font-family:Arial;padding:20px;}
+  .container{max-width:600px;margin:0 auto;}
+  .btn{
+    width:60px;height:60px;margin:5px;
+    font-size:18px;font-weight:bold;
+    border:none;border-radius:8px;
+    background:#2266bb;color:white;
+    cursor:pointer;
+  }
+  .btn:hover{background:#3388ff;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .nav{margin:20px 0;}
+  .nav button{
+    padding:10px 20px;margin:5px;
+    font-size:16px;
+    border:none;border-radius:6px;
+    background:#222;color:#fff;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="nav">
+    <button onclick="showPage(1)">第一页</button>
+    <button onclick="showPage(2)">第二页</button>
+  </div>
+
+  <!-- 第1页：1 - 50 -->
+  <div class="page active" id="page1">
+       <button class="btn" onclick="go(1)">1</button>
+    <button class="btn" onclick="go(2)">2</button>
+    <button class="btn" onclick="go(3)">3</button>
+    <button class="btn" onclick="go(4)">4</button>
+    <button class="btn" onclick="go(5)">5</button>
+    <button class="btn" onclick="go(6)">6</button>
+    <button class="btn" onclick="go(7)">7</button>
+    <button class="btn" onclick="go(8)">8</button>
+    <button class="btn" onclick="go(9)">9</button>
+    <button class="btn" onclick="go(10)">10</button>
+    <button class="btn" onclick="go(11)">11</button>
+    <button class="btn" onclick="go(12)">12</button>
+    <button class="btn" onclick="go(13)">13</button>
+    <button class="btn" onclick="go(14)">14</button>
+    <button class="btn" onclick="go(15)">15</button>
+    <button class="btn" onclick="go(16)">16</button>
+    <button class="btn" onclick="go(17)">17</button>
+    <button class="btn" onclick="go(18)">18</button>
+    <button class="btn" onclick="go(19)">19</button>
+    <button class="btn" onclick="go(20)">20</button>
+    <button class="btn" onclick="go(21)">21</button>
+    <button class="btn" onclick="go(22)">22</button>
+    <button class="btn" onclick="go(23)">23</button>
+    <button class="btn" onclick="go(24)">24</button>
+    <button class="btn" onclick="go(25)">25</button>
+    <button class="btn" onclick="go(26)">26</button>
+    <button class="btn" onclick="go(27)">27</button>
+    <button class="btn" onclick="go(28)">28</button>
+    <button class="btn" onclick="go(29)">29</button>
+    <button class="btn" onclick="go(30)">30</button>
+    <button class="btn" onclick="go(31)">31</button>
+    <button class="btn" onclick="go(32)">32</button>
+    <button class="btn" onclick="go(33)">33</button>
+    <button class="btn" onclick="go(34)">34</button>
+    <button class="btn" onclick="go(35)">35</button>
+    <button class="btn" onclick="go(36)">36</button>
+    <button class="btn" onclick="go(37)">37</button>
+    <button class="btn" onclick="go(38)">38</button>
+    <button class="btn" onclick="go(39)">39</button>
+    <button class="btn" onclick="go(40)">40</button>
+    <button class="btn" onclick="go(41)">41</button>
+    <button class="btn" onclick="go(42)">42</button>
+    <button class="btn" onclick="go(43)">43</button>
+    <button class="btn" onclick="go(44)">44</button>
+    <button class="btn" onclick="go(45)">45</button>
+    <button class="btn" onclick="go(46)">46</button>
+    <button class="btn" onclick="go(47)">47</button>
+    <button class="btn" onclick="go(48)">48</button>
+    <button class="btn" onclick="go(49)">49</button>
+    <button class="btn" onclick="go(50)">50</button>
+  </div>
+
+  <!-- 第2页：51 - 100 -->
+  <div class="page" id="page2">
+        <button class="btn" onclick="go(51)">51</button>
+    <button class="btn" onclick="go(52)">52</button>
+    <button class="btn" onclick="go(53)">53</button>
+    <button class="btn" onclick="go(54)">54</button>
+    <button class="btn" onclick="go(55)">55</button>
+    <button class="btn" onclick="go(56)">56</button>
+    <button class="btn" onclick="go(57)">57</button>
+    <button class="btn" onclick="go(58)">58</button>
+    <button class="btn" onclick="go(59)">59</button>
+    <button class="btn" onclick="go(60)">60</button>
+    <button class="btn" onclick="go(61)">61</button>
+    <button class="btn" onclick="go(62)">62</button>
+    <button class="btn" onclick="go(63)">63</button>
+    <button class="btn" onclick="go(64)">64</button>
+    <button class="btn" onclick="go(65)">65</button>
+    <button class="btn" onclick="go(66)">66</button>
+    <button class="btn" onclick="go(67)">67</button>
+    <button class="btn" onclick="go(68)">68</button>
+    <button class="btn" onclick="go(69)">69</button>
+    <button class="btn" onclick="go(70)">70</button>
+    <button class="btn" onclick="go(71)">71</button>
+    <button class="btn" onclick="go(72)">72</button>
+    <button class="btn" onclick="go(73)">73</button>
+    <button class="btn" onclick="go(74)">74</button>
+    <button class="btn" onclick="go(75)">75</button>
+    <button class="btn" onclick="go(76)">76</button>
+    <button class="btn" onclick="go(77)">77</button>
+    <button class="btn" onclick="go(78)">78</button>
+    <button class="btn" onclick="go(79)">79</button>
+    <button class="btn" onclick="go(80)">80</button>
+    <button class="btn" onclick="go(81)">81</button>
+    <button class="btn" onclick="go(82)">82</button>
+    <button class="btn" onclick="go(83)">83</button>
+    <button class="btn" onclick="go(84)">84</button>
+    <button class="btn" onclick="go(85)">85</button>
+   你自己把 86～100 按上面格式补完就行，格式一模一样：
+    <button class="btn" onclick="go(86)">86</button>
+    <button class="btn" onclick="go(87)">87</button>
+    <button class="btn" onclick="go(88)">88</button>
+    <button class="btn" onclick="go(89)">89</button>
+    <button class="btn" onclick="go(90)">90</button>
+    <button class="btn" onclick="go(91)">91</button>
+    <button class="btn" onclick="go(92)">92</button>
+    <button class="btn" onclick="go(93)">93</button>
+    <button class="btn" onclick="go(94)">94</button>
+    <button class="btn" onclick="go(95)">95</button>
+    <button class="btn" onclick="go(96)">96</button>
+    <button class="btn" onclick="go(97)">97</button>
+    <button class="btn" onclick="go(98)">98</button>
+    <button class="btn" onclick="go(99)">99</button>
+    <button class="btn" onclick="go(100)">100</button>
+  </div>
+</div>
+
+<script>
+// 在这里填你每个编号对应的链接
+const links = [
+  // 1~10
+  "https://link1.com",
+  "https://link2.com",
+  "https://link3.com",
+  "https://link4.com",
+  "https://link5.com",
+  "https://link6.com",
+  "https://link7.com",
+  "https://link8.com",
+  "https://link9.com",
+  "https://link10.com",
+  
+  // 11~20
+  "https://link11.com",
+  "https://link12.com",
+  "https://link13.com",
+  "https://link14.com",
+  "https://link15.com",
+  "https://link16.com",
+  "https://link17.com",
+  "https://link18.com",
+  "https://link19.com",
+  "https://link20.com",
+  
+  // 21~30
+  "https://link21.com",
+  "https://link22.com",
+  "https://link23.com",
+  "https://link24.com",
+  "https://link25.com",
+  "https://link26.com",
+  "https://link27.com",
+  "https://link28.com",
+  "https://link29.com",
+  "https://link30.com",
+  
+  // 31~40
+  "https://link31.com",
+  "https://link32.com",
+  "https://link33.com",
+  "https://link34.com",
+  "https://link35.com",
+  "https://link36.com",
+  "https://link37.com",
+  "https://link38.com",
+  "https://link39.com",
+  "https://link40.com",
+  
+  // 41~50
+  "https://link41.com",
+  "https://link42.com",
+  "https://link43.com",
+  "https://link44.com",
+  "https://link45.com",
+  "https://link46.com",
+  "https://link47.com",
+  "https://link48.com",
+  "https://link49.com",
+  "https://link50.com",
+  
+  // 51~60
+  "https://link51.com",
+  "https://link52.com",
+  "https://link53.com",
+  "https://link54.com",
+  "https://link55.com",
+  "https://link56.com",
+  "https://link57.com",
+  "https://link58.com",
+  "https://link59.com",
+  "https://link60.com",
+  
+  // 61~70
+  "https://link61.com",
+  "https://link62.com",
+  "https://link63.com",
+  "https://link64.com",
+  "https://link65.com",
+  "https://link66.com",
+  "https://link67.com",
+  "https://link68.com",
+  "https://link69.com",
+  "https://link70.com",
+  
+  // 71~80
+  "https://link71.com",
+  "https://link72.com",
+  "https://link73.com",
+  "https://link74.com",
+  "https://link75.com",
+  "https://link76.com",
+  "https://link77.com",
+  "https://link78.com",
+  "https://link79.com",
+  "https://link80.com",
+  
+  // 81~90
+  "https://link81.com",
+  "https://link82.com",
+  "https://link83.com",
+  "https://link84.com",
+  "https://link85.com",
+  "https://link86.com",
+  "https://link87.com",
+  "https://link88.com",
+  "https://link89.com",
+  "https://link90.com",
+  
+  // 91~100
+  "https://link91.com",
+  "https://link92.com",
+  "https://link93.com",
+  "https://link94.com",
+  "https://link95.com",
+  "https://link96.com",
+  "https://link97.com",
+  "https://link98.com",
+  "https://link99.com",
+  "https://link100.com"
+];
+
+function go(n) {
+  const url = links[n-1];
+  if(url) window.open(url, "_blank");
+}
+
+function showPage(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page'+n).classList.add('active');
+}
+</script>
+</body>
+</html>
