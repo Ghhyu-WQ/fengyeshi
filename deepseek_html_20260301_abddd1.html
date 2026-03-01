@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> inward · 大圆满 · 无bug版 </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #1e1a2e, #2a2440);
+            color: #ede7f6;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-weight: 300;
+            font-size: 3.5rem;
+            letter-spacing: 0.2rem;
+            background: linear-gradient(135deg, #d9c9ff, #b8a9e6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px #7f6bb0;
+        }
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            max-width: 1600px;
+            width: 100%;
+        }
+        .card {
+            background: rgba(30, 25, 45, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(220, 200, 255, 0.2);
+            border-radius: 1.8rem;
+            padding: 1rem;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            transition: transform 0.2s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            border-color: rgba(200, 170, 255, 0.5);
+            transform: translateY(-3px);
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 0.1rem;
+            margin-bottom: 0.5rem;
+            color: #cbbff0;
+            border-bottom: 1px dashed #6a5c8c;
+            padding-bottom: 0.3rem;
+        }
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+        }
+        button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #8f7eb5;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.75rem;
+            margin: 0.2rem;
+        }
+        button:hover {
+            background: #6d5a95;
+        }
+        .slider {
+            width: 100%;
+            margin: 0.3rem 0;
+            accent-color: #b09eff;
+        }
+        canvas {
+            background: rgba(10, 8, 20, 0.6);
+            border-radius: 20px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/9;
+            display: block;
+        }
+        .mini-canvas {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 20px;
+            background: #1e1935;
+        }
+        .flex-row {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 0.3rem;
+        }
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: 0.2s;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        .color-dot:hover { transform: scale(1.15); border-color: white; }
+        .quote-box {
+            font-size: 0.85rem;
+            font-style: italic;
+            color: #ded1ff;
+            text-align: center;
+        }
+        .counter-num {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #d9c5ff;
+            text-shadow: 0 0 20px #a07df0;
+        }
+        .stone {
+            width: 20px; height: 16px; background: #8b7aa0; border-radius: 60% 40% 50% 50%; box-shadow: 0 2px 4px black; display: inline-block; margin: 2px;
+        }
+        .bead {
+            width: 18px; height: 18px; background: #b39ec9; border-radius: 50%; box-shadow: 0 2px 5px black; cursor: pointer; display: inline-block; margin: 2px;
+        }
+        .fortune-box {
+            background: #2f254a; padding: 0.3rem 1rem; border-radius: 60px; font-size: 0.9rem;
+        }
+        .indicator {
+            font-size: 0.7rem; color: #c7b3ff; margin-top: 0.2rem;
+        }
+    </style>
+</head>
+<body id="mainBody">
+    <div class="header">
+        <h1>✨  inward · 大圆满 ✨</h1>
+        <p>—— 万法归一，一归何处 ——</p>
+    </div>
+
+    <div class="grid" id="appGrid"></div>
+
+    <script>
+        (function() {
+            const body = document.getElementById('mainBody');
+            const grid = document.getElementById('appGrid');
+
+            // 工具函数：生成随机hex
+            function randomColor() {
+                return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            }
+
+            // 全局状态
+            let currentBrushColor = '#cdb9ff'; // 涂鸦画笔颜色
+
+            // 卡片数据 (每个卡片包含标题和渲染函数)
+            const cards = [];
+
+            // 1 呼吸球
+            cards.push({
+                title: '🌬️ 呼吸 · 心',
+                render: (container) => {
+                    const ball = document.createElement('div');
+                    ball.style.width = '70px';
+                    ball.style.height = '70px';
+                    ball.style.borderRadius = '50%';
+                    ball.style.background = 'radial-gradient(circle at 30% 30%, #b09eff, #5f4b8b)';
+                    ball.style.boxShadow = '0 0 40px #9d86d0';
+                    ball.style.transition = 'transform 0.1s ease';
+                    ball.style.cursor = 'pointer';
+                    container.appendChild(ball);
+
+                    let scale = 1, dir = 1;
+                    let interval = setInterval(() => {
+                        scale += 0.008 * dir;
+                        if (scale >= 1.25) dir = -1;
+                        if (scale <= 0.9) dir = 1;
+                        ball.style.transform = `scale(${scale})`;
+                    }, 60);
+
+                    ball.addEventListener('click', () => { scale = 1; dir = 1; });
+
+                    const slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'slider';
+                    slider.min = 30; slider.max = 150; slider.value = 70;
+                    slider.addEventListener('input', (e) => {
+                        clearInterval(interval);
+                        interval = setInterval(() => {
+                            scale += 0.008 * dir;
+                            if (scale >= 1.25) dir = -1;
+                            if (scale <= 0.9) dir = 1;
+                            ball.style.transform = `scale(${scale})`;
+                        }, 200 - e.target.value);
+                    });
+                    container.appendChild(slider);
+                }
+            });
+
+            // 2 情绪色板 (改变全局背景和画笔)
+            cards.push({
+                title: '🎨 情绪 · 色',
+                render: (container) => {
+                    const palette = document.createElement('div');
+                    palette.className = 'flex-row';
+                    const colors = ['#5d4a7a', '#2c6e63', '#9e5f7b', '#b37b48', '#3e5879'];
+                    colors.forEach(c => {
+                        const dot = document.createElement('div');
+                        dot.className = 'color-dot';
+                        dot.style.background = c;
+                        dot.dataset.color = c;
+                        dot.addEventListener('click', () => {
+                            body.style.background = `linear-gradient(145deg, ${c}88, #1a1530)`;
+                            currentBrushColor = c; // 更新全局画笔颜色
+                        });
+                        palette.appendChild(dot);
+                    });
+                    container.appendChild(palette);
+                }
+            });
+
+            // 3 内心语录
+            cards.push({
+                title: '📜 内心 · 语',
+                render: (container) => {
+                    const quotes = [
+                        "你内心的空间比天空更广阔。","安静下来，才能听见心的声音。",
+                        "不要向外寻找答案，向内看。","每一次呼吸都是新生。",
+                        "你本身就足够完整。","花未开时也是花。","跟随直觉，它知道路。",
+                        "心若不动，风又奈何。","万物皆有裂痕，那是光照进来的地方。",
+                        "深深扎根，高高伸展。"
+                    ];
+                    const box = document.createElement('div');
+                    box.className = 'quote-box';
+                    box.textContent = quotes[0];
+                    container.appendChild(box);
+                    const btn = document.createElement('button');
+                    btn.textContent = '↻ 另一句';
+                    btn.addEventListener('click', () => {
+                        box.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+                    });
+                    container.appendChild(btn);
+                }
+            });
+
+            // 4 涂鸦板 (修复颜色跟随)
+            cards.push({
+                title: '✍️ 涂鸦 · 念',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 200; canvas.height = 120;
+                    canvas.style.aspectRatio = '200/120';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    ctx.lineWidth = 2.5;
+                    ctx.lineCap = 'round';
+                    let drawing = false;
+
+                    function getCoords(e) {
+                        const rect = canvas.getBoundingClientRect();
+                        const scaleX = canvas.width / rect.width;
+                        const scaleY = canvas.height / rect.height;
+                        let clientX, clientY;
+                        if (e.touches) {
+                            clientX = e.touches[0].clientX;
+                            clientY = e.touches[0].clientY;
+                        } else {
+                            clientX = e.clientX;
+                            clientY = e.clientY;
+                        }
+                        return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+                    }
+
+                    canvas.addEventListener('mousedown', (e) => {
+                        drawing = true;
+                        const p = getCoords(e);
+                        ctx.strokeStyle = currentBrushColor; // 使用最新颜色
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                    });
+                    canvas.addEventListener('mousemove', (e) => {
+                        if (!drawing) return;
+                        const p = getCoords(e);
+                        ctx.strokeStyle = currentBrushColor; // 确保颜色最新
+                        ctx.lineTo(p.x, p.y);
+                        ctx.stroke();
+                    });
+                    canvas.addEventListener('mouseup', () => drawing = false);
+                    canvas.addEventListener('mouseleave', () => drawing = false);
+                    canvas.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        drawing = true;
+                        const p = getCoords(e);
+                        ctx.strokeStyle = currentBrushColor;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                    });
+                    canvas.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        if (!drawing) return;
+                        const p = getCoords(e);
+                        ctx.strokeStyle = currentBrushColor;
+                        ctx.lineTo(p.x, p.y);
+                        ctx.stroke();
+                    });
+                    canvas.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        drawing = false;
+                    });
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = '清除';
+                    clearBtn.addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+                    container.appendChild(clearBtn);
+                }
+            });
+
+            // 5 计数器 (修复长按重置)
+            cards.push({
+                title: '🧘 计数 · 定',
+                render: (container) => {
+                    const num = document.createElement('div');
+                    num.className = 'counter-num';
+                    num.textContent = '0';
+                    container.appendChild(num);
+                    let count = 0;
+                    const incBtn = document.createElement('button');
+                    incBtn.textContent = '+';
+                    const decBtn = document.createElement('button');
+                    decBtn.textContent = '–';
+                    const hint = document.createElement('div');
+                    hint.className = 'indicator';
+                    hint.textContent = '长按「+」重置';
+
+                    incBtn.addEventListener('click', () => { count++; num.textContent = count; });
+                    decBtn.addEventListener('click', () => { count = Math.max(0, count-1); num.textContent = count; });
+
+                    let timer;
+                    incBtn.addEventListener('mousedown', () => { timer = setTimeout(() => { count = 0; num.textContent = count; hint.textContent = '✓ 已重置'; setTimeout(() => hint.textContent = '长按「+」重置', 1000); }, 800); });
+                    incBtn.addEventListener('mouseup', () => clearTimeout(timer));
+                    incBtn.addEventListener('mouseleave', () => clearTimeout(timer));
+                    incBtn.addEventListener('touchstart', (e) => { e.preventDefault(); timer = setTimeout(() => { count = 0; num.textContent = count; hint.textContent = '✓ 已重置'; setTimeout(() => hint.textContent = '长按「+」重置', 1000); }, 800); });
+                    incBtn.addEventListener('touchend', () => clearTimeout(timer));
+                    incBtn.addEventListener('touchcancel', () => clearTimeout(timer));
+
+                    const row = document.createElement('div');
+                    row.className = 'flex-row';
+                    row.appendChild(incBtn);
+                    row.appendChild(decBtn);
+                    container.appendChild(row);
+                    container.appendChild(hint);
+                }
+            });
+
+            // 6 波浪 (修复鼠标影响)
+            cards.push({
+                title: '🌊 涟漪 · 动',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 220; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let offset = 0, mouseInfl = 0;
+                    canvas.addEventListener('mousemove', (e) => {
+                        const rect = canvas.getBoundingClientRect();
+                        if (e.clientX >= rect.left && e.clientX <= rect.right) {
+                            const rel = (e.clientX - rect.left) / rect.width;
+                            mouseInfl = rel * 2 - 1;
+                        }
+                    });
+                    canvas.addEventListener('mouseleave', () => { mouseInfl = 0; });
+
+                    function draw() {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        for (let l=0; l<3; l++) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(200,180,255,${0.4-l*0.1})`;
+                            ctx.lineWidth = 2 - l*0.5;
+                            const baseY = canvas.height * (0.5 + l*0.15);
+                            const amp = 8 + l*4;
+                            const freq = 0.02 - l*0.002;
+                            for (let x=0; x<=canvas.width; x+=5) {
+                                let y = baseY + Math.sin(x*freq + offset + l*2 + mouseInfl*2) * amp + Math.cos(x*0.01 + offset*1.3 + mouseInfl)*3;
+                                if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                            }
+                            ctx.stroke();
+                        }
+                        offset += 0.1;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 7 心境罗盘
+            cards.push({
+                title: '🧭 心境 · 盘',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 140; canvas.height = 140;
+                    canvas.className = 'mini-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let mouseX = null, mouseY = null, angle = 0;
+                    canvas.addEventListener('mousemove', (e) => {
+                        const rect = canvas.getBoundingClientRect();
+                        const scaleX = canvas.width/rect.width;
+                        const scaleY = canvas.height/rect.height;
+                        mouseX = (e.clientX - rect.left)*scaleX;
+                        mouseY = (e.clientY - rect.top)*scaleY;
+                    });
+                    canvas.addEventListener('mouseleave', () => { mouseX=null; mouseY=null; });
+                    function draw() {
+                        ctx.clearRect(0,0,140,140);
+                        const cx=70, cy=70;
+                        ctx.beginPath();
+                        ctx.arc(cx,cy,60,0,2*Math.PI);
+                        ctx.strokeStyle = '#bba6e6';
+                        ctx.lineWidth=2;
+                        ctx.stroke();
+                        for (let i=0;i<8;i++) {
+                            let a = i*Math.PI/4;
+                            let x1=cx+50*Math.cos(a), y1=cy+50*Math.sin(a);
+                            let x2=cx+60*Math.cos(a), y2=cy+60*Math.sin(a);
+                            ctx.beginPath();
+                            ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+                            ctx.strokeStyle = '#a088cf';
+                            ctx.stroke();
+                        }
+                        if (mouseX && mouseY) {
+                            let dx = mouseX-cx, dy = mouseY-cy;
+                            angle = Math.atan2(dy,dx);
+                        } else {
+                            angle += 0.005;
+                        }
+                        let px = cx+45*Math.cos(angle);
+                        let py = cy+45*Math.sin(angle);
+                        ctx.beginPath();
+                        ctx.moveTo(cx,cy); ctx.lineTo(px,py);
+                        ctx.strokeStyle = '#ffdab9';
+                        ctx.lineWidth=3;
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.arc(cx,cy,5,0,2*Math.PI);
+                        ctx.fillStyle = '#efe5ff';
+                        ctx.shadowColor = '#b59eff';
+                        ctx.shadowBlur=12;
+                        ctx.fill();
+                        ctx.shadowBlur=0;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 8 月相 (修复文字更新)
+            cards.push({
+                title: '🌙 月相 · 映',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 90; canvas.height = 90;
+                    canvas.style.background = '#1b142b';
+                    canvas.style.borderRadius = '50%';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let phase = 0;
+                    const label = document.createElement('div');
+                    label.style.fontSize = '0.7rem';
+                    label.textContent = '🌓 上弦';
+                    container.appendChild(label);
+                    const phases = ['🌑 新月','🌒 蛾眉','🌓 上弦','🌔 盈凸','🌕 满月','🌖 亏凸','🌗 下弦','🌘 残月'];
+                    function draw() {
+                        ctx.clearRect(0,0,90,90);
+                        ctx.fillStyle = '#26203b';
+                        ctx.beginPath();
+                        ctx.arc(45,45,40,0,2*Math.PI);
+                        ctx.fill();
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(45,45,38,0,2*Math.PI);
+                        ctx.clip();
+                        ctx.fillStyle = '#f5eac1';
+                        ctx.beginPath();
+                        ctx.arc(45 + Math.sin(phase)*25, 45, 38, 0, 2*Math.PI);
+                        ctx.fill();
+                        ctx.restore();
+                        phase += 0.01;
+                        let idx = Math.floor((phase % (2*Math.PI)) / (2*Math.PI) * 8);
+                        label.textContent = phases[idx];
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 9 心情温度
+            cards.push({
+                title: '🌡️ 心情 · 温度',
+                render: (container) => {
+                    const val = document.createElement('div');
+                    val.className = 'counter-num';
+                    val.style.fontSize = '2rem';
+                    val.textContent = '50°';
+                    container.appendChild(val);
+                    const slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'slider';
+                    slider.min = 0; slider.max = 100; slider.value = 50;
+                    const emoji = document.createElement('div');
+                    emoji.textContent = '😐';
+                    slider.addEventListener('input', (e) => {
+                        let v = e.target.value;
+                        val.textContent = v + '°';
+                        if (v < 30) emoji.textContent = '🥶';
+                        else if (v < 60) emoji.textContent = '😐';
+                        else emoji.textContent = '🥳';
+                    });
+                    container.appendChild(slider);
+                    container.appendChild(emoji);
+                }
+            });
+
+            // 10 内心钟
+            cards.push({
+                title: '⏰ 内心 · 钟',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 90; canvas.height = 90;
+                    canvas.style.background = '#1e1935';
+                    canvas.style.borderRadius = '50%';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    function draw() {
+                        ctx.clearRect(0,0,90,90);
+                        ctx.beginPath();
+                        ctx.arc(45,45,40,0,2*Math.PI);
+                        ctx.strokeStyle = '#bbaee6';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        let now = new Date();
+                        let h = now.getHours()%12, m = now.getMinutes(), s = now.getSeconds();
+                        let ha = (h*30 + m*0.5)*Math.PI/180;
+                        let ma = m*6*Math.PI/180;
+                        ctx.beginPath();
+                        ctx.moveTo(45,45);
+                        ctx.lineTo(45+18*Math.sin(ha), 45-18*Math.cos(ha));
+                        ctx.strokeStyle = '#c7b9ff';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(45,45);
+                        ctx.lineTo(45+26*Math.sin(ma), 45-26*Math.cos(ma));
+                        ctx.strokeStyle = '#dacbff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.arc(45,45,3,0,2*Math.PI);
+                        ctx.fillStyle = '#fff0d0';
+                        ctx.fill();
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 11 浮游词
+            cards.push({
+                title: '🕊️ 浮游 · 词',
+                render: (container) => {
+                    const word = document.createElement('div');
+                    word.style.fontSize = '2rem';
+                    word.style.fontWeight = '200';
+                    word.textContent = '悟';
+                    container.appendChild(word);
+                    const btn = document.createElement('button');
+                    btn.textContent = '↻ 换字';
+                    btn.addEventListener('click', () => {
+                        const words = ['悟','空','静','观','心','禅','寂','照','明','觉'];
+                        word.textContent = words[Math.floor(Math.random()*words.length)];
+                    });
+                    container.appendChild(btn);
+                }
+            });
+
+            // 12 禅石叠
+            cards.push({
+                title: '🪨 禅石 · 叠',
+                render: (container) => {
+                    const pile = document.createElement('div');
+                    pile.className = 'flex-row';
+                    let stones = 3;
+                    function renderStones() {
+                        pile.innerHTML = '';
+                        for (let i=0; i<stones; i++) {
+                            let s = document.createElement('div');
+                            s.className = 'stone';
+                            pile.appendChild(s);
+                        }
+                    }
+                    renderStones();
+                    container.appendChild(pile);
+                    const add = document.createElement('button');
+                    add.textContent = '+ 添石';
+                    add.addEventListener('click', () => { if (stones < 18) stones++; renderStones(); });
+                    const reset = document.createElement('button');
+                    reset.textContent = '清零';
+                    reset.addEventListener('click', () => { stones = 0; renderStones(); });
+                    const row = document.createElement('div');
+                    row.className = 'flex-row';
+                    row.appendChild(add); row.appendChild(reset);
+                    container.appendChild(row);
+                }
+            });
+
+            // 13 灵感色码
+            cards.push({
+                title: '🎨 灵感 · 码',
+                render: (container) => {
+                    const preview = document.createElement('div');
+                    preview.style.width = '50px';
+                    preview.style.height = '50px';
+                    preview.style.borderRadius = '15px';
+                    preview.style.background = '#b49eff';
+                    container.appendChild(preview);
+                    const code = document.createElement('div');
+                    code.className = 'color-code';
+                    code.textContent = '#b49eff';
+                    container.appendChild(code);
+                    const btn = document.createElement('button');
+                    btn.textContent = '随机';
+                    btn.addEventListener('click', () => {
+                        let col = randomColor();
+                        preview.style.background = col;
+                        code.textContent = col;
+                    });
+                    container.appendChild(btn);
+                }
+            });
+
+            // 14 简笔形
+            cards.push({
+                title: '🔷 简笔 · 形',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    canvas.className = 'shape-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    function drawShape() {
+                        ctx.clearRect(0,0,160,70);
+                        ctx.fillStyle = '#b29eff';
+                        let type = Math.floor(Math.random()*3);
+                        if (type===0) ctx.fillRect(20,15,50,40);
+                        else if (type===1) { ctx.beginPath(); ctx.arc(50,35,25,0,2*Math.PI); ctx.fill(); }
+                        else { ctx.beginPath(); ctx.moveTo(20,50); ctx.lineTo(80,15); ctx.lineTo(140,50); ctx.fill(); }
+                    }
+                    drawShape();
+                    const btn = document.createElement('button');
+                    btn.textContent = '换形';
+                    btn.addEventListener('click', drawShape);
+                    container.appendChild(btn);
+                }
+            });
+
+            // 15 呼吸灯
+            cards.push({
+                title: '✨ 呼吸 · 灯',
+                render: (container) => {
+                    const light = document.createElement('div');
+                    light.style.width = '60px';
+                    light.style.height = '60px';
+                    light.style.borderRadius = '50%';
+                    light.style.background = '#c39eff';
+                    light.style.boxShadow = '0 0 30px #a37eff';
+                    light.style.animation = 'pulse 2s infinite';
+                    container.appendChild(light);
+                    const slider = document.createElement('input');
+                    slider.type = 'range';
+                    slider.className = 'slider';
+                    slider.min = 0.5; slider.max = 3; slider.step = 0.1; slider.value = 1.5;
+                    slider.addEventListener('input', (e) => {
+                        light.style.animation = `pulse ${2/e.target.value}s infinite`;
+                    });
+                    container.appendChild(slider);
+                }
+            });
+
+            // 16 宁静雨
+            cards.push({
+                title: '☔ 宁静 · 雨',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    canvas.className = 'rain-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let drops = [];
+                    for (let i=0;i<30;i++) drops.push({x:Math.random()*160, y:Math.random()*70, speed:1+Math.random()*3});
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        ctx.fillStyle = '#b3b0ff55';
+                        for (let d of drops) {
+                            ctx.fillRect(d.x, d.y, 1, 6);
+                            d.y += d.speed;
+                            if (d.y > 70) { d.y = 0; d.x = Math.random()*160; }
+                        }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 17 心声纹
+            cards.push({
+                title: '💧 心声 · 纹',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    canvas.className = 'ripple-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let ripples = [];
+                    canvas.addEventListener('click', (e) => {
+                        const rect = canvas.getBoundingClientRect();
+                        const scaleX = canvas.width/rect.width;
+                        const scaleY = canvas.height/rect.height;
+                        let x = (e.clientX - rect.left)*scaleX;
+                        let y = (e.clientY - rect.top)*scaleY;
+                        ripples.push({x,y,r:4});
+                    });
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        ctx.strokeStyle = '#b8a2ff';
+                        ctx.lineWidth = 1.5;
+                        for (let i=ripples.length-1; i>=0; i--) {
+                            let rip = ripples[i];
+                            ctx.beginPath();
+                            ctx.arc(rip.x, rip.y, rip.r, 0, 2*Math.PI);
+                            ctx.stroke();
+                            rip.r += 0.7;
+                            if (rip.r > 35) ripples.splice(i,1);
+                        }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                    const p = document.createElement('p');
+                    p.style.fontSize = '0.6rem';
+                    p.textContent = '点击生涟漪';
+                    container.appendChild(p);
+                }
+            });
+
+            // 18 星夜闪
+            cards.push({
+                title: '✨ 星夜 · 闪',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    canvas.className = 'star-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let stars = [];
+                    for (let i=0;i<30;i++) stars.push({x:Math.random()*160, y:Math.random()*70, size:1+Math.random()*3, phase:Math.random()*10});
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        for (let s of stars) {
+                            let op = 0.5 + 0.5*Math.sin(Date.now()*0.005 + s.phase);
+                            ctx.globalAlpha = op;
+                            ctx.beginPath();
+                            ctx.arc(s.x, s.y, s.size*0.6, 0, 2*Math.PI);
+                            ctx.fillStyle = '#ffecaa';
+                            ctx.fill();
+                        }
+                        ctx.globalAlpha = 1;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 19 心音符
+            cards.push({
+                title: '🎵 心音 · 符',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    canvas.className = 'note-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let notes = [];
+                    canvas.addEventListener('click', (e) => {
+                        const rect = canvas.getBoundingClientRect();
+                        const scaleX = canvas.width/rect.width;
+                        const scaleY = canvas.height/rect.height;
+                        let x = (e.clientX - rect.left)*scaleX;
+                        let y = (e.clientY - rect.top)*scaleY;
+                        notes.push({x,y,life:1});
+                    });
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        ctx.font = '16px "Segoe UI"';
+                        ctx.fillStyle = '#e6d0ff';
+                        for (let i=notes.length-1; i>=0; i--) {
+                            let n = notes[i];
+                            ctx.globalAlpha = n.life;
+                            ctx.fillText('♪', n.x, n.y);
+                            n.life -= 0.02;
+                            n.y -= 0.8;
+                            if (n.life <=0) notes.splice(i,1);
+                        }
+                        ctx.globalAlpha = 1;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 20 今日签
+            cards.push({
+                title: '🔮 今日 · 签',
+                render: (container) => {
+                    const box = document.createElement('div');
+                    box.className = 'fortune-box';
+                    box.textContent = '大吉';
+                    container.appendChild(box);
+                    const btn = document.createElement('button');
+                    btn.textContent = '抽一签';
+                    btn.addEventListener('click', () => {
+                        const f = ['大吉','中吉','小吉','吉','末吉','凶','大凶','平','福','缘'];
+                        box.textContent = f[Math.floor(Math.random()*f.length)];
+                    });
+                    container.appendChild(btn);
+                }
+            });
+
+            // 21 重力球
+            cards.push({
+                title: '🪐 重力 · 球',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 90;
+                    canvas.className = 'gravity-canvas';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let ball = {x:80, y:20, vx:2, vy:2};
+                    canvas.addEventListener('click', () => {
+                        ball.x = 80; ball.y = 20; ball.vx = (Math.random()-0.5)*4; ball.vy = -2;
+                    });
+                    function draw() {
+                        ctx.clearRect(0,0,160,90);
+                        ctx.fillStyle = '#b39eff';
+                        ctx.beginPath();
+                        ctx.arc(ball.x, ball.y, 8, 0, 2*Math.PI);
+                        ctx.fill();
+                        ball.x += ball.vx;
+                        ball.y += ball.vy;
+                        ball.vy += 0.3;
+                        if (ball.x < 5 || ball.x > 155) { ball.vx *= -0.8; ball.x = Math.min(155,Math.max(5,ball.x)); }
+                        if (ball.y > 82) { ball.y = 82; ball.vy *= -0.7; ball.vx *= 0.98; }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 22 念珠转
+            cards.push({
+                title: '📿 念珠 · 转',
+                render: (container) => {
+                    const beadsDiv = document.createElement('div');
+                    beadsDiv.className = 'flex-row';
+                    let beads = 7;
+                    function renderBeads() {
+                        beadsDiv.innerHTML = '';
+                        for (let i=0;i<beads;i++) {
+                            let b = document.createElement('div');
+                            b.className = 'bead';
+                            b.addEventListener('click', () => {
+                                beads = Math.min(12, beads+1);
+                                renderBeads();
+                            });
+                            beadsDiv.appendChild(b);
+                        }
+                    }
+                    renderBeads();
+                    container.appendChild(beadsDiv);
+                }
+            });
+
+            // 23 万花筒 (修复变换累积)
+            cards.push({
+                title: '🌸 万花 · 筒',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 120; canvas.height = 120;
+                    canvas.style.aspectRatio = '1/1';
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    function draw() {
+                        ctx.clearRect(0,0,120,120);
+                        ctx.save(); // 保存原始状态
+                        ctx.translate(60,60);
+                        for (let i=0;i<6;i++) {
+                            ctx.save();
+                            ctx.rotate(i * Math.PI/3);
+                            ctx.fillStyle = `hsl(${Date.now()*0.01 + i*60}, 70%, 70%)`;
+                            ctx.beginPath();
+                            ctx.arc(30, 0, 10, 0, 2*Math.PI);
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                        ctx.restore(); // 恢复原始状态
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 24 禅绕线
+            cards.push({
+                title: '🌀 禅绕 · 线',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 120; canvas.height = 120;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let t=0;
+                    function draw() {
+                        ctx.clearRect(0,0,120,120);
+                        ctx.beginPath();
+                        for (let a=0; a<2*Math.PI; a+=0.1) {
+                            let r = 40 + 15*Math.sin(a*5 + t);
+                            let x = 60 + r*Math.cos(a);
+                            let y = 60 + r*Math.sin(a);
+                            if (a===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                        }
+                        ctx.closePath();
+                        ctx.strokeStyle = '#bba0ff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        t+=0.02;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 25 小沙漏
+            cards.push({
+                title: '⏳ 沙漏 · 心',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 80; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let sand = 0.5;
+                    function draw() {
+                        ctx.clearRect(0,0,80,100);
+                        ctx.strokeStyle = '#b8a3d9';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(20,10); ctx.lineTo(60,10); ctx.lineTo(40,50); ctx.lineTo(60,90); ctx.lineTo(20,90); ctx.lineTo(40,50); ctx.closePath();
+                        ctx.stroke();
+                        ctx.fillStyle = '#f0d3ff';
+                        ctx.fillRect(30, 60 + 30*(1-sand), 20, 30*sand);
+                        sand += 0.002;
+                        if (sand>1) sand=0;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 26 太极
+            cards.push({
+                title: '☯️ 太极 · 生',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 100; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    function draw() {
+                        ctx.clearRect(0,0,100,100);
+                        ctx.beginPath();
+                        ctx.arc(50,50,45,0,2*Math.PI);
+                        ctx.fillStyle = '#000';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(50,25,22.5,0,2*Math.PI);
+                        ctx.fillStyle = '#fff';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(50,75,22.5,0,2*Math.PI);
+                        ctx.fillStyle = '#000';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(50,25,10,0,2*Math.PI);
+                        ctx.fillStyle = '#000';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(50,75,10,0,2*Math.PI);
+                        ctx.fillStyle = '#fff';
+                        ctx.fill();
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 27 心电
+            cards.push({
+                title: '📈 心电 · 图',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let x=0;
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        ctx.strokeStyle = '#9ec9ff';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        for (let i=0; i<160; i++) {
+                            let y = 35 + 20*Math.sin(i*0.1 + x) * Math.exp(-i*0.01);
+                            if (i===0) ctx.moveTo(i,y); else ctx.lineTo(i,y);
+                        }
+                        ctx.stroke();
+                        x += 0.1;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 28 彩虹条
+            cards.push({
+                title: '🌈 彩虹 · 心',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 70;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let offset=0;
+                    function draw() {
+                        ctx.clearRect(0,0,160,70);
+                        for (let i=0;i<7;i++) {
+                            ctx.fillStyle = `hsl(${i*30 + offset}, 80%, 60%)`;
+                            ctx.fillRect(i*23, 0, 23, 70);
+                        }
+                        offset += 0.5;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 29 风铃
+            cards.push({
+                title: '🎐 风铃 · 语',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 100; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let t=0;
+                    function draw() {
+                        ctx.clearRect(0,0,100,100);
+                        ctx.strokeStyle = '#e4c7ff';
+                        ctx.lineWidth = 2;
+                        for (let i=0;i<3;i++) {
+                            let x = 50 + 20*Math.sin(t + i);
+                            ctx.beginPath();
+                            ctx.moveTo(50,10);
+                            ctx.lineTo(x, 40 + i*15);
+                            ctx.stroke();
+                            ctx.beginPath();
+                            ctx.arc(x, 40 + i*15, 8, 0, 2*Math.PI);
+                            ctx.strokeStyle = '#ffdbb5';
+                            ctx.stroke();
+                        }
+                        t+=0.05;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 30 气泡
+            cards.push({
+                title: '🫧 气泡 · 念',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 90;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let bubbles = [];
+                    for (let i=0;i<8;i++) bubbles.push({x:Math.random()*160, y:Math.random()*90, r:5+Math.random()*10, vy:0.5+Math.random()*1});
+                    function draw() {
+                        ctx.clearRect(0,0,160,90);
+                        ctx.strokeStyle = '#b6dcff';
+                        ctx.lineWidth = 1.5;
+                        for (let b of bubbles) {
+                            ctx.beginPath();
+                            ctx.arc(b.x, b.y, b.r, 0, 2*Math.PI);
+                            ctx.stroke();
+                            b.y -= b.vy;
+                            if (b.y + b.r < 0) { b.y = 90 + b.r; b.x = Math.random()*160; }
+                        }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 31 旋转方块
+            cards.push({
+                title: '🔲 旋转 · 境',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 100; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let angle=0;
+                    function draw() {
+                        ctx.clearRect(0,0,100,100);
+                        ctx.save();
+                        ctx.translate(50,50);
+                        ctx.rotate(angle);
+                        ctx.fillStyle = '#bda5ff';
+                        ctx.fillRect(-25,-25,50,50);
+                        ctx.restore();
+                        angle += 0.02;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 32 手指画
+            cards.push({
+                title: '☝️ 手指 · 画',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#efe7ff';
+                    let points = [];
+                    canvas.addEventListener('mousemove', (e) => {
+                        if (e.buttons !== 1) return;
+                        const rect = canvas.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) * (canvas.width/rect.width);
+                        const y = (e.clientY - rect.top) * (canvas.height/rect.height);
+                        points.push({x,y});
+                        if (points.length > 50) points.shift();
+                    });
+                    function draw() {
+                        ctx.clearRect(0,0,160,100);
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#ab8eff';
+                        ctx.lineWidth = 3;
+                        if (points.length>1) {
+                            ctx.moveTo(points[0].x, points[0].y);
+                            for (let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
+                            ctx.stroke();
+                        }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 33 文字雨
+            cards.push({
+                title: '🌧️ 文字 · 雨',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 80;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let chars = [];
+                    for (let i=0;i<20;i++) chars.push({char:'心', x:Math.random()*160, y:Math.random()*80, speed:1+Math.random()*2});
+                    function draw() {
+                        ctx.clearRect(0,0,160,80);
+                        ctx.fillStyle = '#cbb3ff';
+                        ctx.font = '14px serif';
+                        for (let c of chars) {
+                            ctx.fillText(c.char, c.x, c.y);
+                            c.y += c.speed;
+                            if (c.y > 90) { c.y = 0; c.x = Math.random()*160; }
+                        }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 34 数字禅
+            cards.push({
+                title: '🔢 数字 · 禅',
+                render: (container) => {
+                    const num = document.createElement('div');
+                    num.style.fontSize = '2.5rem';
+                    num.style.fontWeight = '200';
+                    num.textContent = '0';
+                    container.appendChild(num);
+                    let val = 0;
+                    setInterval(() => {
+                        val = (val + 1) % 100;
+                        num.textContent = val;
+                    }, 200);
+                }
+            });
+
+            // 35 弹跳球
+            cards.push({
+                title: '⚪ 弹跳 · 心',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 140; canvas.height = 90;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let x=70, y=20, vx=3, vy=2;
+                    function draw() {
+                        ctx.clearRect(0,0,140,90);
+                        ctx.beginPath();
+                        ctx.arc(x, y, 8, 0, 2*Math.PI);
+                        ctx.fillStyle = '#cfb5ff';
+                        ctx.fill();
+                        x += vx; y += vy;
+                        vy += 0.2;
+                        if (x<5 || x>135) { vx *= -0.8; x = Math.min(135,Math.max(5,x)); }
+                        if (y>82) { y=82; vy *= -0.7; vx *= 0.98; }
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 36 老钟摆
+            cards.push({
+                title: '🕰️ 老钟 · 摆',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 100; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    function draw() {
+                        ctx.clearRect(0,0,100,100);
+                        ctx.beginPath();
+                        ctx.arc(50,50,45,0,2*Math.PI);
+                        ctx.strokeStyle = '#ad9fcf';
+                        ctx.lineWidth=2;
+                        ctx.stroke();
+                        let d = new Date();
+                        let h = d.getHours()%12, m = d.getMinutes(), s = d.getSeconds();
+                        let ha = (h*30 + m*0.5)*Math.PI/180;
+                        let ma = m*6*Math.PI/180;
+                        let sa = s*6*Math.PI/180;
+                        ctx.beginPath(); ctx.moveTo(50,50); ctx.lineTo(50+20*Math.sin(ha), 50-20*Math.cos(ha)); ctx.strokeStyle='#c9b5ff'; ctx.lineWidth=3; ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(50,50); ctx.lineTo(50+30*Math.sin(ma), 50-30*Math.cos(ma)); ctx.strokeStyle='#dbc3ff'; ctx.lineWidth=2; ctx.stroke();
+                        ctx.beginPath(); ctx.arc(50,50,3,0,2*Math.PI); ctx.fillStyle='white'; ctx.fill();
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 37 心情线
+            cards.push({
+                title: '📊 心情 · 线',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 160; canvas.height = 80;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let data = Array(20).fill(40);
+                    function update() {
+                        data.shift();
+                        data.push(40 + Math.random()*30 - 15);
+                        ctx.clearRect(0,0,160,80);
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#c4acff';
+                        ctx.lineWidth = 2;
+                        for (let i=0; i<data.length; i++) {
+                            let x = i*8;
+                            let y = 70 - data[i];
+                            if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                        }
+                        ctx.stroke();
+                        requestAnimationFrame(update);
+                    }
+                    update();
+                }
+            });
+
+            // 38 多肉
+            cards.push({
+                title: '🌵 多肉 · 心',
+                render: (container) => {
+                    const plant = document.createElement('div');
+                    plant.style.width = '60px';
+                    plant.style.height = '60px';
+                    plant.style.background = '#6faa7a';
+                    plant.style.borderRadius = '50% 50% 0 0';
+                    plant.style.boxShadow = '0 10px 0 #3d6b47';
+                    container.appendChild(plant);
+                }
+            });
+
+            // 39 远山
+            cards.push({
+                title: '🏔️ 远山 · 静',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 140; canvas.height = 70;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#6f7990';
+                    ctx.beginPath();
+                    ctx.moveTo(0,70); ctx.lineTo(40,20); ctx.lineTo(80,50); ctx.lineTo(120,10); ctx.lineTo(140,30); ctx.lineTo(140,70); ctx.closePath();
+                    ctx.fill();
+                }
+            });
+
+            // 40 转经筒
+            cards.push({
+                title: '🙏 转经 · 筒',
+                render: (container) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 100; canvas.height = 100;
+                    container.appendChild(canvas);
+                    const ctx = canvas.getContext('2d');
+                    let rot = 0;
+                    function draw() {
+                        ctx.clearRect(0,0,100,100);
+                        ctx.save();
+                        ctx.translate(50,50);
+                        ctx.rotate(rot);
+                        ctx.fillStyle = '#cfa97c';
+                        ctx.fillRect(-20,-30,40,60);
+                        ctx.fillStyle = '#e3c494';
+                        ctx.beginPath();
+                        ctx.arc(0,0,15,0,2*Math.PI);
+                        ctx.fill();
+                        ctx.restore();
+                        rot += 0.01;
+                        requestAnimationFrame(draw);
+                    }
+                    draw();
+                }
+            });
+
+            // 将所有卡片渲染到网格
+            cards.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'card-title';
+                titleDiv.textContent = card.title;
+                cardDiv.appendChild(titleDiv);
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'card-content';
+                card.render(contentDiv);
+                cardDiv.appendChild(contentDiv);
+                grid.appendChild(cardDiv);
+            });
+
+            // 注入呼吸灯关键帧
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { opacity: 0.5; transform: scale(0.9); }
+                    50% { opacity: 1; transform: scale(1.1); }
+                    100% { opacity: 0.5; transform: scale(0.9); }
+                }
+            `;
+            document.head.appendChild(style);
+        })();
+    </script>
+</body>
+</html>
