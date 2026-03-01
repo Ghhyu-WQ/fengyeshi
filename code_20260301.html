@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>乱建堂 - 游玩界面</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+/* 本地星空图背景 - 自适应全屏，覆盖所有设备（手机/电脑），无拉伸 */
+html,body{width:100%;height:100%;overflow:hidden;position:relative;}
+#space-bg{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  background: url(space-bg.jpg) no-repeat center center;/* 调用本地space-bg.jpg */
+  background-size: cover;/* 自动适配全屏，无拉伸变形 */
+  background-attachment: fixed;
+  z-index:1;
+}
+/* 左上角唯一返回导航 - 半透黑底，不挡星空，悬浮发光 */
+.return-nav{
+  position:fixed;top:20px;left:20px;z-index:999;
+  display:flex;gap:15px;
+}
+.return-nav a{
+  color:#ffd055;font-size:14px;font-weight:700;
+  padding:8px 12px;background:rgba(0,0,0,0.7);
+  border:1px solid #ffd055;border-radius:6px;
+  text-decoration:none;transition:all 0.3s ease;
+}
+.return-nav a:hover{
+  box-shadow:0 0 15px #ffd055;color:#fff;background:rgba(0,0,0,0.9);
+}
+/* 陨石通用样式 - 正圆形，太空岩石质感，悬停发光放大，大小适中 */
+.meteor{
+  width:60px;height:60px;border-radius:50%;/* 绝对正圆，无变形 */
+  background:linear-gradient(135deg, #777, #444, #666);
+  box-shadow:0 0 18px #999, inset 0 0 12px #333;
+  cursor:pointer;transition:all 0.3s ease;
+  border:2px solid #888;
+  position:fixed;z-index:10;
+}
+.meteor:hover{
+  transform:scale(1.15);
+  box-shadow:0 0 30px #ffffff, inset 0 0 15px #555;
+  z-index:11;
+}
+/* 8个陨石分散摆放 - 全屏幕随机散点，无扎堆，左右上下都有分布 */
+.m1{top:20%;left:10%;}
+.m2{top:20%;right:10%;}
+.m3{top:45%;left:25%;}
+.m4{top:45%;right:25%;}
+.m5{top:70%;left:15%;}
+.m6{top:70%;right:15%;}
+.m7{top:50%;left:50%;transform:translateX(-50%);}
+.m8{top:80%;left:50%;transform:translateX(-50%);}
+/* 底部右侧翻页箭头 - 正圆形，橙黄渐变，悬浮右移发光 */
+.next-page{
+  position:fixed;bottom:30px;right:30px;
+  width:55px;height:55px;border-radius:50%;
+  background:linear-gradient(45deg, #ffd055, #ff5e00);
+  box-shadow:0 0 20px #ffd055;
+  cursor:pointer;transition:all 0.3s ease;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;border:none;
+}
+.next-page::after{
+  content:'';width:18px;height:18px;
+  border-top:4px solid #000;border-right:4px solid #000;
+  transform:rotate(45deg);
+}
+.next-page:hover{
+  transform:scale(1.2) translateX(8px);
+  box-shadow:0 0 35px #ffffff;
+}
+/* 底部版权 - 半透黑底，不挡星空/陨石，居中显示 */
+.copyright{
+  position:fixed;bottom:15px;left:0;right:0;
+  text-align:center;color:#eee;font-size:14px;
+  z-index:5;pointer-events:none;
+  background:rgba(0,0,0,0.6);padding:4px 0;
+}
+/* 手机端适配 - 陨石/箭头等比缩小，分散位置不变，依旧全屏散点 */
+@media (max-width:768px){
+  .meteor{width:50px;height:50px;}
+  .next-page{width:45px;height:45px;bottom:20px;right:20px;}
+  .next-page::after{width:15px;height:15px;}
+  .return-nav{top:15px;left:15px;gap:10px;}
+  .return-nav a{padding:6px 10px;font-size:12px;}
+}
+@media (max-width:480px){
+  .meteor{width:40px;height:40px;}
+  .next-page{width:40px;height:40px;}
+  .next-page::after{width:13px;height:13px;}
+}
+</style>
+</head>
+<body>
+<!-- 本地宇宙星空图背景（调用同文件夹的space-bg.jpg） -->
+<div id="space-bg"></div>
+
+<!-- 左上角唯一返回导航：返回官网/福利页 -->
+<div class="return-nav">
+  <a href="index.html" target="_blank">返回官网</a>
+  <a href="fuli.html" target="_blank">返回福利页</a>
+</div>
+
+<!-- 8个分散摆放的陨石 - 各跳独立网页，全屏散点无扎堆 -->
+<div class="meteor m1" onclick="window.open('ljt_m1.html', '_blank')"></div>
+<div class="meteor m2" onclick="window.open('ljt_m2.html', '_blank')"></div>
+<div class="meteor m3" onclick="window.open('ljt_m3.html', '_blank')"></div>
+<div class="meteor m4" onclick="window.open('ljt_m4.html', '_blank')"></div>
+<div class="meteor m5" onclick="window.open('ljt_m5.html', '_blank')"></div>
+<div class="meteor m6" onclick="window.open('ljt_m6.html', '_blank')"></div>
+<div class="meteor m7" onclick="window.open('ljt_m7.html', '_blank')"></div>
+<div class="meteor m8" onclick="window.open('ljt_m8.html', '_blank')"></div>
+
+<!-- 底部右侧翻页箭头：跳转游玩第二页 ljt_play2.html -->
+<button class="next-page" onclick="window.open('ljt_play2.html', '_blank')"></button>
+
+<!-- 底部版权 -->
+<div class="copyright">© 枫野工作室 版权所有</div>
+</body>
+</html>
