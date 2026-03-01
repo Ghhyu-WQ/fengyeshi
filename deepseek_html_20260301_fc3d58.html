@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>完美最终版钢琴</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#111;overflow:hidden}
+
+#pianoWrap{
+  position:fixed;
+  top:100px;
+  left:50px;
+  width:600px;
+  height:180px;
+  transform-origin:center center;
+}
+
+#pianoWindow{
+  width:100%;
+  height:100%;
+  background:#000;
+  border:2px solid #888;
+  border-radius:4px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+#dragBar{
+  height:22px;
+  background:#444;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  cursor:move;
+}
+
+#piano{
+  display:flex;
+  width:100%;
+  height:calc(100% - 22px);
+  background:#000;
+}
+
+.white{
+  flex-shrink:0;
+  width:22px;
+  height:100%;
+  background:#fff;
+  border-left:1px solid #888;
+}
+.black{
+  flex-shrink:0;
+  width:13px;
+  height:62%;
+  background:#000;
+  margin-left:-6.5px;
+  margin-right:-6.5px;
+  z-index:10;
+}
+
+.white.active{background:#ccc}
+.black.active{background:#333}
+.hidden{
+  background:#000!important;
+  border:none!important;
+  pointer-events:none!important;
+}
+
+#panel{
+  position:fixed;
+  top:20px;
+  left:20px;
+  background:#222;
+  color:#fff;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid #666;
+  font-size:14px;
+  z-index:999;
+  cursor:move;
+  display:flex;
+  gap:6px;
+}
+#panel button{
+  padding:4px 8px;
+  background:#333;
+  color:#fff;
+  border:1px solid #777;
+  border-radius:4px;
+}
+</style>
+</head>
+<body>
+
+<div id="panel">
+  <button id="deleteBtn">删除按键</button>
+  <button id="restoreBtn">还原按键</button>
+</div>
+
+<div id="pianoWrap">
+  <div id="pianoWindow">
+    <div id="dragBar">| 拖动移动 | 长按边缘旋转缩放 |</div>
+    <div id="piano"></div>
+  </div>
+</div>
+
+<script>
+// ===================== 面板拖动 =====================
+const panel = document.getElementById('panel');
+let pDrag = false, pdx=0, pdy=0;
+
+panel.addEventListener('mousedown', function(e){
+  pDrag = true;
+  pdx = e.clientX - panel.offsetLeft;
+  pdy = e.clientY - panel.offsetTop;
+});
+document.addEventListener('mousemove', function(e){
+  if(!pDrag) return;
+  panel.style.left = e.clientX - pdx + 'px';
+  panel.style.top = e.clientY - pdy + 'px';
+});
+document.addEventListener('mouseup', function(){ pDrag = false; });
+
+panel.addEventListener('touchstart', function(e){
+  pDrag = true;
+  const t = e.touches[0];
+  pdx = t.clientX - panel.offsetLeft;
+  pdy = t.clientY - panel.offsetTop;
+});
+document.addEventListener('touchmove', function(e){
+  if(!pDrag) return;
+  const t = e.touches[0];
+  panel.style.left = t.clientX - pdx + 'px';
+  panel.style.top = t.clientY - pdy + 'px';
+});
+document.addEventListener('touchend', function(){ pDrag = false; });
+
+// ===================== 钢琴拖动 =====================
+const wrap = document.getElementById('pianoWrap');
+const dragBar = document.getElementById('dragBar');
+let isMove = false, offx=0, offy=0;
+
+dragBar.addEventListener('mousedown', function(e){
+  isMove = true;
+  const r = wrap.getBoundingClientRect();
+  offx = e.clientX - r.left;
+  offy = e.clientY - r.top;
+});
+document.addEventListener('mousemove', function(e){
+  if(!isMove) return;
+  wrap.style.left = e.clientX - offx + 'px';
+  wrap.style.top = e.clientY - offy + 'px';
+});
+document.addEventListener('mouseup', function(){ isMove = false; });
+
+dragBar.addEventListener('touchstart', function(e){
+  isMove = true;
+  const t = e.touches[0];
+  const r = wrap.getBoundingClientRect();
+  offx = t.clientX - r.left;
+  offy = t.clientY - r.top;
+});
+document.addEventListener('touchmove', function(e){
+  if(!isMove) return;
+  const t = e.touches[0];
+  wrap.style.left = t.clientX - offx + 'px';
+  wrap.style.top = t.clientY - offy + 'px';
+});
+document.addEventListener('touchend', function(){ isMove = false; });
+
+// ===================== 旋转 + 缩放 =====================
+let angle = 0;
+let scale = 1;
+let isTransform = false;
+
+function getCenter() {
+  const r = wrap.getBoundingClientRect();
+  return { x: r.left + r.width/2, y: r.top + r.height/2 };
+}
+
+function getDist(p1,p2){
+  return Math.hypot(p1.x-p2.x, p1.y-p2.y);
+}
+
+let startDist, startScale, startRad, baseAng;
+
+wrap.addEventListener('mousedown', function(e){
+  if(e.target === dragBar) return;
+  isTransform = true;
+  const c = getCenter();
+  const p = {x:e.clientX, y:e.clientY};
+  startRad = Math.atan2(p.y-c.y, p.x-c.x);
+  startDist = getDist(c,p);
+  startScale = scale;
+  baseAng = angle;
+});
+
+document.addEventListener('mousemove', function(e){
+  if(!isTransform) return;
+  const c = getCenter();
+  const p = {x:e.clientX, y:e.clientY};
+  const nowRad = Math.atan2(p.y-c.y, p.x-c.x);
+  angle = baseAng + (nowRad - startRad)*180/Math.PI;
+  const nowDist = getDist(c,p);
+  scale = Math.max(0.3, Math.min(3, startScale * (nowDist/startDist)));
+  wrap.style.transform = `rotate(${angle}deg) scale(${scale})`;
+});
+document.addEventListener('mouseup', function(){ isTransform = false; });
+
+wrap.addEventListener('touchstart', function(e){
+  if(e.target === dragBar) return;
+  isTransform = true;
+  const t = e.touches[0];
+  const c = getCenter();
+  const p = {x:t.clientX, y:t.clientY};
+  startRad = Math.atan2(p.y-c.y, p.x-c.x);
+  startDist = getDist(c,p);
+  startScale = scale;
+  baseAng = angle;
+});
+
+document.addEventListener('touchmove', function(e){
+  if(!isTransform) return;
+  const t = e.touches[0];
+  const c = getCenter();
+  const p = {x:t.clientX, y:t.clientY};
+  const nowRad = Math.atan2(p.y-c.y, p.x-c.x);
+  angle = baseAng + (nowRad - startRad)*180/Math.PI;
+  const nowDist = getDist(c,p);
+  scale = Math.max(0.3, Math.min(3, startScale * (nowDist/startDist)));
+  wrap.style.transform = `rotate(${angle}deg) scale(${scale})`;
+  e.preventDefault();
+});
+document.addEventListener('touchend', function(){ isTransform = false; });
+
+// ===================== 钢琴音 =====================
+const piano = document.getElementById('piano');
+const ratio = [1,1.05946,1.12246,1.18921,1.25992,1.33484,1.41421,1.49831,1.5874,1.6818,1.7818,1.8877];
+const blackPattern = [0,1,0,1,0,0,1,0,1,0,1,0];
+let notes = [];
+
+for(let o=0;o<6;o++){
+  const base = 27.5 * Math.pow(2,o);
+  for(let i=0;i<12;i++){
+    notes.push({f:base*ratio[i], black:blackPattern[i]});
+  }
+}
+
+let ctx;
+function play(f){
+  try{ctx.close()}catch(e){}
+  ctx = new (window.AudioContext||window.webkitAudioContext);
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.frequency.value = f;
+  o.type = 'sine';
+  g.gain.value = 0.25;
+  o.connect(g);
+  g.connect(ctx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.2);
+  setTimeout(()=>o.stop(), 1200);
+}
+
+// ===================== 生成琴键 =====================
+let keys = [];
+let lastKey = null;
+
+notes.forEach(n=>{
+  const k = document.createElement('div');
+  k.className = n.black ? 'black' : 'white';
+  k.dataset.f = n.f;
+  piano.appendChild(k);
+  keys.push(k);
+
+  function down(){
+    if(k.classList.contains('hidden')) return;
+    if(lastKey) lastKey.classList.remove('active');
+    lastKey = k;
+    k.classList.add('active');
+    play(+k.dataset.f);
+  }
+
+  k.onmousedown = down;
+  k.ontouchstart = function(e){ e.preventDefault(); down(); };
+});
+
+// ===================== 滑动发声 =====================
+function moveSound(e){
+  if(isMove || isTransform) return;
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
+  const t = document.elementFromPoint(x,y);
+  if(t && t.dataset.f && t!==lastKey && !t.classList.contains('hidden')){
+    t.onmousedown();
+  }
+}
+
+document.addEventListener('mousemove', function(e){
+  if(e.buttons) moveSound(e);
+});
+document.addEventListener('touchmove', function(e){
+  e.preventDefault();
+  moveSound(e);
+});
+document.addEventListener('mouseup', function(){
+  if(lastKey) lastKey.classList.remove('active');
+  lastKey = null;
+});
+document.addEventListener('touchend', function(){
+  if(lastKey) lastKey.classList.remove('active');
+  lastKey = null;
+});
+
+// ===================== 按钮功能已移除 =====================
+// 删除按钮和还原按钮现在无任何作用
+
+</script>
+</body>
+</html>
