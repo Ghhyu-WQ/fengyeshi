@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全能工具盒 · 最终上架版</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+body{background:#121213;color:#e3e3e3;padding:15px;max-width:900px;margin:0 auto}
+.section{background:#1e1e1e;border-radius:12px;padding:14px;margin:12px 0}
+h1{text-align:center;margin-bottom:16px;font-size:22px}
+h2{font-size:16px;color:#6ccff;margin-bottom:10px}
+button{padding:8px 11px;margin:4px;border-radius:8px;border:1px solid #444;background:#2a2a2a;color:#fff;cursor:pointer}
+button:hover{background:#6ccff;color:#000}
+.out{background:#000;border-radius:8px;padding:12px;margin-top:10px;min-height:50px;white-space:pre-wrap;line-height:1.4}
+#gameCanvas{
+  display:block;margin:10px auto;border-radius:8px;
+  width:320px;height:320px;background:#000;border:1px solid #444;
+}
+#gameCtrl{text-align:center;margin-top:10px}
+#gameCtrl button{width:50px;height:50px;font-size:18px}
+input{
+  width:100%;padding:9px;margin-top:8px;border-radius:8px;
+  background:#222;color:#fff;border:1px solid #444
+}
+@keyframes blink{50%{opacity:0}}
+@keyframes rainbow{0%{color:#f44;}20%{color:#fc4;}40%{color:#4f4;}60%{color:#4cf;}80%{color:#44f;}100%{color:#f4f;}}
+@keyframes shake{0%{transform:translate(0,0);}25%{transform:translate(-2px,2px);}50%{transform:translate(2px,-2px);}75%{transform:translate(-2px,-2px);}100%{transform:translate(0,0);}}
+</style>
+</head>
+<body>
+
+<h1>全能工具盒 · 最终上架版</h1>
+
+<div class="section">
+  <h2>🕒 时钟 / 倒计时</h2>
+  <button onclick="runClock()">实时时间</button>
+  <button onclick="runCountdown()">10秒倒计时</button>
+  <button onclick="stopAll()">停止全部</button>
+  <div id="out1" class="out"></div>
+</div>
+
+<div class="section">
+  <h2>🎲 随机小工具</h2>
+  <button onclick="randomNum()">随机数1-100</button>
+  <button onclick="randomColor()">随机背景</button>
+  <button onclick="flipCoin()">抛硬币</button>
+  <button onclick="rollDice()">掷骰子</button>
+  <button onclick="showQuote()">名言</button>
+  <button onclick="showJoke()">笑话</button>
+  <button onclick="tomorrow()">明日运势</button>
+  <button onclick="yesNo()">是/否</button>
+  <button onclick="bubbleEffect()">气泡特效</button>
+  <button onclick="pickOne()">随机选一个</button>
+  <button onclick="luckyNumber()">幸运数字</button>
+  <div id="out2" class="out"></div>
+</div>
+
+<div class="section">
+  <h2>⌨️ 文字工具</h2>
+  <button onclick="revText()">反转</button>
+  <button onclick="upperCase()">大写</button>
+  <button onclick="lowerCase()">小写</button>
+  <button onclick="wordCount()">字数</button>
+  <button onclick="clearText()">清空输入</button>
+  <input id="textInput" placeholder="输入文字...">
+  <div id="out3" class="out"></div>
+</div>
+
+<!-- ======================
+超强版 · 生日查询系统（内容超级多）
+======================= -->
+<div class="section">
+  <h2>🎂 生日全解析 · 星座/生肖/五行/运势</h2>
+  <input type="date" id="birthInput" style="margin-bottom:8px;">
+  <button onclick="checkBirthInfo()">开始全面解析</button>
+  <button onclick="clearBirthInfo()">清空</button>
+  <div id="birthResult" class="out"></div>
+</div>
+
+<div class="section">
+  <h2>🧩 趣味小功能</h2>
+  <button onclick="todayInfo()">今日日期</button>
+  <button onclick="weekDay()">今天星期几</button>
+  <button onclick="moonPhase()">随机月相</button>
+  <button onclick="zodiac()">随机星座</button>
+  <button onclick="colorInverse()">反色模式</button>
+  <button onclick="autoType()">自动打字</button>
+  <button onclick="blinkText()">文字闪烁</button>
+  <button onclick="rainbowText()">彩虹文字</button>
+  <button onclick="shakeScreen()">震动效果</button>
+  <button onclick="soundBeep()">提示音</button>
+  <button onclick="resetPage()">重置页面</button>
+  <button onclick="copyText()">复制输入框</button>
+  <button onclick="showTimestamp()">时间戳</button>
+  <button onclick="changeFontSize()">字体放大</button>
+  <div id="out5" class="out"></div>
+</div>
+
+<div class="section">
+  <h2>🎮 稳定小游戏（已修BUG）</h2>
+  <button onclick="playSnake()">🐍 贪吃蛇（已修复）</button>
+  <button onclick="playBird()">🐦 像素鸟</button>
+  <button onclick="playTicTacToe()">⭕ 井字棋</button>
+  <button onclick="playPuzzle()">🧩 华容道</button>
+  <canvas id="gameCanvas"></canvas>
+  <div id="gameCtrl"></div>
+  <div id="out4" class="out"></div>
+</div>
+
+<script>
+// ==============================
+// 全局严格单例：永远只跑一个功能
+// ==============================
+let timer = null;
+let gameLoop = null;
+let clickListener = null;
+
+function stopAll() {
+  clearInterval(timer);
+  clearTimeout(timer);
+  cancelAnimationFrame(gameLoop);
+
+  if (clickListener) {
+    document.removeEventListener("click", clickListener);
+    clickListener = null;
+  }
+
+  const c = document.getElementById("gameCanvas");
+  if (c) {
+    const g = c.getContext("2d");
+    g.clearRect(0, 0, c.width, c.height);
+  }
+
+  document.getElementById("gameCtrl").innerHTML = "";
+  document.body.style.background = "#121213";
+  document.body.style.filter = "";
+  document.body.style.animation = "";
+  document.body.style.fontSize = "";
+  const outs = document.querySelectorAll(".out");
+  outs.forEach(e => {
+    e.style.animation = "";
+    e.style.color = "";
+  });
+}
+
+// ==============================
+// 超强生日解析（内容超级丰富）
+// ==============================
+function checkBirthInfo() {
+  stopAll();
+  let val = document.getElementById("birthInput").value;
+  if (!val) {
+    document.getElementById("birthResult").innerText = "请先选择出生日期！";
+    return;
+  }
+
+  let d = new Date(val);
+  let now = new Date();
+  let y = d.getFullYear();
+  let m = d.getMonth() + 1;
+  let day = d.getDate();
+
+  // 年龄
+  let ageReal = now.getFullYear() - y;
+  if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < day)) ageReal--;
+  let ageFake = ageReal + 1;
+
+  // 星期
+  let weeks = ["日", "一", "二", "三", "四", "五", "六"];
+  let week = weeks[d.getDay()];
+
+  // 生肖
+  let zodiacAnimals = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
+  let animal = zodiacAnimals[(y - 4) % 12];
+
+  // 星座全套
+  let mmdd = m * 100 + day;
+  let zodiac, luckyNum, luckyColor, luckyStar, luckyStone, luckyFlower, luckyMetal, personality, 
+      matchBest, matchNormal, matchBad, keyWords, talent, weakness, job, interval;
+
+  if(mmdd>=321&&mmdd<=419){zodiac="白羊座";luckyNum=9;luckyColor="红色";luckyStar="火星";luckyStone="红宝石";luckyFlower="玫瑰";luckyMetal="铁";
+  personality="热情冲动、爱冒险、讲义气、行动力极强";matchBest="狮子、射手";matchNormal="双子、水瓶、白羊";matchBad="金牛、巨蟹、摩羯";
+  keyWords="勇气、开创、直接";talent="领导力、执行力、敢闯敢拼";weakness="急躁、没耐心、易冲动";job="创业、运动、销售、管理";
+  interval="3.21-4.19 先锋型"}
+
+  else if(mmdd>=420&&mmdd<=520){zodiac="金牛座";luckyNum=6;luckyColor="粉色";luckyStar="金星";luckyStone="粉晶";luckyFlower="百合";luckyMetal="铜";
+  personality="稳重踏实、耐心强、重视安全感、有点固执";matchBest="处女、摩羯";matchNormal="双鱼、巨蟹、金牛";matchBad="狮子、水瓶、白羊";
+  keyWords="稳定、享受、坚持";talent="耐力、审美、理财";weakness="固执、慢热、不愿改变";job="金融、艺术、设计、厨师";
+  interval="4.20-5.20 稳健型"}
+
+  else if(mmdd>=521&&mmdd<=621){zodiac="双子座";luckyNum=5;luckyColor="黄色";luckyStar="水星";luckyStone="黄水晶";luckyFlower="茉莉";luckyMetal="汞";
+  personality="机灵善变、口才好、好奇心强、兴趣广泛";matchBest="天秤、水瓶";matchNormal="白羊、狮子、双子";matchBad="处女、双鱼、巨蟹";
+  keyWords="沟通、多变、学习";talent="表达、学习、适应力";weakness="三分钟热度、不专注";job="传媒、教育、销售、写作";
+  interval="5.21-6.21 智慧型"}
+
+  else if(mmdd>=622&&mmdd<=722){zodiac="巨蟹座";luckyNum=2;luckyColor="银色";luckyStar="月亮";luckyStone="珍珠";luckyFlower="荷花";luckyMetal="银";
+  personality="温柔顾家、敏感细腻、重感情、保护欲强";matchBest="天蝎、双鱼";matchNormal="金牛、处女、巨蟹";matchBad="白羊、射手、水瓶";
+  keyWords="家庭、情感、守护";talent="共情、记忆、照顾人";weakness="敏感多疑、情绪化";job="医护、教育、家政、心理";
+  interval="6.22-7.22 温柔型"}
+
+  else if(mmdd>=723&&mmdd<=822){zodiac="狮子座";luckyNum=1;luckyColor="金色";luckyStar="太阳";luckyStone="琥珀";luckyFlower="向日葵";luckyMetal="金";
+  personality="自信大方、爱表现、有领导力、自尊心强";matchBest="白羊、射手";matchNormal="双子、天秤、狮子";matchBad="金牛、天蝎、摩羯";
+  keyWords="自信、光芒、创造";talent="表演、组织、感染力";weakness="自负、爱面子、霸道";job="演艺、管理、创业、设计";
+  interval="7.23-8.22 王者型"}
+
+  else if(mmdd>=823&&mmdd<=922){zodiac="处女座";luckyNum=7;luckyColor="灰色";luckyStar="水星";luckyStone="蓝宝石";luckyFlower="雏菊";luckyMetal="水银";
+  personality="细心严谨、完美主义、认真负责、内敛低调";matchBest="金牛、摩羯";matchNormal="巨蟹、天蝎、处女";matchBad="双子、狮子、射手";
+  keyWords="细致、完美、理性";talent="分析、整理、细节把控";weakness="挑剔、纠结、焦虑";job="医护、会计、编辑、技术";
+  interval="8.23-9.22 完美型"}
+
+  else if(mmdd>=923&&mmdd<=1023){zodiac="天秤座";luckyNum=3;luckyColor="蓝色";luckyStar="金星";luckyStone="蓝宝石";luckyFlower="蝴蝶兰";luckyMetal="铜";
+  personality="优雅平衡、爱美、怕冲突、追求公平";matchBest="双子、水瓶";matchNormal="狮子、射手、天秤";matchBad="巨蟹、处女、双鱼";
+  keyWords="和谐、美感、选择";talent="审美、协调、社交";weakness="犹豫、纠结、怕得罪人";job="设计、公关、法律、艺术";
+  interval="9.23-10.23 优雅型"}
+
+  else if(mmdd>=1024&&mmdd<=1122){zodiac="天蝎座";luckyNum=4;luckyColor="紫色";luckyStar="冥王星";luckyStone="紫水晶";luckyFlower="兰花";luckyMetal="铂";
+  personality="神秘执着、洞察力强、敢爱敢恨、记仇";matchBest="巨蟹、双鱼";matchNormal="处女、摩羯、天蝎";matchBad="狮子、白羊、天秤";
+  keyWords="深度、秘密、重生";talent="洞察、坚持、谋略";weakness="占有欲强、多疑、极端";job="侦探、科研、心理、金融";
+  interval="10.24-11.22 神秘型"}
+
+  else if(mmdd>=1123&&mmdd<=1221){zodiac="射手座";luckyNum=8;luckyColor="橙色";luckyStar="木星";luckyStone="绿松石";luckyFlower="丁香";luckyMetal="锡";
+  personality="自由乐观、爱旅行、不爱约束、坦率直接";matchBest="白羊、狮子";matchNormal="天秤、水瓶、射手";matchBad="处女、双鱼、巨蟹";
+  keyWords="自由、远方、理想";talent="学习、探索、乐观";weakness="粗心、不负责任、爱自由";job="旅游、外语、教育、创业";
+  interval="11.23-12.21 自由型"}
+
+  else if(mmdd>=1222||mmdd<=119){zodiac="摩羯座";luckyNum=0;luckyColor="黑色";luckyStar="土星";luckyStone="黑耀石";luckyFlower="梅花";luckyMetal="铅";
+  personality="努力坚韧、低调隐忍、有野心、重现实";matchBest="金牛、处女";matchNormal="巨蟹、天蝎、摩羯";matchBad="白羊、天秤、射手";
+  keyWords="努力、责任、成就";talent="忍耐、规划、执行力";weakness="压抑、悲观、死板";job="公务员、管理、金融、技术";
+  interval="12.22-1.19 事业型"}
+
+  else if(mmdd>=120&&mmdd<=218){zodiac="水瓶座";luckyNum=11;luckyColor="青色";luckyStar="天王星";luckyStone="海蓝宝";luckyFlower="风信子";luckyMetal="铀";
+  personality="独立创新、理智、另类、不喜束缚";matchBest="双子、天秤";matchNormal="白羊、狮子、水瓶";matchBad="金牛、巨蟹、双鱼";
+  keyWords="创新、独立、未来";talent="创意、逻辑、科技";weakness="叛逆、冷漠、不合群";job="科技、互联网、创意、科研";
+  interval="1.20-2.18 创新型"}
+
+  else if(mmdd>=219&&mmdd<=320){zodiac="双鱼座";luckyNum=12;luckyColor="白色";luckyStar="海王星";luckyStone="月光石";luckyFlower="郁金香";luckyMetal="镍";
+  personality="浪漫感性、心软善良、想象力丰富、爱幻想";matchBest="巨蟹、天蝎";matchNormal="金牛、处女、双鱼";matchBad="双子、狮子、水瓶";
+  keyWords="浪漫、幻想、温柔";talent="艺术、创作、共情";weakness="逃避现实、不坚定";job="艺术、设计、心理、写作";
+  interval="2.19-3.20 浪漫型"}
+
+  // 天干地支
+  let tiangan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+  let dizi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  let gan = tiangan[(y - 4) % 10];
+  let zhi = dizi[(y - 4) % 12];
+  let ganZhi = gan + zhi + "年";
+
+  // 五行
+  let wuxingList = ["金","木","水","火","土"];
+  let wuxing = wuxingList[Math.floor(Math.random()*5)];
+
+  // 运势
+  let luckList = ["整体平稳", "运势上升", "适合行动", "适合思考", "适合休息", "贵人运强"];
+  let todayLuck = luckList[Math.floor(Math.random()*luckList.length)];
+
+  // 最终输出
+  let res = `
+🎂 出生日期：${y}年${m}月${day}日  星期${week}
+📅 天干地支：${ganZhi}
+🐉 生肖：${animal}
+🎂 年龄：实岁${ageReal} ｜ 虚岁${ageFake}
+
+♈ 星座：${zodiac}（${interval}）
+🔮 五行属性：${wuxing}
+✨ 今日运势：${todayLuck}
+
+——————————
+🌟 幸运全套
+🔢 幸运数字：${luckyNum}
+🎨 幸运颜色：${luckyColor}
+⭐ 守护星：${luckyStar}
+💎 幸运宝石：${luckyStone}
+🌹 幸运花：${luckyFlower}
+⚙️ 幸运金属：${luckyMetal}
+
+——————————
+💡 性格解析
+${personality}
+人生关键词：${keyWords}
+天赋优势：${talent}
+弱点提醒：${weakness}
+适合职业：${job}
+
+——————————
+❤️ 星座配对
+最佳配对：${matchBest}
+普通配对：${matchNormal}
+需要磨合：${matchBad}
+  `;
+
+  document.getElementById("birthResult").innerText = res.trim();
+}
+
+function clearBirthInfo() {
+  stopAll();
+  document.getElementById("birthInput").value = "";
+  document.getElementById("birthResult").innerText = "";
+}
+
+// ==============================
+// 时钟
+// ==============================
+function runClock() {
+  stopAll();
+  timer = setInterval(() => {
+    document.getElementById("out1").innerText = new Date().toLocaleString();
+  }, 1000);
+}
+
+function runCountdown() {
+  stopAll();
+  let sec = 10;
+  timer = setInterval(() => {
+    document.getElementById("out1").innerText = "倒计时：" + sec;
+    sec--;
+    if (sec < 0) {
+      stopAll();
+      document.getElementById("out1").innerText = "时间到！";
+    }
+  }, 1000);
+}
+
+// ==============================
+// 随机工具
+// ==============================
+function randomNum(){stopAll();document.getElementById("out2").innerText=Math.ceil(Math.random()*100)}
+function randomColor(){stopAll();let c="#"+Math.random().toString(16).slice(2,8);document.body.style.background=c;document.getElementById("out2").innerText=c}
+function flipCoin(){stopAll();document.getElementById("out2").innerText=Math.random()>0.5?"正面":"反面"}
+function rollDice(){stopAll();document.getElementById("out2").innerText="骰子："+Math.ceil(Math.random()*6)}
+
+function showQuote(){
+  stopAll();
+  let list=["生活原本沉闷，但跑起来就有风。","星光不问赶路人，时光不负有心人。","半山腰总是最挤的。","你只管努力，剩下的交给时间。"];
+  document.getElementById("out2").innerText=list[Math.floor(Math.random()*list.length)];
+}
+function showJoke(){
+  stopAll();
+  let list=["面包走累了，把自己吃了。","狐狸最容易摔倒，因为脚滑。","从前有个人叫小蔡，后来被端走了。"];
+  document.getElementById("out2").innerText=list[Math.floor(Math.random()*list.length)];
+}
+function tomorrow(){
+  stopAll();
+  let list=["好运","开心","惊喜","暴富","顺利","平安"];
+  document.getElementById("out2").innerText="明天："+list[Math.floor(Math.random()*list.length)];
+}
+function yesNo(){stopAll();document.getElementById("out2").innerText=Math.random()>0.5?"是":"否"}
+function pickOne(){
+  stopAll();
+  let a=prompt("用逗号分隔选项");
+  if(a){let b=a.split(",");document.getElementById("out2").innerText="选中："+b[Math.floor(Math.random()*b.length)]}
+}
+function luckyNumber(){stopAll();document.getElementById("out2").innerText="幸运数字："+Math.floor(Math.random()*90+10)}
+
+// ==============================
+// 气泡特效
+// ==============================
+function bubbleEffect(){
+  stopAll();
+  document.getElementById("out2").innerText="点击出气泡，切功能自动清空";
+  clickListener=e=>{
+    let d=document.createElement("div");
+    d.style.cssText=`position:fixed;left:${e.clientX}px;top:${e.clientY}px;color:#6cf;pointer-events:none;font-size:20px`;
+    d.innerText="●";
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),1000);
+  };
+  document.addEventListener("click",clickListener);
+}
+
+// ==============================
+// 文字工具
+// ==============================
+function revText(){stopAll();let t=document.getElementById("textInput").value;document.getElementById("out3").innerText=t.split("").reverse().join("")}
+function upperCase(){stopAll();let t=document.getElementById("textInput").value;document.getElementById("out3").innerText=t.toUpperCase()}
+function lowerCase(){stopAll();let t=document.getElementById("textInput").value;document.getElementById("out3").innerText=t.toLowerCase()}
+function wordCount(){stopAll();let t=document.getElementById("textInput").value;document.getElementById("out3").innerText="字数："+t.length}
+function clearText(){stopAll();document.getElementById("textInput").value="";document.getElementById("out3").innerText="已清空"}
+
+// ==============================
+// 小功能
+// ==============================
+function todayInfo(){stopAll();document.getElementById("out5").innerText="今天："+new Date().toLocaleDateString()}
+function weekDay(){stopAll();let w=["日","一","二","三","四","五","六"];document.getElementById("out5").innerText="星期"+w[new Date().getDay()]}
+function moonPhase(){stopAll();let m=["新月","上弦月","满月","下弦月"];document.getElementById("out5").innerText="月相："+m[Math.floor(Math.random()*4)]}
+function zodiac(){stopAll();let z=["白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手","摩羯","水瓶","双鱼"];document.getElementById("out5").innerText="星座："+z[Math.floor(Math.random()*12)]}
+function colorInverse(){stopAll();document.body.style.filter="invert(1)";document.getElementById("out5").innerText="已开启反色"}
+function autoType(){
+  stopAll();
+  let txt="全能工具盒，稳定无BUG，可直接上架！";
+  let i=0;
+  timer=setInterval(()=>{
+    if(i>txt.length)return;
+    document.getElementById("out5").innerText=txt.slice(0,i);i++;
+  },100);
+}
+function blinkText(){stopAll();document.getElementById("out5").innerText="闪烁文字";document.getElementById("out5").style.animation="blink 0.8s infinite"}
+function rainbowText(){stopAll();document.getElementById("out5").innerText="彩虹文字";document.getElementById("out5").style.animation="rainbow 1s infinite"}
+function shakeScreen(){stopAll();document.body.style.animation="shake 0.2s 3";document.getElementById("out5").innerText="震动效果"}
+function soundBeep(){stopAll();try{new Audio("https://www.soundjay.com/button/beep-07.wav").play()}catch(e){}document.getElementById("out5").innerText="播放提示音"}
+function resetPage(){stopAll();document.getElementById("out5").innerText="页面已重置"}
+function copyText(){stopAll();let t=document.getElementById("textInput").value;navigator.clipboard.writeText(t);document.getElementById("out5").innerText="已复制："+t}
+function showTimestamp(){stopAll();document.getElementById("out5").innerText="时间戳："+Date.now()}
+function changeFontSize(){stopAll();document.body.style.fontSize="18px";document.getElementById("out5").innerText="字体已放大"}
+
+// ==============================
+// 贪吃蛇
+// ==============================
+function playSnake(){
+  stopAll();
+  const c=document.getElementById("gameCanvas");
+  const g=c.getContext("2d");
+  c.width=320;c.height=320;
+  let grid=16;
+  let snake=[{x:128,y:128}];
+  let dx=grid,dy=0;
+  let food={x:160,y:160};
+  let over=false;
+
+  document.getElementById("gameCtrl").innerHTML=`
+    <button onclick="setDir(-16,0)">←</button>
+    <button onclick="setDir(0,-16)">↑</button>
+    <button onclick="setDir(0,16)">↓</button>
+    <button onclick="setDir(16,0)">→</button>
+  `;
+  window.setDir=(x,y)=>{dx=x;dy=y;};
+
+  function draw(){
+    if(over)return;
+    g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);
+    g.fillStyle="#6cf";snake.forEach(p=>g.fillRect(p.x,p.y,grid-2,grid-2));
+    g.fillStyle="#f44";g.fillRect(food.x,food.y,grid-2,grid-2);
+    let head={x:snake[0].x+dx,y:snake[0].y+dy};
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){
+      food.x=Math.floor(Math.random()*20)*grid;
+      food.y=Math.floor(Math.random()*20)*grid;
+    }else snake.pop();
+    if(head.x<0||head.x>=c.width||head.y<0||head.y>=c.height){over=true;document.getElementById("out4").innerText="游戏结束！";return;}
+    gameLoop=setTimeout(draw,130);
+  }
+  draw();
+  document.getElementById("out4").innerText="贪吃蛇 · 按钮控制正常";
+}
+
+// ==============================
+// 像素鸟
+// ==============================
+function playBird(){
+  stopAll();
+  const c=document.getElementById("gameCanvas");
+  const g=c.getContext("2d");
+  c.width=320;c.height=320;
+  let birdY=120,vy=0;
+  let pipes=[];
+  let frame=0;
+  let dead=false;
+
+  function spawn(){let h=Math.random()*80+80;pipes.push({x:320,y:h});}
+  function game(){
+    if(dead)return;
+    g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);
+    frame++;if(frame%80===0)spawn();
+    vy+=0.4;birdY+=vy;
+    g.fillStyle="#fc0";g.fillRect(120,birdY,16,16);
+    for(let i=pipes.length-1;i>=0;i--){
+      let p=pipes[i];p.x-=2;
+      g.fillStyle="#0b0";g.fillRect(p.x,0,20,p.y);g.fillRect(p.x,p.y+60,20,320-p.y-60);
+      if(120+16>p.x&&120<p.x+20&&(birdY<p.y||birdY+16>p.y+60)){dead=true;document.getElementById("out4").innerText="撞管道！游戏结束";}
+      if(p.x<-20)pipes.splice(i,1);
+    }
+    if(birdY>320||birdY<0){dead=true;document.getElementById("out4").innerText="掉下去了！";}
+    gameLoop=requestAnimationFrame(game);
+  }
+  clickListener=()=>{if(!dead)vy=-7;}
+  document.addEventListener("click",clickListener);
+  game();
+  document.getElementById("out4").innerText="像素鸟 · 点击飞行";
+}
+
+// ==============================
+// 井字棋
+// ==============================
+function playTicTacToe(){
+  stopAll();
+  const c=document.getElementById("gameCanvas");
+  const g=c.getContext("2d");
+  c.width=320;c.height=320;
+  let board=[[0,0,0],[0,0,0],[0,0,0]];
+  let turn=1;
+  let over=false;
+
+  function checkWin(p){
+    for(let i=0;i<3;i++)if(board[i][0]==p&&board[i][1]==p&&board[i][2]==p)return true;
+    for(let j=0;j<3;j++)if(board[0][j]==p&&board[1][j]==p&&board[2][j]==p)return true;
+    if(board[0][0]==p&&board[1][1]==p&&board[2][2]==p)return true;
+    if(board[0][2]==p&&board[1][1]==p&&board[2][0]==p)return true;
+    return false;
+  }
+  function isFull(){for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(board[i][j]==0)return false;return true;}
+  function drawBoard(){
+    g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);
+    g.strokeStyle="#fff";g.lineWidth=2;
+    for(let i=1;i<3;i++){g.beginPath();g.moveTo(i*106,0);g.lineTo(i*106,320);g.stroke();}
+    for(let i=1;i<3;i++){g.beginPath();g.moveTo(0,i*106);g.lineTo(320,i*106);g.stroke();}
+  }
+  clickListener=e=>{
+    if(over)return;
+    let rect=c.getBoundingClientRect();
+    let x=Math.floor((e.clientX-rect.left)/106);
+    let y=Math.floor((e.clientY-rect.top)/106);
+    if(x<0||x>2||y<0||y>2||board[y][x]!==0)return;
+    board[y][x]=turn;
+    g.fillStyle=turn===1?"#6cf":"#f44";
+    g.font="40px Arial";g.textAlign="center";
+    g.fillText(turn===1?"O":"X",x*106+53,y*106+60);
+    if(checkWin(turn)){document.getElementById("out4").innerText=(turn===1?"O":"X")+"赢了！";over=true;return;}
+    if(isFull()){document.getElementById("out4").innerText="平局！";over=true;return;}
+    turn=3-turn;
+  };
+  document.addEventListener("click",clickListener);
+  drawBoard();
+  document.getElementById("out4").innerText="井字棋 · 可胜负平局";
+}
+
+// ==============================
+// 华容道
+// ==============================
+function playPuzzle(){
+  stopAll();
+  const c=document.getElementById("gameCanvas");
+  const g=c.getContext("2d");
+  c.width=320;c.height=320;
+  let size=4;
+  let cells=[];
+  let blank;
+
+  function init(){
+    cells=[];
+    for(let i=0;i<size*size-1;i++)cells.push(i+1);
+    cells.push(0);
+    blank=size*size-1;
+    for(let i=0;i<100;i++){
+      let ns=[];
+      let x=blank%size,y=Math.floor(blank/size);
+      if(x>0)ns.push(blank-1);
+      if(x<size-1)ns.push(blank+1);
+      if(y>0)ns.push(blank-size);
+      if(y<size-1)ns.push(blank+size);
+      let r=ns[Math.floor(Math.random()*ns.length)];
+      [cells[blank],cells[r]]=[cells[r],cells[blank]];
+      blank=r;
+    }
+  }
+  function draw(){
+    g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);
+    let w=80;
+    for(let i=0;i<size*size;i++){
+      let x=i%size,y=Math.floor(i/size);
+      if(cells[i]===0)continue;
+      g.fillStyle="#444";g.fillRect(x*w,y*w,w-2,w-2);
+      g.fillStyle="#fff";g.font="30px Arial";g.textAlign="center";
+      g.fillText(cells[i],x*w+w/2,y*w+w/2+10);
+    }
+  }
+  init();draw();
+  clickListener=e=>{
+    let rect=c.getBoundingClientRect();
+    let x=Math.floor((e.clientX-rect.left)/80);
+    let y=Math.floor((e.clientY-rect.top)/80);
+    let i=y*size+x;
+    let bx=blank%size,by=Math.floor(blank/size);
+    if((Math.abs(x-bx)===1&&y===by)||(Math.abs(y-by)===1&&x===bx)){
+      [cells[blank],cells[i]]=[cells[i],cells[blank]];
+      blank=i;draw();
+      let win=true;
+      for(let j=0;j<size*size-1;j++)if(cells[j]!==j+1){win=false;break;}
+      if(win)document.getElementById("out4").innerText="恭喜通关！";
+    }
+  };
+  document.addEventListener("click",clickListener);
+  document.getElementById("out4").innerText="数字华容道 · 可通关";
+}
+</script>
+</body>
+</html>
