@@ -1,0 +1,2180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>修仙摸鱼：洞府·游历·灵兽·宗门·闪现·最终难版</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --bg2:#0e1630;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.10);
+      --text:#e9eeff;
+      --muted:#aab6e8;
+      --good:#67e8a3;
+      --warn:#ffd36b;
+      --bad:#ff6b8b;
+      --brand:#8b9cff;
+      --brand2:#7cfcff;
+      --shadow:0 14px 44px rgba(0,0,0,.40);
+      --r:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 700px at 20% 10%, rgba(124,252,255,.12), transparent 60%),
+        radial-gradient(900px 650px at 85% 0%, rgba(139,156,255,.12), transparent 55%),
+        radial-gradient(900px 650px at 45% 100%, rgba(103,232,163,.08), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 44px}
+    .top{
+      position:sticky;top:12px;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:12px 14px;border-radius:var(--r);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background:
+        radial-gradient(14px 14px at 70% 35%, rgba(124,252,255,.85), transparent 60%),
+        radial-gradient(18px 18px at 35% 65%, rgba(139,156,255,.85), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .t1{display:flex;flex-direction:column;line-height:1.15}
+    .t1 strong{font-size:14px;letter-spacing:.3px}
+    .t1 span{font-size:12px;color:var(--muted)}
+    .ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:flex;gap:8px;align-items:center;
+      padding:8px 10px;border-radius:999px;
+      background:rgba(0,0,0,.16);
+      border:1px solid var(--line);
+    }
+    .pill label{font-size:12px;color:var(--muted)}
+    select{
+      background:transparent;color:var(--text);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:10px;padding:6px 10px;outline:none;
+    }
+    .btn{
+      border:none;cursor:pointer;user-select:none;
+      padding:10px 12px;border-radius:12px;
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(139,156,255,.20), rgba(139,156,255,.08));
+      border:1px solid rgba(139,156,255,.26);
+      transition:transform .06s ease, filter .15s ease;
+    }
+    .btn:hover{filter:brightness(1.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .btn.good{
+      background:linear-gradient(180deg, rgba(103,232,163,.22), rgba(103,232,163,.08));
+      border:1px solid rgba(103,232,163,.26);
+    }
+    .btn.danger{
+      background:linear-gradient(180deg, rgba(255,107,139,.22), rgba(255,107,139,.08));
+      border:1px solid rgba(255,107,139,.28);
+    }
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 340px 1fr 360px;
+      gap:12px;
+      align-items:start;
+    }
+    @media (max-width:1100px){ .grid{grid-template-columns: 320px 1fr} .right{grid-column:1/-1} }
+    @media (max-width:820px){ .grid{grid-template-columns: 1fr} .top{position:relative;top:0} }
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;padding:12px 14px;
+      font-size:12px;letter-spacing:.6px;
+      color:rgba(233,238,255,.94);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .pad{padding:12px 14px}
+    .sub{font-size:12px;color:var(--muted)}
+    .kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+    .kv .k{font-size:12px;color:var(--muted)}
+    .kv .v{font-size:12px;font-family:var(--mono)}
+    .bar{
+      margin-top:12px;padding:10px 10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
+    }
+    .barTop{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .barTop strong{font-size:12px}
+    .barTop span{font-size:11px;font-family:var(--mono);color:var(--muted)}
+    .meter{margin-top:8px;height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
+    .meter i{display:block;height:100%;width:0%;
+      background:linear-gradient(90deg, rgba(124,252,255,.95), rgba(139,156,255,.95));
+      border-radius:999px;box-shadow:0 0 16px rgba(124,252,255,.16)}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tag{
+      font-size:11px;border:1px solid rgba(255,255,255,.14);
+      padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.05);
+      color:rgba(233,238,255,.92);display:inline-flex;gap:6px;align-items:center
+    }
+    .tag b{color:var(--brand2)}
+    .hint{
+      margin-top:10px;
+      padding:10px 12px;border-radius:14px;
+      border:1px dashed rgba(255,255,255,.18);
+      background:rgba(255,255,255,.03);
+      font-size:12px;line-height:1.5;color:rgba(233,238,255,.92)
+    }
+    kbd{
+      font-family:var(--mono);font-size:11px;
+      padding:2px 6px;border-radius:8px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.20)
+    }
+    .actions{display:grid;grid-template-columns: 1fr 1fr;gap:10px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--line);background:rgba(0,0,0,.10)}
+    .tab{
+      padding:8px 10px;border-radius:12px;cursor:pointer;user-select:none;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      font-size:12px;color:rgba(233,238,255,.92)
+    }
+    .tab[aria-selected="true"]{
+      border-color:rgba(124,252,255,.26);
+      background:linear-gradient(180deg, rgba(124,252,255,.15), rgba(124,252,255,.06));
+    }
+    .panel{display:none}
+    .panel.show{display:block}
+    .list{padding:12px 14px;display:grid;gap:10px}
+    .row{
+      padding:12px 12px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04)
+    }
+    .rowTop{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .rowTop strong{font-size:12px}
+    .rowTop em{font-style:normal;font-size:11px;font-family:var(--mono);color:var(--muted)}
+    .desc{margin-top:6px;font-size:12px;line-height:1.45;color:rgba(233,238,255,.92)}
+    .bar2{margin-top:10px;height:9px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
+    .bar2 i{display:block;height:100%;width:10%;background:linear-gradient(90deg, rgba(103,232,163,.95), rgba(124,252,255,.85));border-radius:999px}
+    .rowBtns{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .log{
+      height:370px;overflow:auto;padding:12px 14px
+    }
+    .entry{
+      padding:10px 10px;border-radius:14px;margin-bottom:10px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04)
+    }
+    .meta{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .meta b{font-size:12px}
+    .meta span{font-size:11px;font-family:var(--mono);color:var(--muted)}
+    .entry p{margin:6px 0 0;font-size:12px;line-height:1.5;color:rgba(233,238,255,.92)}
+    .entry.good b{color:var(--good)}
+    .entry.warn b{color:var(--warn)}
+    .entry.bad b{color:var(--bad)}
+    .foot{
+      padding:12px 14px;border-top:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+      font-size:12px;color:rgba(233,238,255,.90)
+    }
+    .toast{
+      position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+      padding:10px 12px;border-radius:14px;z-index:80;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(17,28,58,.90);
+      box-shadow:0 16px 40px rgba(0,0,0,.35);
+      font-size:12px;color:rgba(233,238,255,.95);
+      max-width:min(720px, 92vw);
+      display:none;
+    }
+    .toast.show{display:block}
+
+    .copyright{
+      margin:18px auto 0;
+      max-width:1180px;
+      padding:10px 14px 14px;
+      font-size:12px;
+      color:rgba(233,238,255,.88);
+      text-align:center;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.16);
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .rewardPop{
+      position:fixed;left:50%;top:16%;transform:translateX(-50%);
+      z-index:85;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(17,28,58,.92), rgba(14,26,52,.86));
+      box-shadow:0 26px 90px rgba(0,0,0,.55);
+      padding:14px 16px;
+      min-width:min(520px, 92vw);
+      display:none;
+      text-align:center;
+    }
+    .rewardPop.show{display:block; animation: popWobble .9s ease both;}
+    .rewardPop strong{display:block;font-size:18px;letter-spacing:.8px}
+    .rewardPop span{display:block;margin-top:6px;font-size:12px;color:rgba(233,238,255,.90)}
+    @keyframes popWobble{
+      0%{transform:translateX(-50%) translateY(-10px) scale(.92);opacity:0}
+      40%{transform:translateX(-50%) translateY(0) scale(1.02);opacity:1}
+      65%{transform:translateX(-50%) translateY(0) scale(.99)}
+      85%{transform:translateX(-50%) translateY(0) scale(1.01)}
+      100%{transform:translateX(-50%) translateY(0) scale(1)}
+    }
+
+    /* minigame */
+    .overlay{
+      position:fixed;inset:0;z-index:60;
+      background:rgba(0,0,0,.55);
+      display:none;align-items:center;justify-content:center;padding:18px
+    }
+    .overlay.show{display:flex}
+    .mini{
+      width:min(920px, 96vw);
+      border-radius:18px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(17,28,58,.92), rgba(14,26,52,.90));
+      box-shadow:0 28px 90px rgba(0,0,0,.55)
+    }
+    .miniHead{
+      padding:12px 14px;
+      display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.10)
+    }
+    .miniBody{display:grid;grid-template-columns: 1fr 260px;gap:0}
+    @media (max-width:860px){ .miniBody{grid-template-columns:1fr} .miniSide{border-left:none;border-top:1px solid rgba(255,255,255,.08)} }
+    canvas{
+      display:block;width:100%;
+      background:
+        radial-gradient(600px 400px at 50% 20%, rgba(124,252,255,.12), transparent 60%),
+        radial-gradient(700px 500px at 50% 90%, rgba(139,156,255,.14), transparent 65%),
+        linear-gradient(180deg, rgba(9,14,30,1), rgba(8,12,26,1));
+    }
+    .miniSide{padding:12px 14px;border-left:1px solid rgba(255,255,255,.08)}
+    .miniSide p{margin:0 0 10px;font-size:12px;line-height:1.5;color:rgba(233,238,255,.92)}
+    .miniStat{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+    .miniStat .k{font-size:12px;color:var(--muted)}
+    .miniStat .v{font-size:12px;font-family:var(--mono)}
+    .miniMsg{margin-top:10px}
+
+    /* battle */
+    .battleCard{
+      width:min(920px, 96vw);
+      border-radius:18px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:linear-gradient(180deg, rgba(17,28,58,.92), rgba(14,26,52,.90));
+      box-shadow:0 28px 90px rgba(0,0,0,.55)
+    }
+    .battleBody{display:grid;grid-template-columns: 1fr 340px;gap:0}
+    @media (max-width:920px){ .battleBody{grid-template-columns:1fr} .battleSide{border-left:none;border-top:1px solid rgba(255,255,255,.08)} }
+    .battleArena{
+      padding:14px 14px;
+      min-height:340px;
+      background:
+        radial-gradient(600px 400px at 20% 20%, rgba(255,211,107,.10), transparent 60%),
+        radial-gradient(700px 500px at 70% 80%, rgba(124,252,255,.12), transparent 65%),
+        linear-gradient(180deg, rgba(9,14,30,1), rgba(8,12,26,1));
+    }
+    .hp{
+      margin-top:10px;
+      padding:10px 10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
+    }
+    .hpTop{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .hpTop strong{font-size:12px}
+    .hpTop span{font-size:11px;font-family:var(--mono);color:var(--muted)}
+    .hpBar{margin-top:8px;height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
+    .hpBar i{display:block;height:100%;width:100%;border-radius:999px}
+    .hpBar .p{background:linear-gradient(90deg, rgba(124,252,255,.95), rgba(103,232,163,.85))}
+    .hpBar .e{background:linear-gradient(90deg, rgba(255,107,139,.95), rgba(255,211,107,.70))}
+    .battleSide{padding:12px 14px;border-left:1px solid rgba(255,255,255,.08)}
+    .battleSide .rowBtns{margin-top:10px}
+    .battleLog{margin-top:10px;max-height:240px;overflow:auto}
+    .battleLog .entry{margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="t1">
+          <strong data-i="app.title">修仙摸鱼：洞府·游历·灵兽·宗门·闪现·最终难版</strong>
+          <span data-i="app.sub">奖励更难获取，负面事件频发，修仙需谨慎</span>
+        </div>
+      </div>
+      <div class="ctrl">
+        <div class="pill">
+          <label for="lang" data-i="ui.lang">语言</label>
+          <select id="lang">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <button class="btn secondary" id="export" type="button" data-i="ui.export">导出存档</button>
+        <button class="btn secondary" id="import" type="button" data-i="ui.import">导入存档</button>
+        <button class="btn danger" id="reset" type="button" data-i="ui.reset">重开此生</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>
+          <span data-i="panel.status">状态</span>
+          <span class="sub" id="clock">—</span>
+        </h2>
+        <div class="pad">
+          <div class="kv">
+            <div class="k" data-i="k.realm">境界</div><div class="v" id="realm">—</div>
+            <div class="k" data-i="k.rate">灵气/秒</div><div class="v" id="rate">0.00</div>
+            <div class="k" data-i="k.stones">灵石</div><div class="v" id="stones">0</div>
+            <div class="k" data-i="k.luck">机缘</div><div class="v" id="luck">0</div>
+            <div class="k" data-i="k.will">心性</div><div class="v" id="will">0</div>
+            <!-- 新状态行 -->
+            <div class="k" data-i="k.house">洞府</div><div class="v" id="houseLv">0</div>
+            <div class="k" data-i="k.pet">灵兽</div><div class="v" id="petInfo">无</div>
+            <div class="k" data-i="k.sect">宗门贡献</div><div class="v" id="sectContrib">0</div>
+          </div>
+          <div class="bar">
+            <div class="barTop">
+              <strong data-i="k.qi">灵气</strong>
+              <span id="qiText">0 / 0</span>
+            </div>
+            <div class="meter"><i id="qiFill"></i></div>
+          </div>
+          <div class="tags">
+            <span class="tag"><b>●</b> <span data-i="tag.auto">自动修炼</span>: <span id="auto">ON</span></span>
+            <span class="tag"><b>◆</b> <span data-i="tag.injury">道伤</span>: <span id="injury">0%</span></span>
+            <span class="tag"><b>✦</b> <span data-i="tag.items">背包</span>: <span id="bagMini">—</span></span>
+          </div>
+          <!-- 洞府升级与灵兽喂食快捷区 -->
+          <div style="margin-top:10px; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+            <span class="sub" id="houseBonus">修炼+0% · 避敌+0%</span>
+            <button class="btn secondary" id="upgradeHouse" type="button" data-i="house.upgrade">升级洞府</button>
+          </div>
+          <div style="margin-top:6px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <span class="sub" id="petLoyalty">忠诚0</span>
+            <button class="btn secondary" id="feedPet" type="button" data-i="pet.feed">喂养灵兽</button>
+          </div>
+          <div class="hint">
+            <div><b data-i="hint.title">一分钟上手·最终难版</b></div>
+            <div data-i="hint.body">
+              洞府提升修炼效率并降低遇敌；灵兽可喂养、战斗指令；宗门接任务赚贡献换宝物。<br/>
+              游历凶险但回报高，自由战斗可用「闪现」躲避攻击。<br/>
+              注意：自动修炼变慢，负面事件频发，奖励更难获取！<br/>
+              快捷键：<kbd>M</kbd>/<kbd>E</kbd>/<kbd>C</kbd>/<kbd>P</kbd>/<kbd>B</kbd>/<kbd>G</kbd>/<kbd>Y</kbd>游历/<kbd>H</kbd>灵兽面板
+            </div>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="sub" data-i="foot.autosave">自动存档：开启（本地浏览器）</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn secondary" id="toggleAuto" type="button" data-i="ui.toggleAuto">切换自动修炼</button>
+            <button class="btn secondary" id="toggleMystery" type="button" data-i="ui.toggleMystery">切换奖励显示</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>
+          <span data-i="panel.act">行动</span>
+          <span class="sub" id="tip">—</span>
+        </h2>
+        <div class="pad">
+          <div class="actions">
+            <button class="btn good" id="med" type="button" data-i="act.med">打坐（+灵气）</button>
+            <button class="btn secondary" id="exp" type="button" data-i="act.exp">探索（奇遇）</button>
+            <button class="btn secondary" id="craft" type="button" data-i="act.craft">炼器（拼脸）</button>
+            <button class="btn" id="pill" type="button" data-i="act.pill">服丹（稳一手）</button>
+            <button class="btn" id="break" type="button" data-i="act.break">突破（赌命）</button>
+            <button class="btn secondary" id="travelBtn" type="button" data-i="act.travel">游历（凶险）</button>
+            <button class="btn secondary" id="sectBtn" type="button" data-i="act.sect">宗门事务</button>
+            <button class="btn secondary" id="game" type="button" data-i="act.game">躲飞剑（小游戏）</button>
+          </div>
+        </div>
+        <div class="tabs" role="tablist">
+          <div class="tab" role="tab" tabindex="0" aria-selected="true" data-tab="daily" data-i="tab.daily">日常</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="bag" data-i="tab.bag">背包</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="pet" data-i="tab.pet">灵兽</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="sect" data-i="tab.sect">宗门</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="fortune" data-i="tab.fortune">掐指一算</div>
+          <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="ach" data-i="tab.ach">成就</div>
+        </div>
+        <div class="panel show" id="p-daily"><div class="list" id="daily"></div></div>
+        <div class="panel" id="p-bag"><div class="list" id="bag"></div></div>
+        <div class="panel" id="p-pet"><div class="list" id="petPanel"></div></div>
+        <div class="panel" id="p-sect"><div class="list" id="sectPanel"></div></div>
+        <div class="panel" id="p-fortune"><div class="list" id="fortune"></div></div>
+        <div class="panel" id="p-ach"><div class="list" id="ach"></div></div>
+        <div class="foot">
+          <span class="sub" data-i="foot.lang">语言切换会即时刷新 UI 与日志文案。</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn secondary" id="clearLog" type="button" data-i="ui.clearLog">清空日志</button>
+            <button class="btn secondary" id="toBottom" type="button" data-i="ui.bottom">到底部</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card right">
+        <h2>
+          <span data-i="panel.log">江湖小报（日志）</span>
+          <span class="sub" id="logN">0</span>
+        </h2>
+        <div class="log" id="log"></div>
+        <div class="foot">
+          <span class="sub" data-i="foot.keep">仅保留最近 200 条。</span>
+          <span class="sub" id="saveState">—</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="copyright">
+    本副网站由风野工作室原创开发，版权所有，侵权必究。
+  </div>
+
+  <div class="overlay" id="ov" role="dialog" aria-modal="true">
+    <div class="mini">
+      <div class="miniHead">
+        <strong data-i="mini.title">躲飞剑：坚持 20 秒，活着就赢</strong>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn secondary" id="how" type="button" data-i="mini.how">怎么玩</button>
+          <button class="btn" id="start" type="button" data-i="mini.start">开始</button>
+          <button class="btn danger" id="close" type="button" data-i="mini.close">关闭</button>
+        </div>
+      </div>
+      <div class="miniBody">
+        <canvas id="cv" width="860" height="520"></canvas>
+        <div class="miniSide">
+          <p data-i="mini.desc">按 <b>← →</b> 或 <b>A D</b> 移动，别被飞剑扎到。通关按得分发灵石奖励。</p>
+          <div class="hint" id="ctrlBox">
+            <div><b data-i="ctrl.title">选择控制方式</b></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button class="btn secondary" id="ctrlKeyboard" type="button" data-i="ctrl.kb">电脑键盘</button>
+              <button class="btn secondary" id="ctrlTilt" type="button" data-i="ctrl.tilt">手机倾斜（陀螺仪）</button>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              <button class="btn secondary" id="modeClassic" type="button" data-i="mode.classic">经典（计时通关）</button>
+              <button class="btn secondary" id="modeEndless" type="button" data-i="mode.endless">无尽（活到被扎）</button>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              <button class="btn secondary" id="diffNormal" type="button" data-i="diff.normal">普通</button>
+              <button class="btn secondary" id="diffHard" type="button" data-i="diff.hard">困难</button>
+              <button class="btn secondary" id="diffHell" type="button" data-i="diff.hell">地狱</button>
+            </div>
+            <div class="sub" id="ctrlState" style="margin-top:8px">—</div>
+            <div class="sub" id="ctrlNote" style="margin-top:4px">—</div>
+          </div>
+          <div class="miniStat">
+            <div class="k" data-i="mini.time">剩余时间</div><div class="v" id="mt">20.0s</div>
+            <div class="k" data-i="mini.score">得分</div><div class="v" id="ms">0</div>
+            <div class="k" data-i="mini.reward">奖励</div><div class="v" id="mr">0</div>
+            <div class="k" data-i="mini.best">最佳</div><div class="v" id="mb">0</div>
+          </div>
+          <div class="hint miniMsg" id="mmsg">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="battleOv" role="dialog" aria-modal="true">
+    <div class="battleCard">
+      <div class="miniHead">
+        <strong data-i="battle.title">战斗</strong>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn secondary" id="battleHelp" type="button" data-i="battle.help">说明</button>
+          <button class="btn danger" id="battleClose" type="button" data-i="battle.leave">离开</button>
+        </div>
+      </div>
+      <div class="battleBody">
+        <div class="battleArena">
+          <div class="row">
+            <div class="rowTop">
+              <strong id="enemyName">—</strong>
+              <em id="enemyTag">—</em>
+            </div>
+            <div class="desc" id="enemyDesc">—</div>
+          </div>
+          <div class="hp">
+            <div class="hpTop"><strong data-i="battle.enemyHp">敌方气血</strong><span id="enemyHpText">0/0</span></div>
+            <div class="hpBar"><i class="e" id="enemyHpFill"></i></div>
+          </div>
+          <div class="hp">
+            <div class="hpTop"><strong data-i="battle.playerHp">你的气血</strong><span id="playerHpText">0/0</span></div>
+            <div class="hpBar"><i class="p" id="playerHpFill"></i></div>
+          </div>
+          <!-- 灵兽助战显示（仅当有灵兽且忠诚>60） -->
+          <div id="petBattleInfo" style="margin-top:8px; font-size:11px; color:var(--good); display:none;">灵兽已就绪，每回合自动攻击</div>
+        </div>
+        <div class="battleSide">
+          <p class="sub" id="battleTip">—</p>
+          <div class="rowBtns">
+            <button class="btn good" id="battleAtk" type="button" data-i="battle.atk">出手</button>
+            <button class="btn secondary" id="battleDef" type="button" data-i="battle.def">防守</button>
+            <button class="btn" id="battleSkill" type="button" data-i="battle.skill">招式（耗灵气）</button>
+            <button class="btn secondary" id="battleFlee" type="button" data-i="battle.flee">开溜</button>
+            <button class="btn secondary" id="battleFlash" type="button" data-i="battle.flash" style="display:none;">闪现(10灵气)</button>
+            <button class="btn secondary" id="battleModeToggle" type="button" data-i="battle.mode">模式：回合制/自由式</button>
+          </div>
+          <p class="sub" id="battleModeText">—</p>
+          <div class="battleLog" id="battleLog"></div>
+          <div class="hint" style="margin-top:10px" data-i="battle.note">
+            提示：自由模式可用闪现，消耗10灵气闪避下次攻击。灵兽高忠诚时自动助战。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rewardPop" id="rewardPop" aria-live="polite">
+    <strong id="rewardTitle" data-i="reward.title">恭喜你</strong>
+    <span id="rewardSub" data-i="reward.sub">收获已入账。</span>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (() => {
+    "use strict";
+    const SAVE_KEY = "xiuxian_moyu_save_v5_final"; // 最终版版本号
+    const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+    const now = ()=>Date.now();
+    const pad2 = n => String(n).padStart(2,"0");
+    const fmtClock = t => { const d=new Date(t); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
+    const fmt2 = n => (Math.round(n*100)/100).toFixed(2);
+
+    // i18n 扩展（新增负面事件日志）
+    const I = {
+      zh: {
+        "app.title":"修仙摸鱼：洞府·游历·灵兽·宗门·闪现·最终难版",
+        "app.sub":"奖励更难获取，负面事件频发，修仙需谨慎",
+        "ui.lang":"语言","ui.export":"导出存档","ui.import":"导入存档","ui.reset":"重开此生",
+        "panel.status":"状态","panel.act":"行动","panel.log":"江湖小报（日志）",
+        "k.realm":"境界","k.rate":"灵气/秒","k.stones":"灵石","k.luck":"机缘","k.will":"心性","k.qi":"灵气",
+        "k.house":"洞府","k.pet":"灵兽","k.sect":"宗门贡献",
+        "tag.auto":"自动修炼","tag.injury":"道伤","tag.items":"背包",
+        "hint.title":"一分钟上手·最终难版",
+        "hint.body":"洞府提升修炼效率并降低遇敌；灵兽可喂养、战斗指令；宗门接任务赚贡献换宝物。<br/>游历凶险但回报高，自由战斗可用「闪现」躲避攻击。<br/>注意：自动修炼变慢，负面事件频发，奖励更难获取！<br/>快捷键：<kbd>M</kbd>/<kbd>E</kbd>/<kbd>C</kbd>/<kbd>P</kbd>/<kbd>B</kbd>/<kbd>G</kbd>/<kbd>Y</kbd>游历/<kbd>H</kbd>灵兽面板",
+        "foot.autosave":"自动存档：开启（本地浏览器）",
+        "ui.toggleAuto":"切换自动修炼",
+        "ui.toggleMystery":"奖励显示：神秘/详细",
+        "act.med":"打坐（+灵气）","act.exp":"探索（奇遇）","act.craft":"炼器（拼脸）","act.pill":"服丹（稳一手）","act.break":"突破（赌命）","act.game":"躲飞剑（小游戏）","act.travel":"游历（凶险）","act.sect":"宗门事务",
+        "tab.daily":"日常","tab.bag":"背包","tab.pet":"灵兽","tab.sect":"宗门","tab.fortune":"掐指一算","tab.ach":"成就",
+        "foot.lang":"语言切换会即时刷新 UI 与日志文案。","ui.clearLog":"清空日志","ui.bottom":"到底部",
+        "foot.keep":"仅保留最近 200 条。",
+        "mini.title":"躲飞剑：坚持 20 秒，活着就赢","mini.how":"怎么玩","mini.start":"开始","mini.close":"关闭",
+        "mini.desc":"按 <b>← →</b> 或 <b>A D</b> 移动，别被飞剑扎到。通关按得分发灵石奖励。",
+        "mini.time":"剩余时间","mini.score":"得分","mini.reward":"奖励","mini.best":"最佳",
+        "ctrl.title":"选择控制方式（选完自动开始）",
+        "ctrl.kb":"电脑键盘（←→/A D）",
+        "ctrl.tilt":"手机倾斜（陀螺仪）",
+        "mode.classic":"经典（计时通关）",
+        "mode.endless":"无尽（活到被扎）",
+        "diff.normal":"普通",
+        "diff.hard":"困难",
+        "diff.hell":"地狱",
+        "ctrl.state.none":"当前：未选择",
+        "ctrl.state.kb":"当前：键盘控制",
+        "ctrl.state.tilt":"当前：陀螺仪控制",
+        "ctrl.note.kb":"提示：按住方向键/AD 移动，也支持触摸拖动角色。",
+        "ctrl.note.tilt":"提示：左右倾斜手机移动；若无陀螺仪或未授权，可用触摸拖动兜底。",
+        "ctrl.note.needPerm":"提示：iPhone/iPad 可能需要你点“允许”陀螺仪权限。",
+        "ctrl.note.noSupport":"提示：此设备/浏览器不支持陀螺仪，已建议改用键盘或触摸拖动。",
+        "ctrl.needMode":"还差一步：请选择模式与难度。",
+        "ctrl.needControl":"还差一步：请选择控制方式。",
+        "reward.title":"恭喜你",
+        "reward.sub":"收获已入账。",
+        "reward.subMystery":"好像赚到了（但我不说）。",
+        "reward.subDetail":"已获得奖励：{s}",
+        "battle.title":"战斗",
+        "battle.help":"说明",
+        "battle.leave":"离开",
+        "battle.enemyHp":"敌方气血",
+        "battle.playerHp":"你的气血",
+        "battle.atk":"出手",
+        "battle.def":"防守",
+        "battle.skill":"招式（耗灵气）",
+        "battle.flee":"开溜",
+        "battle.flash":"闪现(10灵气)",
+        "battle.note":"提示：自由模式可用闪现，消耗10灵气闪避下次攻击。灵兽高忠诚时自动助战。",
+        "battle.mode":"模式：回合制/自由式",
+        "battle.helpText":"规则：你先手。出手=稳定伤害；防守=减伤+小回血；招式=耗灵气打爆发；开溜=概率成功。自由模式可闪现。",
+        "toast.saved":"已自动存档。","toast.copied":"存档已复制到剪贴板。","toast.imported":"导入成功，已加载存档。","toast.invalid":"导入失败：内容不像存档。","toast.reset":"已重开此生（存档清空）。",
+        "toast.autoOn":"自动修炼：开启","toast.autoOff":"自动修炼：关闭","toast.logCleared":"日志已清空。",
+        "bag.pills":"丹药","bag.tal":"护身符","bag.art":"法器",
+        "bag.use":"使用","bag.note":"说明","bag.noteText":"丹药：下次突破成功率 +8%（可叠加到 24%）；护身符：失败时自动消耗，减轻道伤；法器：灵气/秒 +6%。",
+        "fortune.title":"今日运势","fortune.roll":"再算一次","fortune.bless":"烧香祈福（+机缘）",
+        "ach.title":"成就",
+        "pet.feed":"喂养（20灵石）","pet.loyal":"忠诚","pet.level":"灵兽等级","pet.panel":"灵兽信息",
+        "sect.task":"接取任务","sect.reward":"兑换奖励","sect.contrib":"贡献","sect.panel":"宗门事务",
+        "log.med":"你打坐片刻，灵气涌入丹田。",
+        "log.exp":"你溜达一圈，江湖气息扑面而来。",
+        "log.craft":"你点燃炉火，开始炼器（心里默念：别炸）。",
+        "log.pill":"你服下一颗丹药，心神稳定不少。",
+        "log.breakTry":"你凝神冲击瓶颈……",
+        "log.breakNo":"灵气还不够满，强行突破只会尬住。",
+        "log.breakSucc":"破！你成功突破，世界都更顺眼了。",
+        "log.breakFail":"差一点点！瓶颈反噬，你受了道伤。",
+        "log.breakProt":"护身符一闪，挡住大部分反噬。",
+        "log.findStone":"你捡到一袋灵石：+{n}。",
+        "log.findPill":"你遇到好心摊贩：丹药+1。",
+        "log.findTal":"你捡到一枚护身符：护身符+1。",
+        "log.art":"炉火纯青！你炼出一件小法器：法器+1。",
+        "log.boom":"轰——炸炉！道伤+{n}%。",
+        "log.bless":"白胡子老头点你一下：机缘+1。",
+        "log.leak":"你想起尴尬往事，灵气走岔：灵气-{n}。",
+        "log.heal":"你顿悟一瞬：道伤-{n}%。",
+        "log.miniWin":"你在飞剑雨中活了下来：灵石+{n}。",
+        "log.miniLose":"你被飞剑戳到：灵气-{n}。",
+        "log.thunder":"第{idx}道雷劫：血量 -{dmg}（{hp}/{max}）",
+        "log.reward":"恭喜你：收获已入账。",
+        "log.battleStart":"你探险时被人盯上了，战斗开始！",
+        "log.battleWin":"你赢下战斗。",
+        "log.battleLose":"你败下阵来，狼狈脱身。",
+        "log.travel":"你外出游历，险象环生……",
+        "log.travelReward":"游历收获颇丰：{desc}",
+        "log.petFeed":"你喂了灵兽，忠诚+{n}。",
+        "log.petAttack":"灵兽扑击，造成 {dmg} 点伤害！",
+        "log.sectTask":"你完成了宗门任务，贡献+{n}。",
+        "log.sectExchange":"你兑换了 {item}。",
+        "log.flashEvade":"你闪现躲开了致命一击！",
+        // 原有5条随机事件日志
+        "log.immortalGuide":"仙人指路，你心性提升。",
+        "log.ancientScroll":"你捡到残破秘籍，领悟了些许机缘。",
+        "log.thunderScratch":"被天雷擦过，灵气流失但心性更坚。",
+        "log.travelingMerchant":"遇到游方商人，低价买到丹药。",
+        "log.illusionTrap":"误入幻阵，心神受损。",
+        // 新增负面事件日志（最终难版）
+        "log.qiLeakLarge":"走火入魔！灵气大量流失，道伤加重。",
+        "log.mindDisturb":"心神不宁，心性下降，灵气逸散。",
+        "log.trapDamage":"踩到陷阱，灵石和灵气都减少了。",
+        "log.robbery":"遭遇抢劫，灵石被抢走一部分。",
+        "log.battleLossQi":"战斗损耗过度，灵气额外减少。",
+        "house.upgrade":"升级洞府",
+        "k.house":"洞府",
+        "house.bonus":"修炼+{a}% · 避敌+{b}%",
+        "realm.0":"凡人","realm.1":"炼气","realm.2":"筑基","realm.3":"金丹","realm.4":"元婴","realm.5":"化神","realm.6":"合体","realm.7":"大乘","realm.8":"渡劫","realm.9":"真·摸鱼仙",
+      },
+      en: {
+        "app.title":"Cultivation: Mansion·Travel·Pet·Sect·Flash·Final Hard",
+        "app.sub":"Harder rewards, frequent negative events",
+        "ui.lang":"Language","ui.export":"Export","ui.import":"Import","ui.reset":"Reset",
+        "panel.status":"Status","panel.act":"Actions","panel.log":"Log",
+        "k.realm":"Realm","k.rate":"Qi/s","k.stones":"Stones","k.luck":"Luck","k.will":"Will","k.qi":"Qi",
+        "k.house":"Mansion","k.pet":"Pet","k.sect":"Sect Contrib",
+        "tag.auto":"Auto","tag.injury":"Injury","tag.items":"Bag",
+        "hint.title":"Final hard tutorial",
+        "hint.body":"Mansion boosts & reduces ambush. Feed pet for loyalty. Sect tasks for rewards.<br/>Travel is risky but rewarding. Free battle: Flash to dodge.<br/>Note: auto-cultivation slower, negative events common.<br/>Keys: M/E/C/P/B/G/Y/H",
+        "foot.autosave":"Autosave ON",
+        "ui.toggleAuto":"Toggle Auto",
+        "ui.toggleMystery":"Mystery/Detail",
+        "act.med":"Meditate","act.exp":"Explore","act.craft":"Craft","act.pill":"Pill","act.break":"Breakthrough","act.game":"Dodge Swords","act.travel":"Travel","act.sect":"Sect",
+        "tab.daily":"Daily","tab.bag":"Bag","tab.pet":"Pet","tab.sect":"Sect","tab.fortune":"Fortune","tab.ach":"Achievements",
+        "foot.lang":"Language updates instantly.","ui.clearLog":"Clear Log","ui.bottom":"Bottom","foot.keep":"Latest 200.",
+        "mini.title":"Dodge Swords","mini.how":"How","mini.start":"Start","mini.close":"Close",
+        "mini.desc":"Move with ← → or A D. Reward based on score.",
+        "mini.time":"Time","mini.score":"Score","mini.reward":"Reward","mini.best":"Best",
+        "ctrl.title":"Controls","ctrl.kb":"Keyboard","ctrl.tilt":"Tilt",
+        "mode.classic":"Classic","mode.endless":"Endless",
+        "diff.normal":"Normal","diff.hard":"Hard","diff.hell":"Hell",
+        "ctrl.state.none":"None","ctrl.state.kb":"Keyboard","ctrl.state.tilt":"Tilt",
+        "ctrl.note.kb":"Use arrow keys/AD. Touch works.",
+        "ctrl.note.tilt":"Tilt left/right. Touch fallback.",
+        "ctrl.note.needPerm":"iOS may need permission.",
+        "ctrl.note.noSupport":"Gyro not supported.",
+        "ctrl.needMode":"Pick mode & difficulty",
+        "ctrl.needControl":"Pick controls",
+        "reward.title":"Congrats","reward.sub":"Credited.","reward.subMystery":"Feels profitable.","reward.subDetail":"Reward: {s}",
+        "battle.title":"Battle","battle.help":"Help","battle.leave":"Leave",
+        "battle.enemyHp":"Enemy HP","battle.playerHp":"Your HP",
+        "battle.atk":"Attack","battle.def":"Defend","battle.skill":"Skill","battle.flee":"Flee","battle.flash":"Flash (10 Qi)",
+        "battle.note":"Free mode: Flash dodges next attack (cost 10 Qi). Pet assists if loyal.",
+        "battle.mode":"Mode: Turn/Free",
+        "battle.helpText":"You act first. Attack=stable; Defend=reduce+heal; Skill=burst; Flee=chance. Free mode: Flash.",
+        "toast.saved":"Saved.","toast.copied":"Copied.","toast.imported":"Imported.","toast.invalid":"Invalid.","toast.reset":"Reset.",
+        "toast.autoOn":"Auto ON","toast.autoOff":"Auto OFF","toast.logCleared":"Log cleared.",
+        "bag.pills":"Pills","bag.tal":"Talismans","bag.art":"Artifacts","bag.use":"Use","bag.note":"Notes","bag.noteText":"Pills: +8% breakthrough; Talismans: auto on failure; Artifacts: +6% Qi/s.",
+        "fortune.title":"Fortune","fortune.roll":"Roll","fortune.bless":"Pray",
+        "ach.title":"Achievements",
+        "pet.feed":"Feed (20 stones)","pet.loyal":"Loyalty","pet.level":"Level","pet.panel":"Pet",
+        "sect.task":"Take Task","sect.reward":"Exchange","sect.contrib":"Contribution","sect.panel":"Sect",
+        "log.med":"You meditate.","log.exp":"You explore.","log.craft":"You craft.","log.pill":"You take a pill.","log.breakTry":"Breakthrough attempt...","log.breakNo":"Qi not full.","log.breakSucc":"Breakthrough!","log.breakFail":"Failure.","log.breakProt":"Talisman protects.","log.findStone":"Found stones +{n}.","log.findPill":"Found pill.","log.findTal":"Found talisman.","log.art":"Crafted artifact.","log.boom":"Boom! Injury +{n}%.","log.bless":"Luck +1.","log.leak":"Qi -{n}.","log.heal":"Injury -{n}%.","log.miniWin":"Minigame win +{n}.","log.miniLose":"Minigame lose -{n}.","log.thunder":"Bolt {idx}: -{dmg} HP","log.reward":"Reward.","log.battleStart":"Battle!","log.battleWin":"You win.","log.battleLose":"You lose.","log.travel":"You travel...","log.travelReward":"Travel reward: {desc}","log.petFeed":"Pet fed, loyalty +{n}.","log.petAttack":"Pet attacks for {dmg}!","log.sectTask":"Task done, +{n} contrib.","log.sectExchange":"Exchanged {item}.","log.flashEvade":"Flash dodged!",
+        "log.immortalGuide":"An immortal guides you, +will.",
+        "log.ancientScroll":"Ancient scroll, +luck.",
+        "log.thunderScratch":"Scratched by thunder, -qi +will.",
+        "log.travelingMerchant":"Merchant, +pill.",
+        "log.illusionTrap":"Illusion trap, -will.",
+        // New negative events
+        "log.qiLeakLarge":"Qi deviation! Heavy qi loss and injury.",
+        "log.mindDisturb":"Mind disturbed, -will and -qi.",
+        "log.trapDamage":"Stepped on a trap, lose stones and qi.",
+        "log.robbery":"Robbed! Some stones stolen.",
+        "log.battleLossQi":"Battle aftereffects, extra qi loss.",
+        "house.upgrade":"Upgrade Mansion",
+        "k.house":"Mansion",
+        "house.bonus":"Cult +{a}% · Avoid +{b}%",
+        "realm.0":"Mortal","realm.1":"Qi Refining","realm.2":"Foundation","realm.3":"Golden Core","realm.4":"Nascent Soul","realm.5":"Soul Transform","realm.6":"Integration","realm.7":"Mahayana","realm.8":"Tribulation","realm.9":"True Idle Immortal",
+      }
+    };
+    const esc = s => String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
+    function t(k, vars){
+      let s = (I[S.lang] && I[S.lang][k]) || I.zh[k] || k;
+      if (vars) for (const [kk,v] of Object.entries(vars)) s = s.replaceAll(`{${kk}}`, String(v));
+      return s;
+    }
+    function applyI18n(){
+      document.documentElement.lang = S.lang === "zh" ? "zh-CN" : "en";
+      for (const n of document.querySelectorAll("[data-i]")){
+        const k = n.getAttribute("data-i");
+        const txt = t(k);
+        if (txt.includes("<br/>") || txt.includes("<kbd>") || txt.includes("<b>")) n.innerHTML = txt;
+        else n.textContent = txt;
+      }
+      $("#lang").value = S.lang;
+      renderAll();
+      updateControlUI();
+    }
+
+    // core data
+    const REALMS = [
+      { cap: 60,  rate: 1.00, p: 0.78 },
+      { cap: 140, rate: 1.18, p: 0.74 },
+      { cap: 300, rate: 1.35, p: 0.70 },
+      { cap: 600, rate: 1.55, p: 0.66 },
+      { cap: 1100,rate: 1.78, p: 0.62 },
+      { cap: 1800,rate: 2.02, p: 0.58 },
+      { cap: 2800,rate: 2.28, p: 0.54 },
+      { cap: 4100,rate: 2.55, p: 0.50 },
+      { cap: 5700,rate: 2.85, p: 0.46 },
+      { cap: 8200,rate: 3.18, p: 0.42 },
+    ];
+    const HOUSE_COST = [0, 300, 900, 2500]; // 洞府升级费用 0->1,1->2,2->3
+    const ACH = [
+      { id:"m1",  zh:"初学打坐", en:"First Meditation",   descZh:"打坐 1 次。",  descEn:"Meditate once.", cond:s=>s.stat.med>=1 },
+      { id:"e10", zh:"江湖初探", en:"First Steps",        descZh:"探索 10 次。", descEn:"Explore 10 times.", cond:s=>s.stat.exp>=10 },
+      { id:"b1",  zh:"破境!",   en:"Break!",             descZh:"突破成功 1 次。", descEn:"Succeed 1 breakthrough.", cond:s=>s.stat.bSucc>=1 },
+      { id:"g1",  zh:"不怕飞剑",en:"Not Afraid",         descZh:"小游戏通关 1 次。", descEn:"Win minigame once.", cond:s=>s.stat.gWin>=1 },
+      { id:"r4",  zh:"金丹大道",en:"Golden Core",        descZh:"到达金丹。", descEn:"Reach Golden Core.", cond:s=>s.realm>=3 },
+      { id:"r9",  zh:"真·摸鱼仙",en:"True Idle Immortal",descZh:"到达最终境界。", descEn:"Reach final realm.", cond:s=>s.realm>=9 },
+    ];
+    function todayId(){
+      const d=new Date();
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    }
+    function defState(){
+      return {
+        v:6, // 版本号升级
+        lang:"zh",
+        realm:0,
+        qi:0,
+        stones:0,
+        luck:0,
+        will:0,
+        injury:0,
+        auto:true,
+        control:"",
+        gameMode:"classic",
+        gameDiff:"normal",
+        battleMode:"turn",
+        mysteryRewards:true,
+        items:{ pills:2, tal:1, art:0 },
+        pillBuff:0,
+        log:[],
+        daily:{ day: todayId(), t:{ med:0, exp:0, craft:0, game:0 }, need:{ med:8, exp:4, craft:3, game:1 }, claimed:false },
+        stat:{ med:0, exp:0, craft:0, cSucc:0, cFail:0, bTry:0, bSucc:0, bFail:0, gWin:0, gLose:0 },
+        miniBest:0,
+        // 新系统状态
+        houseLevel:0,
+        pet:{ level:1, loyalty:0, exp:0 },
+        sectContrib:0,
+        sectTask:{ active:false, progress:0, target:5, reward:30 },
+      };
+    }
+    function load(){
+      try{
+        const raw=localStorage.getItem(SAVE_KEY);
+        if(!raw) return defState();
+        const o=JSON.parse(raw);
+        const d=defState();
+        const s={...d,...o};
+        s.items={...d.items,...(o.items||{})};
+        s.daily={...d.daily,...(o.daily||{})};
+        s.stat={...d.stat,...(o.stat||{})};
+        s.lang = o.lang==="en" ? "en" : "zh";
+        s.houseLevel = clamp(Number(o.houseLevel)||0,0,3);
+        s.pet = o.pet ? { level:clamp(o.pet.level,1,5), loyalty:clamp(o.pet.loyalty,0,100), exp:clamp(o.pet.exp,0,100) } : { level:1, loyalty:0, exp:0 };
+        s.sectContrib = Math.max(0, Number(o.sectContrib)||0);
+        s.sectTask = o.sectTask || { active:false, progress:0, target:5, reward:30 };
+        s.control = (o.control === "keyboard" || o.control === "tilt") ? o.control : "";
+        s.gameMode = (o.gameMode === "endless") ? "endless" : "classic";
+        s.gameDiff = (o.gameDiff === "hard" || o.gameDiff === "hell") ? o.gameDiff : "normal";
+        s.battleMode = (o.battleMode === "free") ? "free" : "turn";
+        s.mysteryRewards = o.mysteryRewards !== false;
+        s.realm = clamp(Number(s.realm)||0,0,9);
+        s.qi = Math.max(0, Number(s.qi)||0);
+        s.stones = Math.max(0, Number(s.stones)||0);
+        s.luck = clamp(Number(s.luck)||0,0,60);
+        s.will = clamp(Number(s.will)||0,0,60);
+        s.injury = clamp(Number(s.injury)||0,0,80);
+        s.pillBuff = clamp(Number(s.pillBuff)||0,0,0.24);
+        s.log = Array.isArray(o.log) ? o.log.slice(-200) : [];
+        s.miniBest = Math.max(0, Number(o.miniBest)||0);
+        return s;
+      }catch{ return defState(); }
+    }
+    function save(){
+      try{ localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }catch{}
+      $("#saveState").textContent = (S.lang==="zh" ? "已保存" : "Saved") + " · " + fmtClock(now());
+      toastOnce("toast.saved", 600);
+    }
+    let saveTimer=null;
+    function saveSoon(){
+      if(saveTimer) return;
+      saveTimer=setTimeout(()=>{ saveTimer=null; save(); }, 520);
+    }
+    const $ = (q)=>document.querySelector(q.startsWith("#")?q:("#"+q));
+    const $$ = (q)=>Array.from(document.querySelectorAll(q));
+
+    const toastEl=$("#toast");
+    let toastT=null;
+    function toastOnce(key, ms=1300){
+      if(toastT) clearTimeout(toastT);
+      toastEl.textContent = t(key);
+      toastEl.classList.add("show");
+      toastT=setTimeout(()=>toastEl.classList.remove("show"), ms);
+    }
+
+    const rewardPopEl = $("#rewardPop");
+    const rewardTitleEl = $("#rewardTitle");
+    const rewardSubEl = $("#rewardSub");
+    let rewardPopT = null;
+    function showRewardPop(detailStr){
+      if(rewardPopT) clearTimeout(rewardPopT);
+      rewardTitleEl.textContent = t("reward.title");
+      if(S.mysteryRewards){
+        rewardSubEl.textContent = t("reward.subMystery");
+      } else if(detailStr){
+        rewardSubEl.textContent = t("reward.subDetail", { s: detailStr });
+      } else {
+        rewardSubEl.textContent = t("reward.sub");
+      }
+      rewardPopEl.classList.add("show");
+      rewardPopT = setTimeout(()=>rewardPopEl.classList.remove("show"), 1100);
+    }
+
+    let S = load();
+    function cap(){ return REALMS[S.realm].cap; }
+    function qiPerSec(){
+      const r=REALMS[S.realm];
+      const injuryMul = 1 - (S.injury/100);
+      const artMul = 1 + S.items.art*0.06;
+      const luckMul = 1 + S.luck*0.003;
+      const willMul = 1 + S.will*0.002;
+      const houseMul = 1 + S.houseLevel * 0.15; // 洞府每级+15%修炼
+      // 降低自动修炼效率：base从0.95改为0.65
+      const base = 0.65 * r.rate;
+      return (S.auto ? base : 0) * injuryMul * artMul * luckMul * willMul * houseMul;
+    }
+
+    function ensureDaily(){
+      const d=todayId();
+      if(!S.daily || S.daily.day!==d){
+        const seed = (d.split("-").join("")|0) ^ (S.stones|0) ^ (S.realm<<4);
+        const rng = mulberry(seed);
+        S.daily = {
+          day:d,
+          t:{ med:0, exp:0, craft:0, game:0 },
+          need:{ med: pick(rng,[6,8,10,12]), exp: pick(rng,[3,4,5,6]), craft: pick(rng,[2,3,4]), game: pick(rng,[1,1,2]) },
+          claimed:false
+        };
+        push("good","panel.log","log.bless",null);
+        saveSoon();
+      }
+    }
+    function mulberry(seed){
+      let t=seed>>>0;
+      return ()=>{ t+=0x6D2B79F5; let x=Math.imul(t^(t>>>15),1|t); x^=x+Math.imul(x^(x>>>7),61|x); return ((x^(x>>>14))>>>0)/4294967296; };
+    }
+    function pick(rng, arr){ return arr[Math.floor(rng()*arr.length)]; }
+
+    function push(kind, titleKey, msgKey, vars){
+      S.log.push({ ts:now(), kind, titleKey, msgKey, vars: vars||null });
+      if(S.log.length>200) S.log.splice(0, S.log.length-200);
+      renderLog();
+    }
+    function renderLog(){
+      $("#logN").textContent = String(S.log.length);
+      $("#log").innerHTML = S.log.map(e=>{
+        const cls = ["good","warn","bad"].includes(e.kind) ? e.kind : "";
+        const title = t(e.titleKey);
+        const msg = t(e.msgKey, e.vars||undefined);
+        return `<div class="entry ${cls}">
+          <div class="meta"><b>${esc(title)}</b><span>${esc(fmtClock(e.ts))}</span></div>
+          <p>${esc(msg)}</p>
+        </div>`;
+      }).join("");
+    }
+
+    function renderStatus(){
+      $("#clock").textContent = fmtClock(now());
+      $("#realm").textContent = t("realm."+S.realm);
+      $("#rate").textContent = fmt2(qiPerSec());
+      $("#stones").textContent = String(Math.floor(S.stones));
+      $("#luck").textContent = String(S.luck);
+      $("#will").textContent = String(S.will);
+      $("#injury").textContent = `${Math.round(S.injury)}%`;
+      $("#auto").textContent = S.auto ? "ON" : "OFF";
+      $("#bagMini").textContent = `${t("bag.pills")}×${S.items.pills} · ${t("bag.tal")}×${S.items.tal} · ${t("bag.art")}×${S.items.art}`;
+      const c = cap();
+      const q = clamp(S.qi,0,c);
+      $("#qiText").textContent = `${fmt2(q)} / ${fmt2(c)}`;
+      $("#qiFill").style.width = `${clamp(q/c*100,0,100)}%`;
+      $("#houseLv").textContent = S.houseLevel;
+      const houseBonusCult = S.houseLevel*15;
+      const houseBonusAvoid = S.houseLevel*5;
+      $("#houseBonus").textContent = t("house.bonus", {a:houseBonusCult, b:houseBonusAvoid});
+      $("#petInfo").textContent = S.pet ? `${t("pet.level")}${S.pet.level} · ${t("pet.loyal")}${S.pet.loyalty}` : t("k.pet")+"无";
+      $("#sectContrib").textContent = S.sectContrib;
+      $("#petLoyalty").textContent = `${t("pet.loyal")}${S.pet.loyalty}`;
+    }
+
+    // 新系统函数
+    function upgradeHouse(){
+      if(S.houseLevel >= 3) return;
+      const cost = HOUSE_COST[S.houseLevel+1];
+      if(S.stones < cost){
+        $("#tip").textContent = S.lang==="zh"?`灵石不足，需要${cost}`:`Need ${cost} stones`;
+        return;
+      }
+      S.stones -= cost;
+      S.houseLevel++;
+      push("good","panel.log","log.bless",null);
+      renderAll(); saveSoon();
+    }
+
+    function feedPet(){
+      const cost = 20;
+      if(S.stones < cost){
+        $("#tip").textContent = S.lang==="zh"?"灵石不足20":"Need 20 stones";
+        return;
+      }
+      S.stones -= cost;
+      let gain = 5 + Math.floor(Math.random()*6);
+      S.pet.loyalty = clamp(S.pet.loyalty + gain, 0, 100);
+      if(S.pet.loyalty >= 100 && S.pet.level < 5){
+        S.pet.level++;
+        S.pet.loyalty = 20;
+        push("good","panel.log","log.bless",null);
+      }
+      push("good","panel.log","log.petFeed", {n:gain});
+      renderAll(); saveSoon();
+    }
+
+    function travel(){
+      ensureDaily();
+      const cost = Math.max(5, cap()*0.08);
+      if(S.qi < cost){
+        push("warn","panel.act","log.leak",{n:Math.round(cost*0.5)});
+        renderAll(); return;
+      }
+      S.qi = clamp(S.qi - cost, 0, cap());
+      push("neutral","panel.act","log.travel",null);
+      // 提高游历遇敌概率（基础从0.5提高到0.65）
+      let enc = 0.65 - S.houseLevel*0.08 + S.realm*0.02 - S.luck*0.002;
+      enc = clamp(enc, 0.35, 0.9);
+      if(Math.random() < enc){
+        openBattle(makeEnemy(true)); // 游历敌人更强
+      } else {
+        const r = Math.random();
+        let desc = "";
+        if(r<0.3){
+          let n = 20 + S.realm*5; // 灵石减少
+          S.stones += n;
+          desc = `灵石+${n}`;
+        } else if(r<0.5){
+          S.items.pills += 1; // 丹药+1
+          desc = "丹药+1";
+        } else if(r<0.7){
+          S.luck = clamp(S.luck+1,0,60);
+          desc = "机缘+1";
+        } else {
+          // 惩罚选项：遭遇抢劫，灵石减少
+          let loss = 10 + Math.floor(Math.random()*20);
+          S.stones = Math.max(0, S.stones - loss);
+          push("bad","panel.log","log.robbery", null);
+          desc = `灵石-${loss}`;
+        }
+        showRewardPop(S.mysteryRewards?"":desc);
+        push("good","panel.log","log.travelReward", {desc});
+      }
+      renderAll(); saveSoon();
+    }
+
+    function sectTask(){
+      if(!S.sectTask.active){
+        S.sectTask.active = true;
+        S.sectTask.progress = 0;
+        S.sectTask.target = 3 + Math.floor(Math.random()*4);
+        S.sectTask.reward = 20 + S.realm*5;
+        push("neutral","panel.log","log.sectTask",null);
+      } else {
+        S.sectTask.progress++;
+        if(S.sectTask.progress >= S.sectTask.target){
+          S.sectContrib += S.sectTask.reward;
+          S.sectTask.active = false;
+          push("good","panel.log","log.sectTask", {n:S.sectTask.reward});
+          showRewardPop(S.mysteryRewards?"":`贡献+${S.sectTask.reward}`);
+        } else {
+          push("neutral","panel.log","log.sectTask",null);
+        }
+      }
+      renderAll(); saveSoon();
+    }
+
+    function sectExchange(){
+      if(S.sectContrib < 50) return;
+      S.sectContrib -= 50;
+      let item = Math.random();
+      if(item<0.4){
+        S.items.pills += 1;
+        push("good","panel.log","log.sectExchange", {item:"丹药"});
+      } else if(item<0.8){
+        S.items.tal += 1;
+        push("good","panel.log","log.sectExchange", {item:"护身符"});
+      } else {
+        S.items.art += 1;
+        push("good","panel.log","log.sectExchange", {item:"法器"});
+      }
+      renderAll(); saveSoon();
+    }
+
+    // 战斗系统扩展：闪现、灵兽
+    const battleOv = $("#battleOv");
+    const battleHelp = $("#battleHelp");
+    const battleClose = $("#battleClose");
+    const enemyNameEl = $("#enemyName");
+    const enemyTagEl = $("#enemyTag");
+    const enemyDescEl = $("#enemyDesc");
+    const enemyHpText = $("#enemyHpText");
+    const enemyHpFill = $("#enemyHpFill");
+    const playerHpText = $("#playerHpText");
+    const playerHpFill = $("#playerHpFill");
+    const battleTip = $("#battleTip");
+    const battleLogEl = $("#battleLog");
+    const battleAtk = $("#battleAtk");
+    const battleDef = $("#battleDef");
+    const battleSkill = $("#battleSkill");
+    const battleFlee = $("#battleFlee");
+    const battleFlash = $("#battleFlash");
+    const battleModeToggle = $("#battleModeToggle");
+    const battleModeText = $("#battleModeText");
+    const petBattleInfo = $("#petBattleInfo");
+
+    const B = {
+      on:false,
+      guard:false,
+      flashActive:false,
+      flashCooldown:false,
+      playerMax:100,
+      playerHp:100,
+      enemyMax:80,
+      enemyHp:80,
+      enemy:null,
+      turn:0,
+      timer:null
+    };
+
+    function enemyPool(){
+      if(S.lang === "zh"){
+        return [
+          { name:"山贼", tag:"拦路抢劫", desc:"他盯上你的灵石袋子。", base: 1.0 },
+          { name:"邪修", tag:"不讲武德", desc:"他笑着说：‘道友留步。’", base: 1.15 },
+          { name:"妖兽", tag:"野生暴躁", desc:"它看起来不太能讲道理。", base: 1.25 },
+          { name:"剑修路人", tag:"手痒切磋", desc:"他说：‘来两招。’你很难拒绝。", base: 1.35 },
+        ];
+      }
+      return [
+        { name:"Bandit", tag:"Roadblock", desc:"He wants your stones.", base: 1.0 },
+        { name:"Evil Cultivator", tag:"No rules", desc:"He says: 'Don't leave.'", base: 1.15 },
+        { name:"Beast", tag:"Wild", desc:"Negotiation seems unlikely.", base: 1.25 },
+        { name:"Sword Adept", tag:"Spar", desc:"He insists: 'Two moves.'", base: 1.35 },
+      ];
+    }
+
+    function makeEnemy(hard=false){
+      const pool = enemyPool();
+      const e0 = pool[Math.floor(Math.random()*pool.length)];
+      const realmMul = 1 + S.realm*0.22;
+      const hardMul = hard ? 1.4 : 1.0;
+      const hp = Math.round((70 + S.realm*32 + Math.random()*40) * e0.base * hardMul);
+      const atk = Math.round((10 + S.realm*4.6 + Math.random()*6) * e0.base * hardMul);
+      return { ...e0, hp: Math.round(hp*realmMul*0.92), atk: Math.round(atk*realmMul*0.90) };
+    }
+
+    function openBattle(enemy){
+      B.on = true;
+      B.guard = false;
+      B.flashActive = false;
+      B.flashCooldown = false;
+      B.turn = 0;
+      B.enemy = enemy;
+      const pMax = Math.round(120 + S.realm*46 + S.will*2.2);
+      B.playerMax = pMax;
+      B.playerHp = clamp(Math.round(pMax * (1 - S.injury/140)), 1, pMax);
+      B.enemyMax = enemy.hp;
+      B.enemyHp = enemy.hp;
+      battleLogEl.innerHTML = "";
+      battleTip.textContent = (S.lang==="zh")
+        ? "你先手。自由模式可用闪现(10灵气)。灵兽忠诚>60自动助战。"
+        : "You act first. Free mode: Flash. Pet assists if loyalty>60.";
+      battleOv.classList.add("show");
+      push("warn","panel.act","log.battleStart",null);
+      renderBattle();
+      if(S.battleMode === "free" && !B.timer){
+        B.timer = setInterval(enemyTurn, 900);
+      }
+    }
+
+    function closeBattle(){
+      battleOv.classList.remove("show");
+      B.on = false;
+      B.enemy = null;
+      stopBattleTimer();
+    }
+
+    function battleSay(kind, text){
+      const cls = kind ? kind : "";
+      const ts = fmtClock(now());
+      battleLogEl.insertAdjacentHTML("beforeend",
+        `<div class="entry ${cls}"><div class="meta"><b>${esc(text)}</b><span>${esc(ts)}</span></div></div>`
+      );
+      battleLogEl.scrollTop = battleLogEl.scrollHeight;
+    }
+
+    function renderBattle(){
+      if(!B.on || !B.enemy) return;
+      enemyNameEl.textContent = B.enemy.name;
+      enemyTagEl.textContent = B.enemy.tag;
+      enemyDescEl.textContent = B.enemy.desc;
+      enemyHpText.textContent = `${B.enemyHp}/${B.enemyMax}`;
+      enemyHpFill.style.width = `${clamp(B.enemyHp/B.enemyMax*100, 0, 100)}%`;
+      playerHpText.textContent = `${B.playerHp}/${B.playerMax}`;
+      playerHpFill.style.width = `${clamp(B.playerHp/B.playerMax*100, 0, 100)}%`;
+      battleAtk.disabled = !B.on;
+      battleDef.disabled = !B.on;
+      battleSkill.disabled = !B.on;
+      battleFlee.disabled = !B.on;
+      if(S.battleMode === "free"){
+        battleFlash.style.display = "inline-block";
+        battleFlash.disabled = B.flashCooldown || S.qi<10;
+      } else {
+        battleFlash.style.display = "none";
+      }
+      const modeText = S.battleMode === "free"
+        ? (S.lang==="zh" ? "自由模式（可闪现）" : "Free mode (Flash)")
+        : (S.lang==="zh" ? "回合制模式" : "Turn-based");
+      battleModeText.textContent = modeText;
+      // 灵兽助战提示
+      if(S.pet && S.pet.loyalty > 60){
+        petBattleInfo.style.display = "block";
+      } else {
+        petBattleInfo.style.display = "none";
+      }
+    }
+
+    function enemyTurn(){
+      if(!B.on) return;
+      const roll = 0.85 + Math.random()*0.35;
+      let dmg = Math.round(B.enemy.atk * roll);
+      if(B.guard) dmg = Math.round(dmg * 0.45);
+      B.guard = false;
+      if(B.flashActive){
+        dmg = 0;
+        B.flashActive = false;
+        battleSay("good", t("log.flashEvade"));
+      }
+      B.playerHp = Math.max(0, B.playerHp - dmg);
+      battleSay("bad", (S.lang==="zh") ? `对方出手：你受伤 -${dmg}` : `Enemy hits: -${dmg}`);
+      if(B.playerHp <= 0){
+        battleLose();
+      } else {
+        renderBattle();
+      }
+    }
+
+    function petAttack(){
+      if(!B.on || !S.pet || S.pet.loyalty <= 60) return;
+      let dmg = 5 + S.pet.level*2 + Math.floor(Math.random()*8);
+      B.enemyHp = Math.max(0, B.enemyHp - dmg);
+      battleSay("good", t("log.petAttack", {dmg}));
+      if(B.enemyHp <= 0) battleWin();
+    }
+
+    function battleWin(){
+      stopBattleTimer();
+      B.on = false;
+      // 减少战斗胜利灵石奖励
+      const rewardStones = Math.round(15 + S.realm*8 + Math.random()*15);
+      S.stones += rewardStones;
+      if(Math.random() < 0.22) S.items.pills += 1;
+      if(Math.random() < 0.16) S.items.tal += 1;
+      if(Math.random() < 0.10) S.items.art += 1;
+      if(Math.random() < 0.18) S.luck = clamp(S.luck+1, 0, 60);
+      if(Math.random() < 0.16) S.will = clamp(S.will+1, 0, 60);
+      // 30%概率额外扣除灵气（战斗损耗）
+      if(Math.random() < 0.3){
+        let loss = Math.max(1, Math.round(cap()*0.02));
+        S.qi = clamp(S.qi - loss, 0, cap());
+        push("bad","panel.log","log.battleLossQi", null);
+      }
+      showRewardPop(S.mysteryRewards ? "" : `${S.lang==="zh"?"灵石":"Stones"}+${rewardStones}`);
+      push("good","panel.log","log.battleWin",null);
+      push("good","panel.log","log.reward",null);
+      battleSay("good", (S.lang==="zh") ? "你赢了。战利品已入账。" : "You win. Loot credited.");
+      renderAll(); saveSoon();
+      setTimeout(closeBattle, 520);
+    }
+
+    function battleLose(){
+      stopBattleTimer();
+      B.on = false;
+      const inj = 8 + Math.floor(Math.random()*14);
+      const qiLoss = Math.max(1, Math.round(cap()*0.08));
+      S.injury = clamp(S.injury + inj, 0, 80);
+      S.qi = clamp(S.qi - qiLoss, 0, cap());
+      push("bad","panel.log","log.battleLose",null);
+      battleSay("bad", (S.lang==="zh") ? "你败了，只能狼狈撤退……" : "You lose and retreat…");
+      renderAll(); saveSoon();
+      setTimeout(closeBattle, 700);
+    }
+
+    function stopBattleTimer(){
+      if(B.timer){
+        clearInterval(B.timer);
+        B.timer = null;
+      }
+    }
+
+    function doBattleAttack(){
+      if(!B.on) return;
+      const base = 18 + S.realm*7 + S.will*0.25;
+      const dmg = Math.round(base * (0.85 + Math.random()*0.35));
+      B.enemyHp = Math.max(0, B.enemyHp - dmg);
+      battleSay("good", (S.lang==="zh") ? `你出手：对方 -${dmg}` : `You attack: -${dmg}`);
+      if(S.pet && S.pet.loyalty > 60) petAttack();
+      if(B.enemyHp <= 0){ battleWin(); return; }
+      renderBattle();
+      if(S.battleMode === "turn") enemyTurn();
+    }
+
+    function doBattleDef(){
+      if(!B.on) return;
+      B.guard = true;
+      const heal = Math.round(6 + S.will*0.15 + Math.random()*6);
+      B.playerHp = clamp(B.playerHp + heal, 1, B.playerMax);
+      battleSay("warn", (S.lang==="zh") ? `你凝神防守：回复 +${heal}` : `You defend: +${heal} HP`);
+      if(S.pet && S.pet.loyalty > 60) petAttack();
+      renderBattle();
+      if(S.battleMode === "turn") enemyTurn();
+    }
+
+    function doBattleSkill(){
+      if(!B.on) return;
+      const cost = Math.round(Math.max(6, cap()*0.05) + S.realm*3);
+      if(S.qi < cost){
+        battleSay("warn", (S.lang==="zh") ? "灵气不够，招式憋回去了。" : "Not enough Qi for skill.");
+        return;
+      }
+      S.qi = clamp(S.qi - cost, 0, cap());
+      const base = 34 + S.realm*11 + S.will*0.35;
+      const dmg = Math.round(base * (0.80 + Math.random()*0.45));
+      B.enemyHp = Math.max(0, B.enemyHp - dmg);
+      battleSay("good", (S.lang==="zh") ? `你使出招式（耗灵气${cost}）：对方 -${dmg}` : `Skill (Qi ${cost}): -${dmg}`);
+      if(S.pet && S.pet.loyalty > 60) petAttack();
+      if(B.enemyHp <= 0){ battleWin(); return; }
+      renderBattle();
+      if(S.battleMode === "turn") enemyTurn();
+    }
+
+    function doBattleFlee(){
+      if(!B.on) return;
+      const p = clamp(0.42 + S.luck*0.004 - S.injury*0.003, 0.12, 0.78);
+      if(Math.random() < p){
+        battleSay("warn", (S.lang==="zh") ? "你溜了！这不丢人，这叫战略撤退。" : "You fled! Strategic retreat.");
+        renderAll(); saveSoon();
+        setTimeout(()=>{ stopBattleTimer(); closeBattle(); }, 420);
+      } else {
+        battleSay("bad", (S.lang==="zh") ? "你没溜掉，对方趁机下重手！" : "Flee failed—enemy strikes hard!");
+        B.guard = false;
+        B.playerHp = Math.max(0, B.playerHp - Math.round(B.enemy.atk*0.35));
+        if(B.playerHp <= 0){ battleLose(); return; }
+        renderBattle();
+        enemyTurn();
+      }
+    }
+
+    function doBattleFlash(){
+      if(!B.on || B.flashCooldown) return;
+      if(S.qi < 10){
+        battleSay("warn", S.lang==="zh"?"灵气不足10":"Qi <10");
+        return;
+      }
+      S.qi -= 10;
+      B.flashActive = true;
+      B.flashCooldown = true;
+      battleFlash.disabled = true;
+      setTimeout(()=>{ B.flashCooldown = false; if(B.on) battleFlash.disabled = false; }, 3000);
+      battleSay("good", t("log.flashEvade"));
+      renderBattle();
+    }
+
+    // 原有玩法函数（保持不变，但修改了探索和随机事件）
+    function meditate(){
+      ensureDaily();
+      const houseMul = 1 + S.houseLevel * 0.2;
+      const gain = Math.max(1, (2 + Math.random()*7) * (1 - S.injury/120) * houseMul);
+      S.qi = clamp(S.qi + gain, 0, cap());
+      S.stat.med++; S.daily.t.med = Math.min(S.daily.need.med, S.daily.t.med+1);
+      push("neutral","panel.act","log.med",null);
+      maybeEvent(0.10);
+      renderAll(); saveSoon();
+    }
+    function explore(){
+      ensureDaily();
+      const cost = Math.max(2, cap()*0.03);
+      if(S.qi < cost){
+        const leak = 1;
+        S.qi = clamp(S.qi - leak, 0, cap());
+        push("warn","panel.act","log.leak",{n:leak});
+        renderAll(); saveSoon(); return;
+      }
+      S.qi = clamp(S.qi - cost, 0, cap());
+      S.stat.exp++; S.daily.t.exp = Math.min(S.daily.need.exp, S.daily.t.exp+1);
+      push("neutral","panel.act","log.exp",null);
+
+      // 提高遇敌概率
+      let enc = clamp(0.35 + S.realm*0.03 - S.luck*0.0015 - S.houseLevel*0.05 + S.injury*0.001, 0.15, 0.65);
+      if(S.houseLevel === 0) enc += 0.15;
+      if(Math.random() < enc){
+        openBattle(makeEnemy(false));
+        renderAll(); saveSoon();
+        return;
+      }
+
+      const r = Math.random() + S.luck*0.006;
+      // 降低获得奖励的概率和数值
+      if(r>1.25){
+        const n=10+Math.floor(Math.random()*30); // 灵石减少
+        S.stones+=n;
+        showRewardPop(S.mysteryRewards ? "" : `${S.lang==="zh"?"灵石":"Stones"}+${n}`);
+        push("good","panel.log", S.mysteryRewards ? "log.reward" : "log.findStone", S.mysteryRewards ? null : {n});
+      }
+      else if(r>1.0){
+        S.items.pills++;
+        showRewardPop(S.mysteryRewards ? "" : (S.lang==="zh" ? "丹药+1" : "Pill+1"));
+        push("good","panel.log", S.mysteryRewards ? "log.reward" : "log.findPill", null);
+      }
+      else if(r>0.82){
+        S.items.tal++;
+        showRewardPop(S.mysteryRewards ? "" : (S.lang==="zh" ? "护身符+1" : "Talisman+1"));
+        push("good","panel.log", S.mysteryRewards ? "log.reward" : "log.findTal", null);
+      }
+      else { maybeEvent(0.40); }
+      // 减少偶然的增益概率
+      if(Math.random()<0.15) S.luck = clamp(S.luck+1,0,60);
+      if(Math.random()<0.10) S.will = clamp(S.will+1,0,60);
+      renderAll(); saveSoon();
+    }
+    function craft(){
+      ensureDaily();
+      const price = 18 + S.items.art*10 + S.realm*6;
+      if(S.stones < price){
+        $("#tip").textContent = S.lang==="zh" ? `灵石不够（需要 ${price}）。` : `Not enough stones (need ${price}).`;
+        push("warn","panel.act","log.craft",null);
+        return;
+      }
+      S.stones -= price;
+      S.stat.craft++; S.daily.t.craft = Math.min(S.daily.need.craft, S.daily.t.craft+1);
+      push("neutral","panel.act","log.craft",null);
+      const base = 0.58 - S.items.art*0.02;
+      const p = clamp(base + S.luck*0.006 + S.will*0.004, 0.10, 0.88);
+      if(Math.random()<p){
+        S.items.art++; S.stat.cSucc++;
+        push("good","panel.log","log.art",null);
+      } else {
+        S.stat.cFail++;
+        const inj = 4 + Math.floor(Math.random()*10);
+        S.injury = clamp(S.injury + inj, 0, 80);
+        push("bad","panel.log","log.boom",{n:inj});
+      }
+      maybeEvent(0.10);
+      renderAll(); saveSoon();
+    }
+    function pill(){
+      ensureDaily();
+      if(S.items.pills<=0){
+        $("#tip").textContent = S.lang==="zh" ? "没丹了，先去探索碰碰运气。" : "No pills. Explore to find some.";
+        return;
+      }
+      S.items.pills--;
+      S.pillBuff = clamp(S.pillBuff + 0.08, 0, 0.24);
+      push("good","panel.act","log.pill",null);
+      renderAll(); saveSoon();
+    }
+    function breakthrough(){
+      ensureDaily();
+      const need = cap()*0.95;
+      if(S.qi < need){
+        push("warn","panel.act","log.breakNo",null);
+        renderAll(); return;
+      }
+      S.stat.bTry++;
+      push("neutral","panel.act","log.breakTry",null);
+      let hpVisMax = 100;
+      let hpVis = hpVisMax;
+      const bolts = 3 + Math.floor(Math.random()*3);
+      for(let i=0;i<bolts;i++){
+        const dmg = 12 + Math.floor(Math.random()*18);
+        hpVis = Math.max(1, hpVis - dmg);
+        push("warn","panel.log","log.thunder",{ idx:i+1, dmg, hp:hpVis, max:hpVisMax });
+      }
+      const r=REALMS[S.realm];
+      const p = clamp(r.p + S.luck*0.003 + S.will*0.004 + S.pillBuff - S.injury*0.004, 0.06, 0.92);
+      if(Math.random()<p){
+        S.stat.bSucc++;
+        S.realm = clamp(S.realm+1, 0, 9);
+        S.qi = REALMS[S.realm].cap*0.10;
+        S.injury = clamp(S.injury - (2+Math.floor(Math.random()*7)), 0, 80);
+        S.will = clamp(S.will+1, 0, 60);
+        if(Math.random()<0.30) S.luck = clamp(S.luck+1, 0, 60);
+        S.pillBuff = 0;
+        push("good","panel.log","log.breakSucc",null);
+      } else {
+        S.stat.bFail++;
+        const hasTal = S.items.tal>0;
+        const qiLoss = Math.round(cap()*(hasTal?0.08:0.14));
+        const inj = hasTal ? (4+Math.floor(Math.random()*10)) : (10+Math.floor(Math.random()*16));
+        if(hasTal){ S.items.tal--; push("warn","panel.log","log.breakProt",null); }
+        S.qi = clamp(S.qi - qiLoss, 0, cap());
+        S.injury = clamp(S.injury + inj, 0, 80);
+        S.pillBuff = 0;
+        push("bad","panel.log","log.breakFail",null);
+      }
+      maybeEvent(0.18);
+      renderAll(); saveSoon();
+    }
+
+    // 随机事件（新增负面，调整概率）
+    function maybeEvent(chance){
+      const c = chance + S.luck*0.0015;
+      if(Math.random()>c) return;
+      const r = Math.random();
+      // 重新分配概率，增加负面，减少正面
+      if(r<0.10){ // 仙人指路
+        S.will = clamp(S.will+2, 0, 60);
+        push("good","panel.log","log.immortalGuide",null);
+      }
+      else if(r<0.20){ // 残破秘籍
+        S.luck = clamp(S.luck+1, 0, 60);
+        push("good","panel.log","log.ancientScroll",null);
+      }
+      else if(r<0.35){ // 天雷擦过
+        let loss = Math.max(1, Math.round(cap()*0.03));
+        S.qi = clamp(S.qi - loss, 0, cap());
+        S.will = clamp(S.will+1, 0, 60);
+        push("warn","panel.log","log.thunderScratch", {n:loss});
+      }
+      else if(r<0.45){ // 游方商人
+        S.items.pills++;
+        push("good","panel.log","log.travelingMerchant",null);
+      }
+      else if(r<0.55){ // 误入幻阵
+        S.will = clamp(S.will-1, 0, 60);
+        push("bad","panel.log","log.illusionTrap",null);
+      }
+      else if(r<0.70){ // 走火入魔（新）
+        let loss = Math.max(1, Math.round(cap()*0.05));
+        S.qi = clamp(S.qi - loss, 0, cap());
+        S.injury = clamp(S.injury + 3, 0, 80);
+        push("bad","panel.log","log.qiLeakLarge", null);
+      }
+      else if(r<0.85){ // 心神不宁（新）
+        S.will = clamp(S.will-1, 0, 60);
+        let loss = Math.max(1, Math.round(cap()*0.02));
+        S.qi = clamp(S.qi - loss, 0, cap());
+        push("bad","panel.log","log.mindDisturb", null);
+      }
+      else if(r<0.95){ // 踩到陷阱（新）
+        let lossStone = 5 + Math.floor(Math.random()*15);
+        S.stones = Math.max(0, S.stones - lossStone);
+        let lossQi = Math.max(1, Math.round(cap()*0.01));
+        S.qi = clamp(S.qi - lossQi, 0, cap());
+        push("bad","panel.log","log.trapDamage", null);
+      }
+      else { // 保留原有点数奖励（减少概率）
+        if(Math.random()<0.5){
+          S.items.pills++;
+          push("good","panel.log", "log.findPill", null);
+        } else {
+          S.items.tal++;
+          push("good","panel.log", "log.findTal", null);
+        }
+      }
+    }
+
+    function hash32(str){
+      let h=2166136261;
+      for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); }
+      return h>>>0;
+    }
+
+    // tabs
+    const panels = { daily:"#p-daily", bag:"#p-bag", pet:"#p-pet", sect:"#p-sect", fortune:"#p-fortune", ach:"#p-ach" };
+    function setTab(id){
+      for(const tab of $$(".tab")){
+        const on = tab.dataset.tab===id;
+        tab.setAttribute("aria-selected", on?"true":"false");
+        tab.tabIndex = on?0:-1;
+      }
+      for(const [k,sel] of Object.entries(panels)){
+        $(sel).classList.toggle("show", k===id);
+      }
+    }
+    for(const tab of $$(".tab")){
+      tab.addEventListener("click", ()=>setTab(tab.dataset.tab));
+      tab.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setTab(tab.dataset.tab); }});
+    }
+
+    // 渲染日常、背包、灵兽、宗门、掐指、成就
+    function renderDaily(){
+      const d=S.daily;
+      const done = d.t.med>=d.need.med && d.t.exp>=d.need.exp && d.t.craft>=d.need.craft && d.t.game>=d.need.game;
+      const reward = done ? (20 + S.realm*8 + Math.floor((d.need.med+d.need.exp+d.need.craft)*2)) : 0;
+      const btn = done && !d.claimed
+        ? `<button class="btn good" id="claimDaily">${S.lang==="zh"?"领取奖励":"Claim"} (+${reward})</button>`
+        : `<button class="btn secondary" disabled>${d.claimed ? (S.lang==="zh"?"已领取":"Claimed") : (S.lang==="zh"?"未完成":"Not done")}</button>`;
+      $("#daily").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(S.lang==="zh"?"日常任务（每日刷新）":"Daily tasks (reset daily)")}</strong><em>${esc(d.day)}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"完成四项指标即可领奖励（灵石）。":"Finish all 4 counters to claim stones.")}</div>
+        </div>
+        ${dailyRow("M", S.lang==="zh"?"打坐":"Meditate", d.t.med, d.need.med)}
+        ${dailyRow("E", S.lang==="zh"?"探索":"Explore", d.t.exp, d.need.exp)}
+        ${dailyRow("C", S.lang==="zh"?"炼器":"Craft", d.t.craft, d.need.craft)}
+        ${dailyRow("G", S.lang==="zh"?"躲飞剑通关":"Minigame wins", d.t.game, d.need.game)}
+        <div class="row">
+          <div class="rowTop"><strong>${esc(S.lang==="zh"?"今日总进度":"Overall")}</strong><em>${esc(done?(S.lang==="zh"?"可领奖":"Ready"):(S.lang==="zh"?"继续摸鱼":"Keep going"))}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"完成后可领取灵石奖励。":"Claim stones when complete.")}</div>
+          <div class="rowBtns">${btn}</div>
+        </div>
+      `;
+      const claim=$("#claimDaily");
+      if(claim){
+        claim.addEventListener("click", ()=>{
+          if(S.daily.claimed) return;
+          if(!done) return;
+          S.daily.claimed=true;
+          S.stones += reward;
+          showRewardPop(S.mysteryRewards ? "" : `${S.lang==="zh"?"灵石":"Stones"}+${reward}`);
+          push("good","panel.log", S.mysteryRewards ? "log.reward" : "log.findStone", S.mysteryRewards ? null : {n:reward});
+          renderAll(); saveSoon();
+        });
+      }
+    }
+    function dailyRow(key, name, v, need){
+      const p = clamp(v/need,0,1);
+      return `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(name)} × ${need}</strong><em>${esc(key)}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"进度":"Progress")}: ${v}/${need}</div>
+          <div class="bar2"><i style="width:${Math.round(p*100)}%"></i></div>
+        </div>
+      `;
+    }
+
+    function renderBag(){
+      $("#bag").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("bag.pills"))}/${esc(t("bag.tal"))}/${esc(t("bag.art"))}</strong><em>${S.items.pills}/${S.items.tal}/${S.items.art}</em></div>
+          <div class="desc">${esc(t("bag.noteText"))}</div>
+        </div>
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("bag.use"))}</strong><em>—</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"点击丹药使用":"Click pill to use")}</div>
+          <div class="rowBtns"><button class="btn good" id="usePill">${esc(t("bag.use"))}</button></div>
+        </div>
+      `;
+      const b=$("#usePill");
+      if(b) b.addEventListener("click", ()=>pill());
+    }
+
+    function renderPet(){
+      $("#petPanel").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("pet.panel"))}</strong><em>Lv.${S.pet.level}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"忠诚":"Loyalty")}: ${S.pet.loyalty}/100</div>
+          <div class="bar2"><i style="width:${S.pet.loyalty}%"></i></div>
+          <div class="rowBtns"><button class="btn secondary" id="feedPetBtn">${esc(t("pet.feed"))}</button></div>
+        </div>
+      `;
+      $("#feedPetBtn").addEventListener("click", feedPet);
+    }
+
+    function renderSect(){
+      const taskHtml = S.sectTask.active
+        ? `<div class="desc">${S.lang==="zh"?"任务进度":"Progress"}: ${S.sectTask.progress}/${S.sectTask.target}</div><div class="bar2"><i style="width:${(S.sectTask.progress/S.sectTask.target)*100}%"></i></div>`
+        : `<div class="desc">${S.lang==="zh"?"无进行中的任务":"No active task"}</div>`;
+      $("#sectPanel").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("sect.contrib"))}</strong><em>${S.sectContrib}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"完成宗门任务获得贡献":"Earn contribution by tasks")}</div>
+        </div>
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("sect.task"))}</strong><em>${S.sectTask.active?S.lang==="zh"?"进行中":"Active":S.lang==="zh"?"可接":"Available"}</em></div>
+          ${taskHtml}
+          <div class="rowBtns"><button class="btn secondary" id="sectTaskBtn">${S.sectTask.active?(S.lang==="zh"?"提交进度":"Submit"):(S.lang==="zh"?"接取任务":"Take")}</button></div>
+        </div>
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("sect.reward"))}</strong><em>50贡献</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"随机获得丹药/护身符/法器":"Random pill/talisman/artifact")}</div>
+          <div class="rowBtns"><button class="btn secondary" id="sectExchangeBtn">${esc(t("sect.reward"))}</button></div>
+        </div>
+      `;
+      $("#sectTaskBtn").addEventListener("click", sectTask);
+      $("#sectExchangeBtn").addEventListener("click", sectExchange);
+    }
+
+    function renderFortune(){
+      const d=todayId();
+      const seed = hash32(d + "|" + S.realm + "|" + Math.floor(S.stones));
+      const rng = mulberry(seed);
+      const r = rng();
+      const msg = r>0.72
+        ? (S.lang==="zh"?"大吉：适合突破、探索、以及在群里装忙。":"Great luck: consider a breakthrough and exploring.")
+        : r>0.32
+          ? (S.lang==="zh"?"中平：稳健修炼，少炼器（为了你的心态）。":"Neutral: cultivate steadily, avoid too much crafting.")
+          : (S.lang==="zh"?"小凶：别硬刚，先吃丹攒护身符。":"Slightly bad: don't force it—take pills and stock talismans.");
+      $("#fortune").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("fortune.title"))}</strong><em>seed:${esc(String(seed))}</em></div>
+          <div class="desc">${esc(msg)}</div>
+          <div class="rowBtns">
+            <button class="btn secondary" id="rollF">${esc(t("fortune.roll"))}</button>
+            <button class="btn" id="blessF">${esc(t("fortune.bless"))}</button>
+          </div>
+          <div class="hint">${esc(S.lang==="zh"?"这不是迷信，是概率学；但你心里舒服了，成功率就会提高一点点（真的就一点点）。":"Not superstition—just probability. Feeling better helps a tiny bit.")}</div>
+        </div>
+      `;
+      $("#rollF").addEventListener("click", renderFortune);
+      $("#blessF").addEventListener("click", ()=>{
+        const cost = 15 + Math.floor(S.luck*0.5);
+        if(S.stones < cost){
+          $("#tip").textContent = S.lang==="zh" ? "灵石不够，香火钱也不能白嫖。" : "Not enough stones for incense.";
+          return;
+        }
+        S.stones -= cost;
+        S.luck = clamp(S.luck+1,0,60);
+        push("good","panel.log","log.bless",null);
+        renderAll(); saveSoon();
+      });
+    }
+
+    function renderAch(){
+      const unlocked = ACH.filter(a=>a.cond(S)).map(a=>a.id);
+      $("#ach").innerHTML = `
+        <div class="row">
+          <div class="rowTop"><strong>${esc(t("ach.title"))}</strong><em>${esc(`${unlocked.length}/${ACH.length}`)}</em></div>
+          <div class="desc">${esc(S.lang==="zh"?"成就不加战力，只加快乐。":"Achievements boost joy, not power.")}</div>
+        </div>
+      ` + ACH.map(a=>{
+        const ok = unlocked.includes(a.id);
+        const name = S.lang==="zh" ? a.zh : a.en;
+        const desc = S.lang==="zh" ? a.descZh : a.descEn;
+        return `
+          <div class="row">
+            <div class="rowTop"><strong>${esc(name)}</strong><em>${esc(ok ? (S.lang==="zh"?"已解锁":"Unlocked") : (S.lang==="zh"?"未解锁":"Locked"))}</em></div>
+            <div class="desc">${esc(desc)}</div>
+            <div class="bar2"><i style="width:${ok?100:10}%"></i></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAll(){
+      ensureDaily();
+      renderStatus();
+      renderDaily();
+      renderBag();
+      renderPet();
+      renderSect();
+      renderFortune();
+      renderAch();
+      renderLog();
+      $("#mb").textContent = String(S.miniBest||0);
+      $("#tip").textContent = S.lang==="zh" ? `当前突破丹效：${Math.round(S.pillBuff*100)}%` : `Pill buff: ${Math.round(S.pillBuff*100)}%`;
+      if(B.on) renderBattle();
+    }
+
+    // 躲飞剑小游戏（完全保留原有代码）
+    const ov=$("#ov"), cv=$("#cv"), ctx=cv.getContext("2d");
+    const mt=$("#mt"), ms=$("#ms"), mr=$("#mr"), mb=$("#mb"), mmsg=$("#mmsg");
+    const ctrlKeyboard = $("#ctrlKeyboard");
+    const ctrlTilt = $("#ctrlTilt");
+    const modeClassic = $("#modeClassic");
+    const modeEndless = $("#modeEndless");
+    const diffNormal = $("#diffNormal");
+    const diffHard = $("#diffHard");
+    const diffHell = $("#diffHell");
+    const ctrlState = $("#ctrlState");
+    const ctrlNote = $("#ctrlNote");
+    const startBtn = $("#start");
+    let tiltVal = 0;
+    let tiltEnabled = false;
+    let tiltListenerOn = false;
+    const G = {
+      on:false,
+      t:20, score:0, reward:0, surv:0,
+      best: S.miniBest||0,
+      p:{ x:cv.width/2, y:cv.height-54, w:52, h:18, vx:0 },
+      swords:[],
+      spawn:0,
+      keys:{L:false,R:false},
+      last: now(),
+      cfg: null
+    };
+    const touch = { on:false, pid:null };
+    function hasGyro(){ return typeof window !== "undefined" && ("DeviceOrientationEvent" in window); }
+    function onOri(e){ if(!ov.classList.contains("show")) return; if(!e) return; const g = e.gamma; if(typeof g !== "number") return; tiltVal = clamp(g/25, -1, 1); }
+    async function enableTilt(){
+      if(!hasGyro()){ tiltEnabled = false; ctrlNote.textContent = t("ctrl.note.noSupport"); return false; }
+      try{
+        if(typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function"){
+          ctrlNote.textContent = t("ctrl.note.needPerm");
+          const res = await DeviceOrientationEvent.requestPermission();
+          if(res !== "granted"){ tiltEnabled = false; return false; }
+        }
+      }catch{ tiltEnabled = false; return false; }
+      if(!tiltListenerOn){ window.addEventListener("deviceorientation", onOri, true); tiltListenerOn = true; }
+      tiltEnabled = true; return true;
+    }
+    function updateControlUI(){
+      const mode = S.control;
+      const sel = (mode === "keyboard" || mode === "tilt");
+      ctrlKeyboard.classList.toggle("good", mode === "keyboard");
+      ctrlKeyboard.classList.toggle("secondary", mode !== "keyboard");
+      ctrlTilt.classList.toggle("good", mode === "tilt");
+      ctrlTilt.classList.toggle("secondary", mode !== "tilt");
+      modeClassic.classList.toggle("good", S.gameMode === "classic");
+      modeClassic.classList.toggle("secondary", S.gameMode !== "classic");
+      modeEndless.classList.toggle("good", S.gameMode === "endless");
+      modeEndless.classList.toggle("secondary", S.gameMode !== "endless");
+      diffNormal.classList.toggle("good", S.gameDiff === "normal");
+      diffNormal.classList.toggle("secondary", S.gameDiff !== "normal");
+      diffHard.classList.toggle("good", S.gameDiff === "hard");
+      diffHard.classList.toggle("secondary", S.gameDiff !== "hard");
+      diffHell.classList.toggle("good", S.gameDiff === "hell");
+      diffHell.classList.toggle("secondary", S.gameDiff !== "hell");
+      if(!sel){
+        ctrlState.textContent = t("ctrl.state.none");
+        ctrlNote.textContent = t("ctrl.needControl");
+        startBtn.disabled = true;
+      } else if(mode === "keyboard"){
+        ctrlState.textContent = `${t("ctrl.state.kb")} · ${t("mode."+S.gameMode)} · ${t("diff."+S.gameDiff)}`;
+        ctrlNote.textContent = t("ctrl.note.kb");
+        startBtn.disabled = false;
+      } else {
+        ctrlState.textContent = `${t("ctrl.state.tilt")} · ${t("mode."+S.gameMode)} · ${t("diff."+S.gameDiff)}`;
+        ctrlNote.textContent = t("ctrl.note.tilt");
+        startBtn.disabled = false;
+      }
+    }
+    function setMode(m){ S.gameMode = (m === "endless") ? "endless" : "classic"; updateControlUI(); renderAll(); saveSoon(); if(ov.classList.contains("show") && !G.on && (S.control==="keyboard"||S.control==="tilt")) startGame(); }
+    function setDiff(d){ S.gameDiff = (d === "hard" || d === "hell") ? d : "normal"; updateControlUI(); renderAll(); saveSoon(); if(ov.classList.contains("show") && !G.on && (S.control==="keyboard"||S.control==="tilt")) startGame(); }
+    async function setControl(mode){
+      S.control = mode;
+      updateControlUI();
+      if(mode === "tilt"){ const ok = await enableTilt(); if(!ok){ ctrlNote.textContent = hasGyro() ? t("ctrl.note.needPerm") : t("ctrl.note.noSupport"); } }
+      renderAll(); saveSoon();
+      if(!G.on) startGame();
+    }
+    function openGame(){
+      ov.classList.add("show");
+      mmsg.textContent = S.lang==="zh"
+        ? "先选控制方式（电脑/手机），再选模式与难度。触摸拖动也能玩。"
+        : "Pick controls (keyboard/tilt), then mode & difficulty. Touch-drag also works.";
+      updateControlUI();
+      drawGame(true);
+    }
+    function closeGame(){ ov.classList.remove("show"); G.on=false; }
+    function startGame(){
+      if(!(S.control === "keyboard" || S.control === "tilt")){ updateControlUI(); mmsg.textContent = S.lang==="zh" ? "请选择控制方式后再开始。" : "Choose controls before starting."; return; }
+      const cfg = gameCfg();
+      G.cfg = cfg;
+      G.on=true; G.t=cfg.duration; G.surv=0; G.score=0; G.reward=0; G.swords=[]; G.spawn=0;
+      G.p.x=cv.width/2; G.p.vx=0; G.p.w = cfg.playerW;
+      G.last=now();
+      if(S.control === "tilt") enableTilt();
+      mmsg.textContent = S.lang==="zh" ? "开始！别慌（触摸拖动也可）。" : "Go! Don't panic (touch-drag works).";
+      requestAnimationFrame(loopGame);
+    }
+    function gameCfg(){
+      const diff = S.gameDiff;
+      const mode = S.gameMode;
+      const base = {
+        duration: mode === "endless" ? Infinity : 20,
+        spawnBase: 0.34,
+        spawnMin: 0.12,
+        speedBase: 220,
+        speedRand: 180,
+        swordR0: 9,
+        swordR1: 15,
+        playerW: 52,
+        wobble: 12,
+        scoreMul: 1.0,
+      };
+      if(diff === "hard"){
+        base.spawnBase = 0.28; base.spawnMin = 0.10;
+        base.speedBase = 270; base.speedRand = 220;
+        base.swordR0 = 9; base.swordR1 = 14;
+        base.playerW = 46;
+        base.scoreMul = 1.15;
+      } else if(diff === "hell"){
+        base.spawnBase = 0.23; base.spawnMin = 0.08;
+        base.speedBase = 320; base.speedRand = 260;
+        base.swordR0 = 8; base.swordR1 = 13;
+        base.playerW = 40;
+        base.wobble = 15;
+        base.scoreMul = 1.35;
+      }
+      return base;
+    }
+    function spawnSword(intensity, cfg){
+      const x = 24 + Math.random()*(cv.width-48);
+      const v = cfg.speedBase + Math.random()*cfg.speedRand + intensity*170;
+      const r = cfg.swordR0 + Math.random()*(cfg.swordR1 - cfg.swordR0);
+      G.swords.push({ x, y:-30, v, r, wob: Math.random()*Math.PI*2 });
+    }
+    function hitSword(s){
+      const px=G.p.x, py=G.p.y;
+      const rx = clamp(s.x, px-G.p.w/2, px+G.p.w/2);
+      const ry = clamp(s.y, py-G.p.h/2, py+G.p.h/2);
+      const dx=s.x-rx, dy=s.y-ry;
+      return (dx*dx+dy*dy) <= (s.r*s.r);
+    }
+    function loopGame(){
+      if(!G.on) return;
+      const cfg = G.cfg || gameCfg();
+      const tN=now();
+      const dt=clamp((tN-G.last)/1000, 0, 0.05);
+      G.last=tN;
+      if(S.gameMode === "classic"){ G.t = Math.max(0, G.t-dt); G.surv += dt; }
+      else { G.surv += dt; }
+      const intensity = (S.gameMode === "classic") ? clamp(1 - (G.t / Math.max(1, cfg.duration)), 0, 1) : clamp(G.surv / 30, 0, 1);
+      const accel=1100;
+      if(S.control === "keyboard"){
+        if(G.keys.L) G.p.vx -= accel*dt;
+        if(G.keys.R) G.p.vx += accel*dt;
+      } else if(S.control === "tilt"){
+        const dead = 0.10;
+        const v = Math.abs(tiltVal) < dead ? 0 : tiltVal;
+        G.p.vx += v * accel * dt;
+      }
+      G.p.vx *= Math.pow(0.03, dt);
+      G.p.x += G.p.vx*dt;
+      G.p.x = clamp(G.p.x, 40, cv.width-40);
+      G.spawn += dt;
+      const every = clamp(cfg.spawnBase - intensity*0.18, cfg.spawnMin, cfg.spawnBase);
+      while(G.spawn >= every){
+        G.spawn -= every;
+        spawnSword(intensity, cfg);
+        if(intensity>0.65 && Math.random() < (S.gameDiff==="hell" ? 0.45 : 0.30)) spawnSword(intensity*0.7, cfg);
+      }
+      for(const s of G.swords){
+        s.y += s.v*dt;
+        s.wob += dt*(2.2 + intensity*2);
+        s.x += Math.sin(s.wob)*cfg.wobble*dt*(1+intensity);
+      }
+      G.swords = G.swords.filter(s=>s.y < cv.height+40);
+      G.score += Math.round(((6 + intensity*10) * dt*10) * cfg.scoreMul);
+      for(const s of G.swords){
+        if(hitSword(s)){
+          G.on=false;
+          const loss = Math.max(1, Math.round(cap()*0.03));
+          S.qi = clamp(S.qi - loss, 0, cap());
+          S.stat.gLose++;
+          if(S.gameMode === "endless"){
+            const reward = Math.max(0, 10 + Math.floor(G.score/18) + S.realm*6);
+            if(reward > 0){ S.stones += reward; showRewardPop(); }
+            push("bad","panel.log","log.miniLose", S.mysteryRewards ? { n: 0 } : { n: loss });
+            mmsg.textContent = S.lang==="zh" ? "无尽结束：你被扎到了（奖励已结算）。" : "Endless ended: you got hit (reward settled).";
+          } else {
+            push("bad","panel.log","log.miniLose", S.mysteryRewards ? { n: 0 } : { n: loss });
+            mmsg.textContent = S.lang==="zh" ? "被扎到了！下次一定更稳。" : "Ouch! Next time.";
+          }
+          renderAll(); saveSoon();
+          drawGame();
+          return;
+        }
+      }
+      if(S.gameMode === "classic" && G.t<=0){
+        G.on=false;
+        const reward = 35 + Math.floor(G.score/10) + S.realm*8 + (S.gameDiff==="hard"?18:0) + (S.gameDiff==="hell"?42:0);
+        S.stones += reward;
+        S.stat.gWin++;
+        S.daily.t.game = Math.min(S.daily.need.game, S.daily.t.game+1);
+        showRewardPop();
+        push("good","panel.log","log.miniWin", S.mysteryRewards ? { n: 0 } : { n: reward });
+        if(G.score > (S.miniBest||0)){ S.miniBest = G.score; }
+        mmsg.textContent = S.lang==="zh" ? "通关！奖励已发放。" : "Cleared! Reward granted.";
+        renderAll(); saveSoon();
+        drawGame();
+        return;
+      }
+      G.reward = (S.gameMode === "classic")
+        ? (35 + Math.floor(G.score/10) + S.realm*8 + (S.gameDiff==="hard"?18:0) + (S.gameDiff==="hell"?42:0))
+        : (10 + Math.floor(G.score/18) + S.realm*6);
+      mt.textContent = (S.gameMode === "classic") ? `${G.t.toFixed(1)}s` : "∞";
+      ms.textContent = String(G.score);
+      mr.textContent = String(G.reward);
+      mb.textContent = String(S.miniBest||0);
+      drawGame();
+      requestAnimationFrame(loopGame);
+    }
+    function drawGame(idle=false){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      ctx.fillStyle="rgba(124,252,255,.06)";
+      ctx.fillRect(0, cv.height-90, cv.width, 90);
+      ctx.save();
+      ctx.translate(G.p.x, G.p.y);
+      ctx.fillStyle="rgba(124,252,255,.85)";
+      ctx.strokeStyle="rgba(255,255,255,.55)";
+      ctx.lineWidth=2;
+      roundRect(ctx, -G.p.w/2, -G.p.h/2, G.p.w, G.p.h, 8);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+      for(const s of G.swords){
+        ctx.beginPath();
+        ctx.fillStyle="rgba(255,211,107,.85)";
+        ctx.strokeStyle="rgba(255,255,255,.45)";
+        ctx.lineWidth=2;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+        ctx.strokeStyle="rgba(255,211,107,.14)";
+        ctx.lineWidth=6;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y - s.r);
+        ctx.lineTo(s.x, s.y - 36);
+        ctx.stroke();
+      }
+      if(idle){
+        mt.textContent = "20.0s"; ms.textContent="0"; mr.textContent="0"; mb.textContent=String(S.miniBest||0);
+      }
+    }
+    function roundRect(c,x,y,w,h,r){
+      c.beginPath();
+      c.moveTo(x+r,y);
+      c.arcTo(x+w,y,x+w,y+h,r);
+      c.arcTo(x+w,y+h,x,y+h,r);
+      c.arcTo(x,y+h,x,y,r);
+      c.arcTo(x,y,x+w,y,r);
+      c.closePath();
+    }
+
+    // 小游戏事件
+    $("#how").addEventListener("click", ()=>{
+      mmsg.textContent = S.lang==="zh"
+        ? "规则：经典=坚持到计时结束；无尽=活到被扎。难度越高飞剑越多越快。奖励会弹「恭喜你」。"
+        : "Rule: Classic = survive until timer ends; Endless = survive until hit. Higher diff spawns faster swords.";
+    });
+    $("#start").addEventListener("click", startGame);
+    $("#close").addEventListener("click", closeGame);
+    ov.addEventListener("click", (e)=>{ if(e.target===ov) closeGame(); });
+    ctrlKeyboard.addEventListener("click", ()=>setControl("keyboard"));
+    ctrlTilt.addEventListener("click", ()=>setControl("tilt"));
+    modeClassic.addEventListener("click", ()=>setMode("classic"));
+    modeEndless.addEventListener("click", ()=>setMode("endless"));
+    diffNormal.addEventListener("click", ()=>setDiff("normal"));
+    diffHard.addEventListener("click", ()=>setDiff("hard"));
+    diffHell.addEventListener("click", ()=>setDiff("hell"));
+
+    // 触摸控制
+    cv.addEventListener("pointerdown", (e)=>{
+      if(!ov.classList.contains("show")) return;
+      touch.on = true;
+      touch.pid = e.pointerId;
+      cv.setPointerCapture(e.pointerId);
+      const rect = cv.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (cv.width / rect.width);
+      G.p.x = clamp(x, 40, cv.width-40);
+    });
+    cv.addEventListener("pointermove", (e)=>{
+      if(!touch.on) return;
+      if(touch.pid !== e.pointerId) return;
+      const rect = cv.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (cv.width / rect.width);
+      G.p.x = clamp(x, 40, cv.width-40);
+    });
+    const endTouch = (e)=>{
+      if(touch.pid !== null && e.pointerId !== touch.pid) return;
+      touch.on = false;
+      touch.pid = null;
+    };
+    cv.addEventListener("pointerup", endTouch);
+    cv.addEventListener("pointercancel", endTouch);
+
+    // 全局快捷键
+    window.addEventListener("keydown", (e)=>{
+      const k=e.key.toLowerCase();
+      if(ov.classList.contains("show")){
+        if(e.key==="Escape"){ closeGame(); return; }
+        if(e.key==="ArrowLeft"||k==="a") G.keys.L=true;
+        if(e.key==="ArrowRight"||k==="d") G.keys.R=true;
+        return;
+      }
+      if(k==="m") meditate();
+      else if(k==="e") explore();
+      else if(k==="c") craft();
+      else if(k==="p") pill();
+      else if(k==="b") breakthrough();
+      else if(k==="g") openGame();
+      else if(k==="y") travel();
+      else if(k==="h") setTab("pet");
+    });
+    window.addEventListener("keyup", (e)=>{
+      const k=e.key.toLowerCase();
+      if(!ov.classList.contains("show")) return;
+      if(e.key==="ArrowLeft"||k==="a") G.keys.L=false;
+      if(e.key==="ArrowRight"||k==="d") G.keys.R=false;
+    });
+
+    // 所有事件监听
+    $("#med").addEventListener("click", meditate);
+    $("#exp").addEventListener("click", explore);
+    $("#craft").addEventListener("click", craft);
+    $("#pill").addEventListener("click", pill);
+    $("#break").addEventListener("click", breakthrough);
+    $("#travelBtn").addEventListener("click", travel);
+    $("#sectBtn").addEventListener("click", ()=>setTab("sect"));
+    $("#game").addEventListener("click", openGame);
+    $("#upgradeHouse").addEventListener("click", upgradeHouse);
+    $("#feedPet").addEventListener("click", feedPet);
+    $("#toggleAuto").addEventListener("click", ()=>{
+      S.auto=!S.auto;
+      toastOnce(S.auto?"toast.autoOn":"toast.autoOff");
+      renderAll(); saveSoon();
+    });
+    $("#toggleMystery").addEventListener("click", ()=>{
+      S.mysteryRewards = !S.mysteryRewards;
+      showRewardPop();
+      renderAll(); saveSoon();
+    });
+    $("#clearLog").addEventListener("click", ()=>{
+      S.log=[]; toastOnce("toast.logCleared");
+      renderAll(); saveSoon();
+    });
+    $("#toBottom").addEventListener("click", ()=>{ const l=$("#log"); l.scrollTop=l.scrollHeight; });
+    $("#export").addEventListener("click", async ()=>{
+      const txt = btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+      try{ await navigator.clipboard.writeText(txt); toastOnce("toast.copied"); }
+      catch{ prompt(S.lang==="zh"?"复制下面这段存档字符串：":"Copy this save string:", txt); }
+    });
+    $("#import").addEventListener("click", ()=>{
+      const inp = prompt(S.lang==="zh"?"把存档字符串粘贴到这里：":"Paste your save string:");
+      if(!inp) return;
+      try{
+        const json = decodeURIComponent(escape(atob(inp.trim())));
+        const o = JSON.parse(json);
+        localStorage.setItem(SAVE_KEY, JSON.stringify(o));
+        S = load();
+        ensureDaily();
+        toastOnce("toast.imported");
+        applyI18n();
+        saveSoon();
+      }catch{ toastOnce("toast.invalid"); }
+    });
+    $("#reset").addEventListener("click", ()=>{
+      const ok = confirm(S.lang==="zh"?"确定要重开吗？这会清空当前存档。":"Reset? This clears the current save.");
+      if(!ok) return;
+      localStorage.removeItem(SAVE_KEY);
+      S = defState();
+      toastOnce("toast.reset");
+      applyI18n();
+      saveSoon();
+    });
+    $("#lang").addEventListener("change", (e)=>{
+      S.lang = e.target.value==="en" ? "en" : "zh";
+      applyI18n();
+      saveSoon();
+    });
+
+    // 战斗相关事件
+    battleHelp.addEventListener("click", ()=>{ battleSay("warn", t("battle.helpText")); });
+    battleClose.addEventListener("click", closeBattle);
+    battleAtk.addEventListener("click", doBattleAttack);
+    battleDef.addEventListener("click", doBattleDef);
+    battleSkill.addEventListener("click", doBattleSkill);
+    battleFlee.addEventListener("click", doBattleFlee);
+    battleFlash.addEventListener("click", doBattleFlash);
+    battleOv.addEventListener("click", (e)=>{ if(e.target === battleOv) closeBattle(); });
+    battleModeToggle.addEventListener("click", ()=>{
+      S.battleMode = S.battleMode === "turn" ? "free" : "turn";
+      if(S.battleMode === "free" && B.on && !B.timer){
+        B.timer = setInterval(enemyTurn, 900);
+      }
+      if(S.battleMode === "turn") stopBattleTimer();
+      renderBattle();
+      saveSoon();
+    });
+
+    // 循环
+    let last=now();
+    setInterval(()=>{
+      ensureDaily();
+      const tN=now();
+      const dt=(tN-last)/1000;
+      last=tN;
+      const gain = qiPerSec()*dt;
+      if(gain>0) S.qi = clamp(S.qi + gain, 0, cap());
+      if(S.qi >= cap()*0.4 && S.injury>0 && Math.random()<0.02) S.injury = clamp(S.injury-1, 0, 80);
+      if(S.auto) maybeEvent(0.02); // 降低随机事件触发概率
+      renderStatus();
+    }, 120);
+
+    applyI18n();
+    renderAll();
+    renderLog();
+    saveSoon();
+
+  })();
+  </script>
+</body>
+</html>
