@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>彩蛋 · 网页游戏星球</title>
+<style>
+  :root{
+    --bg:#07080f; --bg2:#0d1024; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.12);
+    --text:#eef1ff; --muted:#9aa3c7; --brand:#7cfcff; --brand2:#b07aff; --good:#67e8a3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--text);
+    background:radial-gradient(1100px 600px at 15% -10%,rgba(124,252,255,.12),transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,rgba(176,122,255,.14),transparent 55%),
+               linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 48px;
+  }
+  .top{width:min(720px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{font-size:clamp(22px,5vw,30px);background:linear-gradient(90deg,var(--brand),var(--brand2));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .home{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:8px 14px;border-radius:999px;
+        background:var(--card);cursor:pointer;text-decoration:none}
+  .home:hover{color:var(--text);border-color:var(--brand)}
+  .lead{width:min(720px,100%);color:var(--muted);font-size:13px;line-height:1.7;margin:14px 0 6px}
+  .lead b{color:var(--brand)}
+
+  .feature{width:min(720px,100%);margin:10px 0 26px;border:1px solid var(--line);border-radius:18px;
+    overflow:hidden;display:flex;background:
+      radial-gradient(600px 300px at 80% -20%,rgba(124,252,255,.18),transparent 60%),var(--card);
+    text-decoration:none;color:inherit;transition:.18s}
+  .feature:hover{transform:translateY(-2px);border-color:var(--brand)}
+  .feature .fc{flex:1;padding:20px 22px}
+  .feature .tag{display:inline-block;font-size:11px;color:#06121a;background:var(--good);
+    padding:3px 10px;border-radius:999px;font-weight:700;margin-bottom:10px}
+  .feature h2{font-size:22px;margin-bottom:8px}
+  .feature p{color:var(--muted);font-size:13px;line-height:1.6}
+  .feature .go{display:flex;align-items:center;justify-content:center;width:96px;font-size:30px;
+    background:linear-gradient(180deg,rgba(124,252,255,.18),rgba(176,122,255,.18));border-left:1px solid var(--line)}
+
+  .grid{width:min(720px,100%);display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .gcard{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--card);
+    text-decoration:none;color:inherit;transition:.18s;display:flex;flex-direction:column;gap:6px}
+  .gcard:hover{transform:translateY(-2px);border-color:var(--brand);background:rgba(255,255,255,.08)}
+  .gcard .emoji{font-size:26px}
+  .gcard .name{font-size:16px;font-weight:700}
+  .gcard .desc{font-size:12px;color:var(--muted);line-height:1.5}
+  .gcard .url{font-size:11px;color:var(--brand);margin-top:2px;word-break:break-all}
+  .foot{width:min(720px,100%);color:var(--muted);font-size:12px;text-align:center;margin-top:28px;line-height:1.7}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>🐰 彩蛋 · 网页游戏星球</h1>
+    <a class="home" href="index.html">返回首页</a>
+  </div>
+
+  <p class="lead">这是个隐藏传送门 —— 收集了<b>不用下载、打开浏览器就能玩</b>的好地方。第一个就是能在网页里直接盖房子的《我的世界》经典版，下面还有一堆免费网页游戏站。点任意一张卡片即可在新标签页打开，玩完关掉回来就行。</p>
+
+  <a class="feature" href="https://classic.minecraft.net/" target="_blank" rel="noopener noreferrer">
+    <div class="fc">
+      <span class="tag">★ 主推 · MC</span>
+      <h2>🟩 Minecraft 经典版（网页内运行）</h2>
+      <p>由 Mojang 官方提供的《我的世界》浏览器版本，无需账号、无需下载，打开就能和朋友联机盖房子、挖矿、打怪。纯网页运行，点开即玩。</p>
+    </div>
+    <div class="go">↗</div>
+  </a>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="foot">上述站点均为公开免费的网页游戏平台，链接仅作收藏与分享，内容由各自站点提供。<br>本页不收集任何信息，放心游玩。</p>
+
+<script>
+  const SITES=[
+    {emoji:"🎮",name:"Poki",          desc:"海量免费小游戏，分类清晰，手机电脑都能玩。",            url:"https://poki.com"},
+    {emoji:"⚡",name:"CrazyGames",     desc:"动作、解谜、多人联机，加载快、品类全。",                url:"https://www.crazygames.com"},
+    {emoji:"🕹️",name:"Kongregate",     desc:"老牌网页游戏社区，排行榜与成就系统完善。",              url:"https://www.kongregate.com"},
+    {emoji:"🎨",name:"Newgrounds",     desc:"不仅有游戏，还有动画与音乐，独立创作者的天堂。",        url:"https://www.newgrounds.com"},
+    {emoji:"🔥",name:"Armor Games",    desc:"策略与角色扮演类精品网页游戏聚集地。",                  url:"https://armorgames.com"},
+    {emoji:"🌀",name:"Addicting Games",desc:"经典休闲小游戏站，杀时间神器。",                        url:"https://www.addictinggames.com"},
+    {emoji:"💡",name:"itch.io",        desc:"独立游戏作者的发布平台，藏着无数脑洞小游戏。",          url:"https://itch.io"},
+    {emoji:"🎯",name:"Miniclip",       desc:"桌球、射击、体育类网页游戏老字号。",                    url:"https://www.miniclip.com"},
+  ];
+  const grid=document.getElementById('grid');
+  for(const s of SITES){
+    const a=document.createElement('a');
+    a.className='gcard'; a.href=s.url; a.target='_blank'; a.rel='noopener noreferrer';
+    a.innerHTML='<div class="emoji">'+s.emoji+'</div><div class="name">'+s.name+'</div>'+
+                '<div class="desc">'+s.desc+'</div><div class="url">'+s.url+'</div>';
+    grid.appendChild(a);
+  }
+</script>
+</body>
+</html>

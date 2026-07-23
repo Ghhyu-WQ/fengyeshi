@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>2048 合并</title>
+<style>
+  :root{
+    --bg:#07080f; --bg2:#0d1024; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.12);
+    --text:#eef1ff; --muted:#9aa3c7; --brand:#7cfcff; --brand2:#b07aff; --good:#67e8a3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--text);
+    background:radial-gradient(1100px 600px at 15% -10%,rgba(124,252,255,.12),transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,rgba(176,122,255,.14),transparent 55%),
+               linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 40px;
+  }
+  .top{width:min(440px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{font-size:clamp(22px,5vw,30px);background:linear-gradient(90deg,var(--brand),var(--brand2));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .home{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:8px 14px;border-radius:999px;
+        background:var(--card);cursor:pointer;text-decoration:none}
+  .home:hover{color:var(--text);border-color:var(--brand)}
+  .bar{width:min(440px,100%);display:flex;gap:10px;margin:14px 0}
+  .stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:center}
+  .stat b{display:block;font-size:18px;font-family:ui-monospace,monospace}
+  .stat span{font-size:11px;color:var(--muted)}
+  .board{
+    width:min(440px,100%);aspect-ratio:1/1;position:relative;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:10px;
+    display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:10px;
+    touch-action:none;user-select:none;
+  }
+  .cell{background:rgba(255,255,255,.05);border-radius:10px;display:flex;align-items:center;justify-content:center;
+        font-size:clamp(20px,6vw,34px);font-weight:800;font-family:ui-monospace,monospace;color:#fff;
+        text-shadow:0 1px 4px rgba(0,0,0,.5)}
+  .controls{width:min(440px,100%);display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+  .controls button{padding:9px 0;flex:1;min-width:64px;border-radius:10px;border:1px solid var(--line);
+        background:var(--card);color:var(--text);font-weight:700;font-size:14px;cursor:pointer}
+  .controls button:hover{border-color:var(--brand)}
+  .tip{color:var(--muted);font-size:12px;margin-top:12px;text-align:center;width:min(440px,100%)}
+  .overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;border-radius:16px;
+           background:rgba(5,6,15,.78);backdrop-filter:blur(3px);z-index:5}
+  .overlay.show{display:flex}
+  .overlay .msg{text-align:center}
+  .overlay h2{font-size:26px;margin-bottom:6px}
+  .overlay p{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>2️⃣ 2048 合并</h1>
+    <a class="home" href="index.html">返回首页</a>
+  </div>
+
+  <div class="bar">
+    <div class="stat"><b id="score">0</b><span>分数</span></div>
+    <div class="stat"><b id="best">0</b><span>最高</span></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="overlay" id="over"><div class="msg"><h2 id="overTitle">游戏结束</h2><p id="overText">点击「重开」再来一局</p></div></div>
+  </div>
+
+  <div class="controls">
+    <button data-dir="up">↑ 上</button>
+    <button data-dir="left">← 左</button>
+    <button data-dir="down">↓ 下</button>
+    <button data-dir="right">→ 右</button>
+    <button id="restart">重开</button>
+  </div>
+
+  <div class="tip">方向键 / 滑动屏幕移动方块，相同数字相撞即合并。目标：凑出 2048！</div>
+
+<script>
+  const SIZE = 4;
+  const COLORS = {2:"rgba(124,252,255,.22)",4:"rgba(176,122,255,.26)",8:"rgba(103,232,163,.34)",
+    16:"rgba(255,211,107,.40)",32:"rgba(255,143,207,.46)",64:"rgba(139,156,255,.52)",
+    128:"rgba(124,252,255,.60)",256:"rgba(176,122,255,.66)",512:"rgba(103,232,163,.72)",
+    1024:"rgba(255,211,107,.80)",2048:"rgba(255,143,207,.90)"};
+  const boardEl = document.getElementById('board');
+  const scoreEl = document.getElementById('score');
+  const bestEl = document.getElementById('best');
+  const overEl = document.getElementById('over');
+
+  let grid, score, best, over, won;
+  best = Number(localStorage.getItem('g2048best') || 0);
+  bestEl.textContent = best;
+
+  function emptyGrid(){ return Array.from({length:SIZE},()=>Array(SIZE).fill(0)); }
+  function cells(){ const r=[]; for(let i=0;i<SIZE;i++)for(let j=0;j<SIZE;j++) if(grid[i][j]===0) r.push([i,j]); return r; }
+  function addRandom(){
+    const cs = cells(); if(!cs.length) return;
+    const [i,j] = cs[Math.floor(Math.random()*cs.length)];
+    grid[i][j] = Math.random()<0.9 ? 2 : 4;
+  }
+  function render(){
+    scoreEl.textContent = score;
+    if(score>best){ best=score; bestEl.textContent=best; localStorage.setItem('g2048best',best); }
+    // clear cells (keep overlay)
+    [...boardEl.querySelectorAll('.cell')].forEach(e=>e.remove());
+    for(let i=0;i<SIZE;i++)for(let j=0;j<SIZE;j++){
+      const v = grid[i][j];
+      const c = document.createElement('div');
+      c.className='cell';
+      c.textContent = v ? v : '';
+      c.style.background = v ? (COLORS[v]||'#fff') : 'rgba(255,255,255,.05)';
+      boardEl.appendChild(c);
+    }
+  }
+  function slide(line){
+    const arr = line.filter(v=>v); const res=[];
+    for(let i=0;i<arr.length;i++){
+      if(arr[i]===arr[i+1]){ const m=arr[i]*2; res.push(m); score+=m; i++; }
+      else res.push(arr[i]);
+    }
+    while(res.length<SIZE) res.push(0);
+    return res;
+  }
+  function move(dir){
+    if(over) return;
+    const before = JSON.stringify(grid);
+    if(dir==='left'||dir==='right'){
+      for(let i=0;i<SIZE;i++){
+        let row = grid[i].slice();
+        if(dir==='right') row.reverse();
+        row = slide(row);
+        if(dir==='right') row.reverse();
+        grid[i]=row;
+      }
+    } else {
+      for(let j=0;j<SIZE;j++){
+        let col = [grid[0][j],grid[1][j],grid[2][j],grid[3][j]];
+        if(dir==='down') col.reverse();
+        col = slide(col);
+        if(dir==='down') col.reverse();
+        for(let i=0;i<SIZE;i++) grid[i][j]=col[i];
+      }
+    }
+    if(JSON.stringify(grid)!==before){
+      addRandom();
+      if(!won && grid.flat().includes(2048)){ won=true; flash('🎉 2048！','可以继续挑战更高分'); }
+      if(isOver()) end();
+      render();
+    }
+  }
+  function isOver(){
+    if(cells().length) return false;
+    for(let i=0;i<SIZE;i++)for(let j=0;j<SIZE;j++){
+      const v=grid[i][j];
+      if(j<SIZE-1 && grid[i][j+1]===v) return false;
+      if(i<SIZE-1 && grid[i+1][j]===v) return false;
+    }
+    return true;
+  }
+  function end(){ over=true; overEl.querySelector('#overTitle').textContent='游戏结束'; overEl.querySelector('#overText').textContent='得分 '+score+' · 点击「重开」再来'; overEl.classList.add('show'); }
+  function flash(title,text){ const t=overEl.querySelector('#overTitle'),p=overEl.querySelector('#overText'); t.textContent=title; p.textContent=text; overEl.classList.add('show'); setTimeout(()=>overEl.classList.remove('show'),1100); }
+  function reset(){ grid=emptyGrid(); score=0; over=false; won=false; overEl.classList.remove('show'); addRandom(); addRandom(); render(); }
+
+  document.addEventListener('keydown', e=>{
+    const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+    if(map[e.key]){ e.preventDefault(); move(map[e.key]); }
+  });
+  document.querySelectorAll('.controls button[data-dir]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.dir)));
+  document.getElementById('restart').addEventListener('click', reset);
+
+  // touch swipe
+  let sx=0,sy=0;
+  boardEl.addEventListener('touchstart',e=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; },{passive:true});
+  boardEl.addEventListener('touchend',e=>{
+    const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<24) return;
+    if(Math.abs(dx)>Math.abs(dy)) move(dx>0?'right':'left'); else move(dy>0?'down':'up');
+  },{passive:true});
+
+  reset();
+</script>
+</body>
+</html>

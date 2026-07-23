@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>像素鸟</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'PingFang SC','Microsoft YaHei',sans-serif; color:#eef1ff;
+    background:linear-gradient(160deg,#07080f,#0d1024); min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; padding:18px;
+  }
+  .home { align-self:flex-start; color:#ffd055; font-size:14px; font-weight:700; padding:8px 14px;
+    background:rgba(0,0,0,0.5); border:1px solid #ffd055; border-radius:8px; text-decoration:none; }
+  h1 { font-size:22px; margin:8px 0 10px; }
+  .wrap { position:relative; }
+  canvas { background:linear-gradient(180deg,#1b3a6b,#3a7bd5 60%,#cfe8ff); border:1px solid rgba(124,252,255,0.25);
+    border-radius:12px; touch-action:none; max-width:92vw; height:auto; display:block; }
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; gap:12px; align-items:center;
+    justify-content:center; background:rgba(5,7,15,0.8); border-radius:12px; text-align:center; padding:20px; }
+  .overlay.hidden { display:none; }
+  .overlay p { color:#9aa3c7; max-width:260px; line-height:1.6; font-size:14px; }
+  .btn { padding:11px 22px; border-radius:999px; border:none; cursor:pointer; font-weight:700; font-size:15px;
+    color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); }
+  .score { position:absolute; top:14px; left:0; width:100%; text-align:center; font-size:34px; font-weight:800;
+    color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+  <a class="home" href="index.html">返回首页</a>
+  <h1>🐤 像素鸟</h1>
+  <div class="wrap">
+    <canvas id="cv" width="360" height="540"></canvas>
+    <div class="score" id="score">0</div>
+    <div class="overlay" id="ov">
+      <h2 id="ovTitle">像素鸟</h2>
+      <p id="ovText">点击 / 空格 / 点屏幕让小鸟上飞，松手它会下落。穿过水管缝隙得分，撞到水管或地面就结束。</p>
+      <button class="btn" id="startBtn">开始</button>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const scoreEl = document.getElementById('score'), ov = document.getElementById('ov');
+  const ovTitle = document.getElementById('ovTitle'), ovText = document.getElementById('ovText'), startBtn = document.getElementById('startBtn');
+
+  let bird, pipes, score, vY, loop, running, best=0;
+  try { best = +localStorage.getItem('flappy_best')||0; } catch(e){}
+
+  function reset(){
+    bird = {x:90, y:H/2, r:13};
+    vY = 0; pipes = []; score = 0; scoreEl.textContent = 0;
+    for (let i=0;i<3;i++) addPipe(W + i*170);
+  }
+  function addPipe(x){ const gap=140, gy=40+Math.random()*(H-gap-80); pipes.push({x, gapY:gy, gap, passed:false}); }
+
+  function flap(){ if(!running){ return; } vY = -5.2; }
+
+  function step(){
+    vY += 0.32; bird.y += vY;
+    if (bird.y + bird.r > H) return end();
+    if (bird.y - bird.r < 0) { bird.y = bird.r; vY = 0; }
+
+    for (const p of pipes){
+      p.x -= 2.4;
+      if (!p.passed && p.x + 26 < bird.x){ p.passed = true; score++; scoreEl.textContent = score; }
+    }
+    if (pipes.length && pipes[0].x < -30) pipes.shift();
+    const last = pipes[pipes.length-1];
+    if (last.x < W - 170) addPipe(last.x + 170);
+
+    // 碰撞
+    for (const p of pipes){
+      if (bird.x + bird.r > p.x && bird.x - bird.r < p.x + 26){
+        if (bird.y - bird.r < p.gapY || bird.y + bird.r > p.gapY + p.gap) return end();
+      }
+    }
+    draw();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // 水管
+    for (const p of pipes){
+      ctx.fillStyle = '#2fbf71'; ctx.strokeStyle = '#1c8a4d'; ctx.lineWidth = 3;
+      ctx.fillRect(p.x, 0, 26, p.gapY); ctx.strokeRect(p.x, 0, 26, p.gapY);
+      ctx.fillRect(p.x, p.gapY+p.gap, 26, H-(p.gapY+p.gap)); ctx.strokeRect(p.x, p.gapY+p.gap, 26, H-(p.gapY+p.gap));
+      ctx.fillStyle = '#1c8a4d'; ctx.fillRect(p.x-3, p.gapY-10, 32, 10); ctx.fillRect(p.x-3, p.gapY+p.gap, 32, 10);
+    }
+    // 鸟
+    ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(bird.x, bird.y, bird.r, 0, 7); ctx.fill();
+    ctx.fillStyle = '#06121a'; ctx.beginPath(); ctx.arc(bird.x+5, bird.y-4, 3, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ff8c00'; ctx.beginPath(); ctx.moveTo(bird.x+bird.r-2, bird.y); ctx.lineTo(bird.x+bird.r+8, bird.y-3); ctx.lineTo(bird.x+bird.r+8, bird.y+3); ctx.fill();
+  }
+
+  function end(){
+    running = false; cancelAnimationFrame(loop);
+    if (score > best){ best = score; try{localStorage.setItem('flappy_best',best);}catch(e){} }
+    ovTitle.textContent = '撞到了！';
+    ovText.textContent = '本次得分 ' + score + '（最高 ' + best + '）。再来一局？';
+    ov.classList.remove('hidden');
+  }
+
+  function frame(){ if(running){ step(); loop = requestAnimationFrame(frame); } }
+
+  function start(){
+    reset(); draw(); ov.classList.add('hidden'); running = true;
+    cancelAnimationFrame(loop); loop = requestAnimationFrame(frame);
+  }
+
+  function tap(e){ e.preventDefault(); if(running) flap(); }
+  cv.addEventListener('mousedown', tap);
+  cv.addEventListener('touchstart', tap, {passive:false});
+  window.addEventListener('keydown', e=>{ if(e.code==='Space'){ e.preventDefault(); if(running) flap(); } });
+  startBtn.addEventListener('click', start);
+  reset(); draw();
+})();
+</script>
+</body>
+</html>

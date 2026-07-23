@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>迷宫</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; color:#eef1ff;
+    background:linear-gradient(160deg,#07080f,#0d1024); min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; padding:18px; }
+  .home { align-self:flex-start; color:#ffd055; font-size:14px; font-weight:700; padding:8px 14px;
+    background:rgba(0,0,0,0.5); border:1px solid #ffd055; border-radius:8px; text-decoration:none; }
+  h1 { font-size:22px; margin:8px 0 8px; }
+  .bar { display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:10px; color:#9aa3c7; font-size:14px; }
+  .bar b { color:#7cfcff; }
+  .src { display:flex; gap:8px; margin-bottom:10px; }
+  .chip { cursor:pointer; font-size:13px; color:#9aa3c7; border:1px solid rgba(255,255,255,0.12); padding:6px 14px; border-radius:999px; }
+  .chip.active { color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); border:none; font-weight:700; }
+  canvas { background:#0a0d1e; border:1px solid rgba(124,252,255,0.25); border-radius:10px; touch-action:none; max-width:92vw; height:auto; }
+  .btn { margin-left:8px; padding:8px 16px; border-radius:999px; border:none; cursor:pointer; font-weight:700; font-size:14px;
+    color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); }
+  .hint { color:#9aa3c7; font-size:12.5px; margin-top:10px; }
+</style>
+</head>
+<body>
+  <a class="home" href="index.html">返回首页</a>
+  <h1>🌀 迷宫</h1>
+  <div class="bar">
+    <div class="src">
+      <span class="chip active" data-n="12">简单</span>
+      <span class="chip" data-n="18">中等</span>
+      <span class="chip" data-n="26">困难</span>
+    </div>
+    <span>用时 <b id="time">0.0s</b></span>
+    <button class="btn" id="newBtn">换迷宫</button>
+  </div>
+  <canvas id="cv" width="440" height="440"></canvas>
+  <div class="hint">方向键 / WASD 或滑动屏幕移动蓝色方块到 🏁，别撞墙。</div>
+
+<script>
+(function () {
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const timeEl = document.getElementById('time');
+  let N = 12, cell, grid, player, goal, startT, timer, won;
+
+  // 递归回溯生成迷宫：grid[y][x] = 墙位 bit(上右下左)
+  function gen(n){
+    const g = Array.from({length:n},()=>Array.from({length:n},()=>({w:15,vis:false})));
+    const stack = [[0,0]]; g[0][0].vis = true;
+    while(stack.length){
+      const [x,y] = stack[stack.length-1];
+      const nb = [];
+      if(y>0 && !g[y-1][x].vis) nb.push([x,y-1,1,4]);
+      if(x<n-1 && !g[y][x+1].vis) nb.push([x+1,y,2,8]);
+      if(y<n-1 && !g[y+1][x].vis) nb.push([x,y+1,4,1]);
+      if(x>0 && !g[y][x-1].vis) nb.push([x-1,y,8,2]);
+      if(!nb.length){ stack.pop(); continue; }
+      const [nx,ny,bit,opp] = nb[Math.floor(Math.random()*nb.length)];
+      g[y][x].w ^= bit; g[ny][nx].w ^= opp; g[ny][nx].vis = true; stack.push([nx,ny]);
+    }
+    return g;
+  }
+
+  function build(){
+    cell = Math.floor((cv.width - 8) / N);
+    const off = (cv.width - cell*N)/2;
+    grid = gen(N); player = {x:0,y:0}; goal = {x:N-1,y:N-1}; won=false;
+    startT = performance.now();
+    clearInterval(timer); timeEl.textContent='0.0s';
+    timer = setInterval(()=>{ timeEl.textContent = ((performance.now()-startT)/1000).toFixed(1)+'s'; }, 100);
+    draw(off);
+  }
+
+  function draw(off){
+    off = off!==undefined ? off : (cv.width - cell*N)/2;
+    ctx.fillStyle='#0a0d1e'; ctx.fillRect(0,0,cv.width,cv.height);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const px=off+x*cell, py=off+y*cell, c=grid[y][x];
+      ctx.fillStyle='#16203c'; ctx.fillRect(px,py,cell,cell);
+      ctx.strokeStyle='#7cfcff'; ctx.lineWidth=2;
+      if(c.w&1){ ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+cell,py);ctx.stroke(); }
+      if(c.w&2){ ctx.beginPath();ctx.moveTo(px+cell,py);ctx.lineTo(px+cell,py+cell);ctx.stroke(); }
+      if(c.w&4){ ctx.beginPath();ctx.moveTo(px,py+cell);ctx.lineTo(px+cell,py+cell);ctx.stroke(); }
+      if(c.w&8){ ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py+cell);ctx.stroke(); }
+    }
+    // 终点
+    ctx.font = (cell*0.7)+'px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🏁', off+goal.x*cell+cell/2, off+goal.y*cell+cell/2);
+    // 玩家
+    ctx.fillStyle='#ffd23f'; ctx.shadowColor='#ffd23f'; ctx.shadowBlur=12;
+    ctx.beginPath(); ctx.arc(off+player.x*cell+cell/2, off+player.y*cell+cell/2, cell*0.32, 0, 7); ctx.fill();
+    ctx.shadowBlur=0;
+  }
+
+  function move(dx,dy){
+    if(won) return;
+    const c = grid[player.y][player.x];
+    if((dx===0&&dy===-1&&(c.w&1))||(dx===1&&dy===0&&(c.w&2))||(dx===0&&dy===1&&(c.w&4))||(dx===-1&&dy===0&&(c.w&8))) return;
+    const nx=player.x+dx, ny=player.y+dy;
+    if(nx<0||ny<0||nx>=N||ny>=N) return;
+    player.x=nx; player.y=ny;
+    if(player.x===goal.x && player.y===goal.y) win();
+    draw();
+  }
+  function win(){
+    won=true; clearInterval(timer);
+    timeEl.textContent = ((performance.now()-startT)/1000).toFixed(1)+'s 🎉';
+  }
+
+  window.addEventListener('keydown', e=>{
+    const k=e.key.toLowerCase();
+    if(k==='arrowup'||k==='w') move(0,-1);
+    else if(k==='arrowdown'||k==='s') move(0,1);
+    else if(k==='arrowleft'||k==='a') move(-1,0);
+    else if(k==='arrowright'||k==='d') move(1,0);
+  });
+  let tsx=0,tsy=0;
+  cv.addEventListener('touchstart',e=>{tsx=e.touches[0].clientX;tsy=e.touches[0].clientY;},{passive:true});
+  cv.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tsx, dy=e.changedTouches[0].clientY-tsy;
+    if(Math.abs(dx)>Math.abs(dy)) move(dx>0?1:-1,0); else move(0,dy>0?1:-1);
+  },{passive:true});
+
+  document.querySelectorAll('.chip').forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      ch.classList.add('active'); N = +ch.dataset.n; build();
+    });
+  });
+  document.getElementById('newBtn').addEventListener('click', build);
+  build();
+})();
+</script>
+</body>
+</html>

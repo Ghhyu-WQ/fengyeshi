@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打字练习</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; color:#eef1ff;
+    background:linear-gradient(160deg,#07080f,#0d1024); min-height:100vh; padding:18px; }
+  .home { display:inline-block; color:#ffd055; font-size:14px; font-weight:700; padding:8px 14px;
+    background:rgba(0,0,0,0.5); border:1px solid #ffd055; border-radius:8px; text-decoration:none; }
+  h1 { font-size:22px; margin:8px 0 12px; }
+  .bar { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:12px; color:#9aa3c7; font-size:14px; }
+  .bar b { color:#7cfcff; }
+  .src { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .chip { cursor:pointer; font-size:13px; color:#9aa3c7; border:1px solid rgba(255,255,255,0.12);
+    padding:6px 14px; border-radius:999px; }
+  .chip.active { color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); border:none; font-weight:700; }
+  .text { font-size:18px; line-height:2; letter-spacing:1px; background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:18px; margin-bottom:14px; }
+  .text span { border-radius:3px; padding:0 1px; }
+  .ok { color:#67e8a3; }
+  .bad { color:#ff6b9d; background:rgba(255,107,157,0.18); }
+  .cur { background:rgba(124,252,255,0.25); }
+  textarea { width:100%; min-height:90px; resize:vertical; background:#0a0d1e; color:#eef1ff;
+    border:1px solid rgba(124,252,255,0.3); border-radius:12px; padding:14px; font-size:16px; outline:none; }
+  .btn { margin-top:12px; padding:11px 22px; border-radius:999px; border:none; cursor:pointer; font-weight:700;
+    font-size:15px; color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); }
+  .result { margin-top:14px; color:#9aa3c7; font-size:14px; line-height:1.8; }
+  .result b { color:#7cfcff; }
+</style>
+</head>
+<body>
+  <a class="home" href="index.html">返回首页</a>
+  <h1>⌨️ 打字练习</h1>
+  <div class="bar">
+    <span>用时 <b id="time">0.0s</b></span>
+    <span>速度 <b id="wpm">0</b> 字/分</span>
+    <span>正确率 <b id="acc">100%</b></span>
+  </div>
+  <div class="src">
+    <span class="chip active" data-k="cn">中文段</span>
+    <span class="chip" data-k="en">English</span>
+    <span class="chip" data-k="code">代码</span>
+  </div>
+  <div class="text" id="text"></div>
+  <textarea id="input" placeholder="在这里开始打字，上方会实时高亮对错…" autocomplete="off" spellcheck="false"></textarea>
+  <button class="btn" id="again">换一段</button>
+  <div class="result" id="result"></div>
+
+<script>
+(function () {
+  const CN = [
+    "风野工作室的小游戏分站，是用来放松身心的地方。累了就点开一款游戏，让时间慢下来。",
+    "生活不止眼前的忙碌，还有片刻的宁静。给自己一杯茶的时间，听听窗外的风声。",
+    "代码写久了，眼睛会累。站起来走两步，看看远方，再回来继续也不迟。"
+  ];
+  const EN = [
+    "the quick brown fox jumps over the lazy dog while the small blue cat watches from the window",
+    "practice makes perfect, and every keystroke brings you one step closer to faster typing",
+    "open source means everyone can learn, build, and share software with the whole world"
+  ];
+  const CODE = [
+    "function greet(name){ return 'hello, ' + name; }",
+    "const sum = arr => arr.reduce((a,b)=>a+b, 0);",
+    "for(let i=0;i<10;i++){ console.log(i); }"
+  ];
+  const POOLS = { cn:CN, en:EN, code:CODE };
+  let kind = 'cn', target = '', startT = 0, done = false;
+
+  const textEl = document.getElementById('text'), input = document.getElementById('input');
+  const timeEl = document.getElementById('time'), wpmEl = document.getElementById('wpm'), accEl = document.getElementById('acc');
+  const result = document.getElementById('result');
+
+  function newText(){
+    const pool = POOLS[kind];
+    target = pool[Math.floor(Math.random()*pool.length)];
+    startT = 0; done = false; input.value = ''; result.textContent = '';
+    render();
+  }
+  function render(){
+    let html = '';
+    for (let i=0;i<target.length;i++){
+      const c = target[i];
+      let cls = '';
+      if (i < input.value.length){
+        cls = input.value[i] === c ? 'ok' : 'bad';
+      } else if (i === input.value.length && !done){
+        cls = 'cur';
+      }
+      html += '<span class="'+cls+'">'+ (c===' '?'&nbsp;':escapeHtml(c)) +'</span>';
+    }
+    textEl.innerHTML = html;
+  }
+  function escapeHtml(c){ return c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function onType(){
+    if (!startT && input.value.length) startT = performance.now();
+    if (!done) render();
+    const now = performance.now();
+    const sec = startT ? (now - startT)/1000 : 0;
+    timeEl.textContent = sec.toFixed(1) + 's';
+
+    const typed = input.value;
+    let correct = 0;
+    for (let i=0;i<typed.length;i++) if (typed[i]===target[i]) correct++;
+    const acc = typed.length ? Math.round(correct/typed.length*100) : 100;
+    accEl.textContent = acc + '%';
+
+    // 速度：按正确字数 / 分钟
+    if (sec > 0) wpmEl.textContent = Math.round(correct / 5 / (sec/60));
+
+    if (typed.length >= target.length && typed === target){
+      done = true; render();
+      result.innerHTML = '🎉 完成！用时 <b>'+sec.toFixed(1)+'s</b> · 速度 <b>'+Math.round(correct/5/(sec/60))+'</b> 字/分 · 正确率 <b>'+acc+'%</b>';
+    }
+  }
+
+  document.querySelectorAll('.chip').forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      ch.classList.add('active'); kind = ch.dataset.k; newText();
+    });
+  });
+  input.addEventListener('input', onType);
+  document.getElementById('again').addEventListener('click', newText);
+  newText();
+})();
+</script>
+</body>
+</html>

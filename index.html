@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>风野小游戏 · 风野工作室分站</title>
+<meta name="description" content="风野工作室的小游戏分站——在这里用免费小游戏放松一下，舒缓时间。" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+<style>
+  :root {
+    --bg: #07080f;
+    --bg2: #0d1024;
+    --card: rgba(255, 255, 255, 0.04);
+    --line: rgba(255, 255, 255, 0.10);
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --brand: #7cfcff;
+    --brand2: #b07aff;
+    --good: #67e8a3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(124, 252, 255, 0.12), transparent 60%),
+      radial-gradient(1000px 500px at 110% 10%, rgba(176, 122, 255, 0.14), transparent 55%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+    background-attachment: fixed;
+    min-height: 100%;
+    line-height: 1.6;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px clamp(16px, 5vw, 48px);
+    backdrop-filter: blur(10px);
+    background: rgba(7, 8, 15, 0.6);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .5px; }
+  .brand .logo { font-size: 22px; }
+  .brand small { color: var(--muted); font-weight: 500; font-size: 12px; }
+  .topbar .gh {
+    font-size: 13px; color: var(--muted);
+    border: 1px solid var(--line); padding: 7px 12px; border-radius: 999px;
+    transition: .25s;
+  }
+  .topbar .gh:hover { color: var(--text); border-color: var(--brand); box-shadow: 0 0 16px rgba(124,252,255,.25); }
+
+  /* hero */
+  .hero {
+    text-align: center;
+    padding: clamp(48px, 9vw, 96px) clamp(16px, 5vw, 48px) clamp(28px, 5vw, 48px);
+  }
+  .hero h1 {
+    font-size: clamp(30px, 6vw, 56px);
+    line-height: 1.15;
+    background: linear-gradient(90deg, var(--brand), var(--brand2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { color: var(--muted); margin: 16px auto 0; max-width: 640px; font-size: clamp(14px, 2.4vw, 17px); }
+  .hero .cta { margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 15px;
+    border: 1px solid var(--line); cursor: pointer; transition: .25s; background: var(--card);
+  }
+  .btn.primary { background: linear-gradient(90deg, var(--brand), var(--brand2)); color: #06121a; border: none; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,252,255,.2); }
+  .btn.primary:hover { box-shadow: 0 8px 28px rgba(176,122,255,.35); }
+
+  /* section */
+  .section-title {
+    text-align: center; margin: 8px auto 28px; font-size: 20px; color: var(--text);
+    letter-spacing: 2px;
+  }
+  .section-title span { color: var(--muted); font-size: 13px; display: block; letter-spacing: 1px; margin-top: 4px; }
+
+  /* grid */
+  .grid {
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    padding: 0 clamp(16px, 5vw, 48px) 60px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .card {
+    position: relative; overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px; padding: 22px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: .28s ease; min-height: 190px;
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--accent, var(--brand)), transparent 60%);
+    opacity: .12; transition: .28s;
+  }
+  .card:hover { transform: translateY(-6px); border-color: var(--accent, var(--brand)); box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+  .card:hover::before { opacity: .22; }
+  .card .ico { font-size: 34px; }
+  .card h3 { font-size: 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card .tag {
+    font-size: 11px; font-weight: 600; color: var(--muted);
+    border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px;
+  }
+  .card p { color: var(--muted); font-size: 14px; flex: 1; }
+  .card .play {
+    align-self: flex-start; margin-top: auto;
+    font-weight: 700; font-size: 14px; color: var(--text);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .card .play::after { content: "→"; transition: .25s; }
+  .card:hover .play::after { transform: translateX(5px); }
+
+  /* footer */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 28px clamp(16px, 5vw, 48px);
+    text-align: center; color: var(--muted); font-size: 13px;
+  }
+  footer a { color: var(--brand); }
+  footer .lic { margin-top: 6px; }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🎮</span>
+      <span>风野小游戏 <small>风野工作室 · 分站</small></span>
+    </div>
+    <!-- 主站地址：风野工作室自制软件站 -->
+    <a class="gh" id="homeLink" href="https://fengye.bbroot.com" title="前往风野工作室主站（下载自制软件）">🏠 返回主站</a>
+  </header>
+
+  <section class="hero">
+    <h1>放松一下 · 免费小游戏分站</h1>
+    <p>这里是「风野工作室」的小游戏分站。挑一款免费小游戏，给自己放个短假，舒缓一下时间。<br>想找更硬核的东西？主站收录了我自制的各类软件，随时欢迎前去下载体验。</p>
+    <div class="cta">
+      <a class="btn primary" href="#games">浏览全部游戏</a>
+      <button class="btn" id="randomBtn">🎲 随机游玩</button>
+    </div>
+  </section>
+
+  <h2 class="section-title" id="games">游戏列表 <span>GAMES</span></h2>
+
+  <main class="grid" id="gameGrid"></main>
+
+  <footer>
+    <div>风野小游戏分站 · 风野工作室旗下 · 纯前端静态站点，可部署于 GitHub Pages / Vercel / Netlify 等任意静态托管。</div>
+    <div class="lic">© 2026 风野工作室 · 小游戏分站 · 游戏各自的玩法与素材归原作者所有。</div>
+  </footer>
+
+<script>
+  // 游戏清单：标题、描述、入口、图标、标签、强调色
+  const games = [
+    { file: "particle-canvas.html", title: "超好玩粒子画布", desc: "鼠标 / 触摸即可绘制的炫彩粒子画布，随手作画。", ico: "🎨", tag: "创意", color: "#7cfcff" },
+    { file: "piano.html",          title: "完美钢琴",        desc: "网页钢琴，支持弹奏与录音，随时来一段。", ico: "🎹", tag: "音乐", color: "#ff8fcf" },
+    { file: "sparkle.html",        title: "粒子星空",        desc: "跟随指针绽放的粒子光点，移动即生辉。", ico: "✨", tag: "特效", color: "#b07aff" },
+    { file: "number-hub.html",    title: "1–100 链接页",    desc: "1–100 编号按钮网格，可接入任意跳转目标。", ico: "🔢", tag: "工具", color: "#67e8a3" },
+    { file: "inward.html",         title: "inward · 大圆满", desc: "一个关于旋转与冥想的交互小玩具。", ico: "🌀", tag: "解压", color: "#ffd36b" },
+    { file: "toolbox.html",        title: "全能工具盒",      desc: "贪吃蛇、文字特效、小工具等集合于一体。", ico: "🧰", tag: "合集", color: "#8b9cff" },
+    { file: "idle-cultivation.html", title: "修仙摸鱼",      desc: "修仙放置挂机：洞府、灵兽、宗门、游历、闪现，支持存档。", ico: "🪷", tag: "放置", color: "#67e8a3" },
+    { file: "contemplation.html", title: "三百秒沉思",      desc: "Canvas 绘制的沉思空间，点击 / 空格点亮三百秒，给大脑放个假。", ico: "🌌", tag: "解压", color: "#7cfcff" },
+    { file: "random-build.html",  title: "乱建堂 · 随机入口", desc: "陨石散布的随机传送门，点开即进入任意小游戏。", ico: "🪐", tag: "彩蛋", color: "#b07aff" },
+    { file: "memory.html",       title: "记忆翻牌",          desc: "经典翻牌配对记忆游戏，记录步数与用时，挑战最少步数通关。", ico: "🃏", tag: "益智", color: "#67e8a3" },
+    { file: "merge-2048.html",    title: "2048 合并",       desc: "经典数字合并，滑动方块凑出 2048。", ico: "2️⃣", tag: "益智", color: "#7cfcff" },
+    { file: "tetris.html",        title: "俄罗斯方块",      desc: "下落方块消除整行，挑战速度与手速。", ico: "🧱", tag: "街机", color: "#8b9cff" },
+    { file: "minesweeper.html",   title: "扫雷",            desc: "左键翻开、右键插旗，找出所有地雷。", ico: "💣", tag: "解谜", color: "#ff8fcf" },
+    { file: "tic-tac-toe.html",   title: "井字棋",          desc: "三子连珠对战，支持人机与双人模式。", ico: "🎯", tag: "对战", color: "#67e8a3" },
+    { file: "breakout.html",      title: "打砖块",          desc: "操控挡板接球，击碎全部砖块过关。", ico: "🎾", tag: "街机", color: "#b07aff" },
+    { file: "reaction-test.html", title: "反应速度测试",    desc: "绿灯亮起瞬间点击，测你的反应毫秒。", ico: "⚡", tag: "挑战", color: "#ffd36b" },
+    { file: "snake.html",         title: "贪吃蛇",          desc: "经典贪吃蛇，方向键 / 滑动控制，吃果实变长。", ico: "🐍", tag: "街机", color: "#67e8a3" },
+    { file: "gomoku.html",        title: "五子棋",          desc: "三子？不，五子连珠！对战带攻防的电脑 AI。", ico: "🎯", tag: "对战", color: "#b07aff" },
+    { file: "flappy.html",        title: "像素鸟",          desc: "Flappy 风格：点击上飞，穿过水管得分。", ico: "🐤", tag: "街机", color: "#ffd36b" },
+    { file: "typing.html",        title: "打字练习",        desc: "中 / 英 / 代码随机片段，实时统计速度与正确率。", ico: "⌨️", tag: "练习", color: "#7cfcff" },
+    { file: "maze.html",          title: "迷宫",            desc: "随机生成迷宫，三档难度，滑到终点过关。", ico: "🌀", tag: "解谜", color: "#8b9cff" },
+    { file: "guess.html",         title: "猜数字",          desc: "1–100 猜数游戏，大小提示与次数统计。", ico: "🔢", tag: "休闲", color: "#ff8fcf" }
+  ];
+
+  const grid = document.getElementById("gameGrid");
+  games.forEach(g => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = g.file;
+    a.style.setProperty("--accent", g.color);
+    a.innerHTML = `
+      <div class="ico">${g.ico}</div>
+      <h3>${g.title} <span class="tag">${g.tag}</span></h3>
+      <p>${g.desc}</p>
+      <span class="play">开始游玩</span>`;
+    grid.appendChild(a);
+  });
+
+  // 随机游玩
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    const g = games[Math.floor(Math.random() * games.length)];
+    window.location.href = g.file;
+  });
+
+  // 返回主站链接：把上面的 # 换成你自制软件主站网址即可
+  // 例：document.getElementById("homeLink").href = "https://你的主站地址";
+
+  // 隐藏彩蛋：在首页直接键入工作室别名「fengye」即可进入「网页游戏星球」
+  (function () {
+    const secret = 'fengye';
+    let buf = '';
+    window.addEventListener('keydown', e => {
+      // 只取单个字母键，避免组合键干扰
+      if (e.key && e.key.length === 1 && /[a-z]/i.test(e.key)) {
+        buf = (buf + e.key.toLowerCase()).slice(-secret.length);
+        if (buf === secret) { window.location.href = 'easter.html'; }
+      }
+    });
+  })();
+</script>
+</body>
+</html>

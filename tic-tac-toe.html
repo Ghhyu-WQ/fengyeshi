@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>井字棋</title>
+<style>
+  :root{
+    --bg:#07080f; --bg2:#0d1024; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.12);
+    --text:#eef1ff; --muted:#9aa3c7; --brand:#7cfcff; --brand2:#b07aff; --good:#67e8a3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--text);
+    background:radial-gradient(1100px 600px at 15% -10%,rgba(124,252,255,.12),transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,rgba(176,122,255,.14),transparent 55%),
+               linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 40px;
+  }
+  .top{width:min(380px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{font-size:clamp(22px,5vw,30px);background:linear-gradient(90deg,var(--brand),var(--brand2));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .home{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:8px 14px;border-radius:999px;
+        background:var(--card);cursor:pointer;text-decoration:none}
+  .home:hover{color:var(--text);border-color:var(--brand)}
+  .stat{width:min(380px,100%);display:flex;gap:8px;margin:14px 0}
+  .stat div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;font-size:13px}
+  .stat b{display:block;font-size:16px;font-family:ui-monospace,monospace}
+  .status{width:min(380px,100%);text-align:center;color:var(--muted);font-size:14px;min-height:22px;margin-bottom:10px}
+  .board{width:min(330px,100%);aspect-ratio:1/1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+         background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:10px;
+         touch-action:none;user-select:none}
+  .cell{border-radius:12px;border:none;background:rgba(255,255,255,.06);font-size:clamp(40px,12vw,64px);
+        font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);transition:.12s}
+  .cell:hover{background:rgba(255,255,255,.12)}
+  .cell.x{color:var(--brand)} .cell.o{color:var(--brand2)}
+  .cell.win{box-shadow:0 0 18px rgba(103,232,163,.6);background:rgba(103,232,163,.18)}
+  .controls{width:min(330px,100%);display:flex;gap:10px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+  .controls button{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+        color:var(--text);font-weight:700;font-size:14px;cursor:pointer}
+  .controls button.on{border-color:var(--brand);color:var(--brand)}
+  .controls button:hover{border-color:var(--brand)}
+  .tip{color:var(--muted);font-size:12px;margin-top:12px;text-align:center;width:min(380px,100%)}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>🎯 井字棋</h1>
+    <a class="home" href="index.html">返回首页</a>
+  </div>
+
+  <div class="stat">
+    <div><b id="w">0</b>你胜</div>
+    <div><b id="d">0</b>平局</div>
+    <div><b id="l">0</b>电脑胜</div>
+  </div>
+  <div class="status" id="status">点击格子开始对战</div>
+
+  <div class="board" id="board"></div>
+
+  <div class="controls">
+    <button id="vsAI" class="on">对手：电脑</button>
+    <button id="first">你先手</button>
+    <button id="restart">重开</button>
+  </div>
+
+  <div class="tip">三子连成一线（横/竖/斜）即获胜。点「对手」可切换双人模式。</div>
+
+<script>
+  const boardEl=document.getElementById('board'), statusEl=document.getElementById('status');
+  let board, turn, over, vsAI, humanFirst, score;
+  score={w:0,d:0,l:0};
+
+  function init(){
+    board=Array(9).fill('');
+    turn='X'; over=false;
+    boardEl.innerHTML='';
+    for(let i=0;i<9;i++){ const c=document.createElement('button'); c.className='cell'; c.dataset.i=i;
+      c.addEventListener('click',()=>play(i)); boardEl.appendChild(c); }
+    setStatus(vsAI ? (humanFirst?'你执 X 先手':'电脑执 X 先手') : 'X 先手');
+    if(vsAI && !humanFirst) setTimeout(aiMove,350);
+  }
+  function setStatus(t){ statusEl.textContent=t; }
+  function render(){ [...boardEl.children].forEach((c,i)=>{ c.textContent=board[i];
+    c.className='cell'+(board[i]==='X'?' x':board[i]==='O'?' o':''); }); }
+  function play(i){
+    if(over||board[i]) return;
+    const myMark = vsAI ? 'X' : turn;
+    if(vsAI && turn!==myMark) return; // not your turn
+    board[i]=turn; render();
+    if(checkEnd()) return;
+    turn = turn==='X'?'O':'X';
+    if(vsAI){ setStatus('电脑思考中…'); setTimeout(aiMove,350); }
+    else setStatus(turn+' 的回合');
+  }
+  function aiMove(){
+    if(over) return;
+    const move=bestMove();
+    if(move<0) return;
+    board[move]='O'; render();
+    if(checkEnd()) return;
+    turn='X'; setStatus('你的回合');
+  }
+  function bestMove(){
+    // win > block > center > corner > random
+    const ai='O', hu='X';
+    const line=(a,b,c)=>board[a]&&board[a]===board[b]&&board[a]===board[c];
+    const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    // win
+    for(const [a,b,c] of wins){ const v=[board[a],board[b],board[c]];
+      if(v.filter(x=>x===ai).length===2 && v.includes('')) return [a,b,c].find(k=>board[k]===''); }
+    // block
+    for(const [a,b,c] of wins){ const v=[board[a],board[b],board[c]];
+      if(v.filter(x=>x===hu).length===2 && v.includes('')) return [a,b,c].find(k=>board[k]===''); }
+    if(board[4]==='') return 4;
+    const corners=[0,2,6,8].filter(k=>board[k]===''); if(corners.length) return corners[Math.floor(Math.random()*corners.length)];
+    const rest=[1,3,5,7].filter(k=>board[k]===''); if(rest.length) return rest[Math.floor(Math.random()*rest.length)];
+    return board.findIndex(x=>x==='');
+  }
+  function checkEnd(){
+    const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for(const [a,b,c] of wins){ if(board[a]&&board[a]===board[b]&&board[a]===board[c]){
+      over=true; markWin([a,b,c]);
+      const winner=board[a];
+      if(vsAI){ if(winner==='X'){score.w++;setStatus('🎉 你赢了！');} else {score.l++;setStatus('电脑赢了，再来！');} }
+      else setStatus(winner+' 获胜！');
+      updateScore(); return true; } }
+    if(board.every(x=>x)){ over=true; score.d++; setStatus('平局！'); updateScore(); return true; }
+    return false;
+  }
+  function markWin(ids){ ids.forEach(i=>boardEl.children[i].classList.add('win')); }
+  function updateScore(){ document.getElementById('w').textContent=score.w;
+    document.getElementById('d').textContent=score.d; document.getElementById('l').textContent=score.l; }
+
+  document.getElementById('vsAI').addEventListener('click',e=>{ vsAI=!vsAI; e.target.textContent='对手：'+(vsAI?'电脑':'双人');
+    e.target.classList.toggle('on',vsAI); init(); });
+  document.getElementById('first').addEventListener('click',e=>{ humanFirst=!humanFirst;
+    e.target.textContent=humanFirst?'你先手':'电脑先手'; init(); });
+  document.getElementById('restart').addEventListener('click',init);
+
+  init();
+</script>
+</body>
+</html>

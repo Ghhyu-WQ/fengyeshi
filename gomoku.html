@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>五子棋</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'PingFang SC','Microsoft YaHei',sans-serif; color:#eef1ff;
+    background:linear-gradient(160deg,#07080f,#0d1024);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:18px;
+  }
+  .home { align-self:flex-start; color:#ffd055; font-size:14px; font-weight:700; padding:8px 14px;
+    background:rgba(0,0,0,0.5); border:1px solid #ffd055; border-radius:8px; text-decoration:none; }
+  h1 { font-size:22px; margin:8px 0 4px; }
+  .bar { display:flex; gap:14px; align-items:center; margin:8px 0 10px; color:#9aa3c7; font-size:14px; }
+  .bar b { color:#7cfcff; }
+  canvas { background:#16321f; border:1px solid rgba(124,252,255,0.25); border-radius:10px; touch-action:none; max-width:92vw; height:auto; }
+  .btn { padding:9px 18px; border-radius:999px; border:none; cursor:pointer; font-weight:700; font-size:14px;
+    color:#06121a; background:linear-gradient(90deg,#7cfcff,#b07aff); }
+  .hint { color:#9aa3c7; font-size:12.5px; margin-top:10px; }
+</style>
+</head>
+<body>
+  <a class="home" href="index.html">返回首页</a>
+  <h1>🎯 五子棋</h1>
+  <div class="bar"><span>你执 <b>黑 ●</b></span><span id="status">轮到你落子</span><button class="btn" id="restart">重开</button></div>
+  <canvas id="cv" width="450" height="450"></canvas>
+  <div class="hint">点击交叉点落子，先连成五子者胜。</div>
+
+<script>
+(function () {
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const N = 15, PAD = 22, GAP = (cv.width - PAD * 2) / (N - 1);
+  const statusEl = document.getElementById('status');
+  let board, over, myTurn;
+
+  function pos(i){ return PAD + i * GAP; }
+  function reset(){ board = Array.from({length:N},()=>Array(N).fill(0)); over=false; myTurn=true; statusEl.textContent='轮到你落子'; draw(); }
+
+  function draw(){
+    ctx.fillStyle='#16321f'; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1;
+    for(let i=0;i<N;i++){
+      ctx.beginPath(); ctx.moveTo(pos(i),PAD); ctx.lineTo(pos(i),cv.width-PAD); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(PAD,pos(i)); ctx.lineTo(cv.width-PAD,pos(i)); ctx.stroke();
+    }
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      if(!board[y][x]) continue;
+      const c = board[y][x]===1 ? '#0b0b0b' : '#f4f4f4';
+      ctx.fillStyle=c; ctx.shadowColor='rgba(0,0,0,0.4)'; ctx.shadowBlur=4;
+      ctx.beginPath(); ctx.arc(pos(x),pos(y),GAP*0.42,0,7); ctx.fill(); ctx.shadowBlur=0;
+    }
+  }
+
+  function win(b,x,y,p){
+    const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+    for(const [dx,dy] of dirs){
+      let cnt=1;
+      for(let s=1;s<5;s++){const nx=x+dx*s,ny=y+dy*s; if(nx<0||ny<0||nx>=N||ny>=N||b[ny][nx]!==p)break; cnt++;}
+      for(let s=1;s<5;s++){const nx=x-dx*s,ny=y-dy*s; if(nx<0||ny<0||nx>=N||ny>=N||b[ny][nx]!==p)break; cnt++;}
+      if(cnt>=5) return true;
+    }
+    return false;
+  }
+
+  function click(e){
+    if(over||!myTurn) return;
+    const r = cv.getBoundingClientRect();
+    const mx = (e.clientX!==undefined?e.clientX:(e.touches&&e.touches[0].clientX)) - r.left;
+    const my = (e.clientY!==undefined?e.clientY:(e.touches&&e.touches[0].clientY)) - r.top;
+    const x = Math.round((mx*cv.width/r.width - PAD)/GAP);
+    const y = Math.round((my*cv.height/r.height - PAD)/GAP);
+    if(x<0||y<0||x>=N||y>=N||board[y][x]) return;
+    board[y][x]=1; draw();
+    if(win(board,x,y,1)){ over=true; statusEl.textContent='🎉 你赢了！'; return; }
+    myTurn=false; statusEl.textContent='电脑思考中…';
+    setTimeout(aiMove, 260);
+  }
+
+  function aiMove(){
+    const mv = bestMove(board, 2);
+    if(!mv){ statusEl.textContent='平局'; over=true; return; }
+    board[mv.y][mv.x]=2; draw();
+    if(win(board,mv.x,mv.y,2)){ over=true; statusEl.textContent='电脑赢了，再来一局？'; return; }
+    myTurn=true; statusEl.textContent='轮到你落子';
+  }
+
+  // 启发式：对每个空点评分（进攻+防守）
+  const SCO = [0,1,10,100,1000,100000];
+  function evalPoint(b,x,y,p){
+    const dirs=[[1,0],[0,1],[1,1],[1,-1]]; let s=0;
+    for(const [dx,dy] of dirs){
+      let cnt=1, blk=0;
+      for(let k=1;k<5;k++){const nx=x+dx*k,ny=y+dy*k; if(nx<0||ny<0||nx>=N||ny>=N){blk++;break;} if(b[ny][nx]===p)cnt++; else if(b[ny][nx]!==0){blk++;break;}}
+      for(let k=1;k<5;k++){const nx=x-dx*k,ny=y-dy*k; if(nx<0||ny<0||nx>=N||ny>=N){blk++;break;} if(b[ny][nx]===p)cnt++; else if(b[ny][nx]!==0){blk++;break;}}
+      s += SCO[Math.min(cnt,5)] || 0;
+    }
+    return s;
+  }
+  function bestMove(b,p){
+    let best=null, bestS=-1;
+    const opp = p===2?1:2;
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      if(b[y][x]) continue;
+      const atk=evalPoint(b,x,y,p), def=evalPoint(b,x,y,opp);
+      const s = Math.max(atk,def)*1.0 + Math.min(atk,def)*0.8;
+      if(s>bestS){ bestS=s; best={x,y}; }
+    }
+    return best;
+  }
+
+  cv.addEventListener('click', click);
+  cv.addEventListener('touchstart', e=>{e.preventDefault(); click(e);}, {passive:false});
+  document.getElementById('restart').addEventListener('click', reset);
+  reset();
+})();
+</script>
+</body>
+</html>

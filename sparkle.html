@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: black;
+      cursor: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    (function() {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      let width, height;
+      let particles = [];
+      const PARTICLE_COUNT = 360; 
+
+      let mouse = {
+        x: null,
+        y: null,
+        present: false
+      };
+
+      const CONNECT_DIST_BASE = 135;      
+      const MOUSE_RADIUS_BASE = 190;       
+      const REPEL_FORCE = 0.65;             
+      const FRICTION = 0.992;               
+      const RANDOM_WALK = 0.018;             
+
+      let timeOffset = 0;
+
+      function random(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          particles.push({
+            x: random(0, width),
+            y: random(0, height),
+            vx: random(-0.9, 0.9),
+            vy: random(-0.9, 0.9),
+            hue: random(180, 320),           
+            size: random(1.8, 3.6),
+          });
+        }
+      }
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initParticles();
+        mouse.present = false; 
+      }
+
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        mouse.present = true;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        mouse.present = false;
+      });
+
+      canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches.length > 0) {
+          mouse.x = e.touches[0].clientX - rect.left;
+          mouse.y = e.touches[0].clientY - rect.top;
+          mouse.present = true;
+        }
+      }, { passive: false });
+
+      canvas.addEventListener('touchend', (e) => {
+        mouse.present = false;
+      });
+
+      canvas.addEventListener('touchcancel', (e) => {
+        mouse.present = false;
+      });
+
+      function updateParticles() {
+        const connectDist = CONNECT_DIST_BASE + 15 * Math.sin(timeOffset * 0.003); 
+        const mouseRadius = MOUSE_RADIUS_BASE + 12 * Math.cos(timeOffset * 0.005); 
+
+        for (let p of particles) {
+          p.vx *= FRICTION;
+          p.vy *= FRICTION;
+
+          p.vx += random(-RANDOM_WALK, RANDOM_WALK);
+          p.vy += random(-RANDOM_WALK, RANDOM_WALK);
+
+          if (mouse.present && mouse.x !== null && mouse.y !== null) {
+            const dx = p.x - mouse.x;
+            const dy = p.y - mouse.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < mouseRadius && dist > 0.1) {
+              const force = (1 - dist / mouseRadius) * REPEL_FORCE;
+              const angle = Math.atan2(dy, dx);
+              p.vx += Math.cos(angle) * force;
+              p.vy += Math.sin(angle) * force;
+            }
+          }
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) {
+            p.x = 0;
+            p.vx *= -0.92;
+          } else if (p.x > width) {
+            p.x = width;
+            p.vx *= -0.92;
+          }
+          if (p.y < 0) {
+            p.y = 0;
+            p.vy *= -0.92;
+          } else if (p.y > height) {
+            p.y = height;
+            p.vy *= -0.92;
+          }
+        }
+      }
+
+      function drawParticles() {
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${p.hue + timeOffset * 0.03 % 360}, 80%, 68%, 0.9)`;
+          ctx.fill();
+          ctx.shadowColor = `hsla(${p.hue + timeOffset * 0.02 % 360}, 90%, 70%, 0.7)`;
+          ctx.shadowBlur = 10;
+          ctx.fill(); 
+          ctx.shadowBlur = 0; 
+        }
+      }
+
+      function drawConnections() {
+        const connectDist = CONNECT_DIST_BASE + 15 * Math.sin(timeOffset * 0.003);
+        const thresholdSq = connectDist * connectDist;
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p1 = particles[i];
+            const p2 = particles[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < thresholdSq && distSq > 0.01) {
+              const dist = Math.sqrt(distSq);
+              const alpha = (1 - dist / connectDist) * 0.28; 
+              const hueMix = (p1.hue + p2.hue) / 2 + timeOffset * 0.01;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `hsla(${hueMix % 360}, 75%, 72%, ${alpha})`;
+              ctx.lineWidth = 0.9 + (1 - dist / connectDist) * 1.1;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function drawMouseRing() {
+        if (mouse.present && mouse.x !== null && mouse.y !== null) {
+          const ringRadius = MOUSE_RADIUS_BASE + 8 * Math.sin(timeOffset * 0.02);
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, ringRadius, 0, Math.PI * 2);
+          ctx.strokeStyle = `hsla(${240 + 40 * Math.sin(timeOffset * 0.01)}, 85%, 70%, 0.4)`;
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${180 + 60 * Math.sin(timeOffset * 0.02)}, 90%, 75%, 0.8)`;
+          ctx.fill();
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = `hsla(${200 + 30 * Math.sin(timeOffset * 0.03)}, 100%, 70%, 0.9)`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      function drawBackground() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.11)'; 
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function animate() {
+        timeOffset += 1;
+        updateParticles();
+
+        drawBackground();
+        drawConnections();
+        drawParticles();
+        drawMouseRing();
+
+        requestAnimationFrame(animate);
+      }
+
+      resizeCanvas();
+      animate();
+
+      (function insertSecretShimmer() {
+        const hiddenSpan = document.createElement('span');
+        hiddenSpan.style.position = 'absolute';
+        hiddenSpan.style.opacity = '0';
+        hiddenSpan.style.pointerEvents = 'none';
+        hiddenSpan.textContent = '∞';
+        document.body.appendChild(hiddenSpan);
+      })();
+
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          if (!mouse.present) {
+            mouse.x = width * 0.5;
+            mouse.y = height * 0.5;
+            mouse.present = true;
+            setTimeout(() => { mouse.present = false; }, 800);
+          }
+        }, 300);
+      });
+
+      const style = document.createElement('style');
+      style.innerHTML = `
+        canvas {
+          transition: filter 0.3s ease;
+        }
+        body:hover canvas {
+          filter: drop-shadow(0 0 8px rgba(140, 200, 255, 0.15));
+        }
+      `;
+      document.head.appendChild(style);
+
+      let lastTime = 0;
+      function subtleJitter(now) {
+        if (!lastTime) lastTime = now;
+        const delta = now - lastTime;
+        if (delta > 12000) {
+          for (let p of particles) {
+            p.vx += random(-0.3, 0.3);
+            p.vy += random(-0.3, 0.3);
+          }
+          lastTime = now;
+        }
+        requestAnimationFrame(subtleJitter);
+      }
+      requestAnimationFrame(subtleJitter);
+    })();
+  </script>
+</body>
+</html>

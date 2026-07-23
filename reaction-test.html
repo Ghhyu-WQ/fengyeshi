@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>反应速度测试</title>
+<style>
+  :root{
+    --bg:#07080f; --bg2:#0d1024; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.12);
+    --text:#eef1ff; --muted:#9aa3c7; --brand:#7cfcff; --brand2:#b07aff; --good:#67e8a3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--text);
+    background:radial-gradient(1100px 600px at 15% -10%,rgba(124,252,255,.12),transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,rgba(176,122,255,.14),transparent 55%),
+               linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100%;display:flex;flex-direction:column;align-items:center;padding:18px 14px 40px;
+  }
+  .top{width:min(440px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{font-size:clamp(22px,5vw,30px);background:linear-gradient(90deg,var(--brand),var(--brand2));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .home{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:8px 14px;border-radius:999px;
+        background:var(--card);cursor:pointer;text-decoration:none}
+  .home:hover{color:var(--text);border-color:var(--brand)}
+  .bar{width:min(440px,100%);display:flex;gap:10px;margin:14px 0}
+  .stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:center}
+  .stat b{display:block;font-size:18px;font-family:ui-monospace,monospace}
+  .stat span{font-size:11px;color:var(--muted)}
+  .pad{width:min(440px,100%);aspect-ratio:2/1;border-radius:18px;border:1px solid var(--line);
+       display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(18px,4.5vw,26px);
+       font-weight:700;cursor:pointer;user-select:none;transition:background .08s;padding:16px;line-height:1.5}
+  .idle{background:rgba(255,255,255,.05)}
+  .wait{background:rgba(255,107,107,.28)}
+  .go{background:rgba(103,232,163,.34)}
+  .tip{color:var(--muted);font-size:12px;margin-top:14px;text-align:center;width:min(440px,100%)}
+  .controls{width:min(440px,100%);display:flex;gap:10px;margin-top:14px;justify-content:center}
+  .controls button{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+        color:var(--text);font-weight:700;font-size:14px;cursor:pointer}
+  .controls button:hover{border-color:var(--brand)}
+  .list{width:min(440px,100%);margin-top:14px;color:var(--muted);font-size:13px;text-align:center;min-height:20px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>⚡ 反应速度测试</h1>
+    <a class="home" href="index.html">返回首页</a>
+  </div>
+
+  <div class="bar">
+    <div class="stat"><b id="last">—</b><span>本次(ms)</span></div>
+    <div class="stat"><b id="best">—</b><span>最佳</span></div>
+    <div class="stat"><b id="avg">—</b><span>平均</span></div>
+  </div>
+
+  <div class="pad idle" id="pad">点击开始<br>等待变绿后再点击</div>
+
+  <div class="list" id="list"></div>
+
+  <div class="controls">
+    <button id="reset">清空记录</button>
+  </div>
+
+  <div class="tip">一共 5 轮。屏幕变红时千万别点（会判犯规），变绿后越快点击越好。</div>
+
+<script>
+  const pad=document.getElementById('pad'), listEl=document.getElementById('list');
+  const lastEl=document.getElementById('last'), bestEl=document.getElementById('best'), avgEl=document.getElementById('avg');
+  let state='idle'; // idle | wait | go
+  let waitStart=0, goStart=0, timeoutId=null;
+  let records=[], round=0;
+  let best = Number(localStorage.getItem('rtBest')||0);
+  if(best) bestEl.textContent=best;
+
+  function setPad(cls,html){ pad.className='pad '+cls; pad.innerHTML=html; }
+  function begin(){
+    if(state!=='idle') return;
+    state='wait'; round++;
+    setPad('wait','等待…<br>变绿再点击');
+    const delay=1200+Math.random()*2200;
+    timeoutId=setTimeout(()=>{ state='go'; goStart=performance.now(); setPad('go','点击！'); },delay);
+  }
+  function click(){
+    if(state==='idle'){ begin(); return; }
+    if(state==='wait'){ // too early
+      clearTimeout(timeoutId); state='idle';
+      setPad('idle','⚠️ 太早了！<br>点击重新开始');
+      return;
+    }
+    if(state==='go'){
+      const ms=Math.round(performance.now()-goStart); state='idle';
+      records.push(ms); lastEl.textContent=ms;
+      if(best===0||ms<best){ best=ms; bestEl.textContent=ms; localStorage.setItem('rtBest',best); }
+      const avg=Math.round(records.reduce((a,b)=>a+b,0)/records.length);
+      avgEl.textContent=avg;
+      listEl.textContent='本轮成绩：'+records.join(' · ')+(records.length<5?' （还需 '+(5-records.length)+' 轮）':' （已满 5 轮）');
+      setPad('idle','第 '+(records.length+1)+' 轮<br>点击开始');
+    }
+  }
+  pad.addEventListener('click',click);
+  document.getElementById('reset').addEventListener('click',()=>{ records=[]; round=0; best=0; bestEl.textContent='—';
+    lastEl.textContent='—'; avgEl.textContent='—'; listEl.textContent=''; localStorage.removeItem('rtBest');
+    setPad('idle','点击开始<br>等待变绿后再点击'); });
+
+  setPad('idle','点击开始<br>等待变绿后再点击');
+</script>
+</body>
+</html>
